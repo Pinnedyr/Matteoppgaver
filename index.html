@@ -1,161 +1,173 @@
-<div class="container">
-  <h1>What the facqkuit</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Matteoppgaver</title>
+  <link rel="icon" type="image/png" href="images/Math header.png">
+  <style>
+    :root { --gap: 12px; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0;
+    }
+    h1 { margin: 0 0 8px; font-size: 3.6rem; }
+    p.hint { margin: 0 0 20px; opacity: .8; }
+    .container { max-width: 1000px; margin: 0 auto; }
 
-  <!-- Search bar -->
-  <input
-    type="text"
-    id="search-input"
-    placeholder="Search..."
-    style="width:100%; padding:12px 14px; border-radius:14px; border:1px solid #334155; margin-bottom:16px; background:#1f2937; color:#f8fafc;"
-  />
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--gap);
+    }
+
+    a.link {
+      display: inline-block;
+      width: 100%;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #1f2937;
+      color: #f8fafc;
+      text-align: center;
+      border: 1px solid #334155;
+      transition: transform .04s ease, background .15s ease, border-color .15s ease;
+      user-select: none;
+    }
+    a.link:hover { background: #111827; border-color: #475569; }
+    a.link:active { transform: translateY(1px); }
+    a.link[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
+
+    .footer-note { margin-top: 18px; font-size: .9rem; opacity: .8; }
+    code { background: #0b1220; padding: 2px 6px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>What the facqkuit</h1>
 
 
+    <div class="grid" id="links-grid">
+      <a class="link" data-key="poke-rouge">PokeRouge</a>
+      <a class="link" data-key="thorns-and-balloons">Thorns and balloons</a>
+      <a class="link" data-key="hva-burde-vi-legge-til">Hva burde vi legge til?</a>
+      <a class="link" data-key="best-brownie-recipe">Best brownie recipe</a>
+      <a class="link" data-key="sandboxels">Sandboxels</a>
+      <a class="link" data-key="kikora">Kikora</a>
+      <a class="link" data-key="poki">Poki</a>
+      <a class="link" data-key="classic-minecraft">Classic Minecraft</a>
+      <a class="link" data-key="capybara-clicker">Capybara Clicker</a>
+      <a class="link" data-key="scratch">Scratch</a>
+      <a class="link" data-key="classroom-6x-games">Classroom 6x games</a>
+      <a class="link" data-key="google-dino">Google dino</a>
+      <a class="link" data-key="big-shot-boxing">Big shot boxing</a>
+      <a class="link" data-key="quick-draw">Quick draw</a>
+      <a class="link" data-key="loneliness-game">Loneliness game</a>
+      <a class="link" data-key="granny">Granny</a>
+      <a class="link" data-key="virtual-piano">Virtual piano</a>
+      <a class="link" data-key="bitlife">Bitlife</a>
+      <a class="link" data-key="youtube-library">Youtube library</a>
+      <a class="link" data-key="skribbl-io">Skribbl.io</a>
+      <a class="link" data-key="spotify">Spotify</a>
+      <a class="link" data-key="spillespill">Spillespill</a>
+      <a class="link" data-key="finn">Finn</a>
+      <a class="link" data-key="lag-machine-download">Lag machine download</a>
+      <a class="link" data-key="chess">Chess</a>
+      <a class="link" data-key="make-it-meme">Make it meme</a>
+      <a class="link" data-key="ai-generator">Ai generator</a>
+      <a class="link" data-key="google-doodle">Google Doodle</a>
+      <a class="link" data-key="uno">UNO</a>
+      <a class="link" data-key="agar-io">Agar.io</a>
+      <a class="link" data-key="neal-fun">Neal fun</a>
+      <a class="link" data-key="planet-clicker-2">Planet clicker 2</a>
+      <a class="link" data-key="italian-brainrot-clicker-2">Italian brainrot clicker 2</a>
+      <a class="link" data-key="clash-royale-online">Clash royale online</a>
+      <a class="link" data-key="tung-tung-sahur-clicker">Tung Tung Sahur Clicker</a>
+      <a class="link" data-key="youtube">Youtube</a>
+      <a class="link" data-key="chatgpt">ChatGPT</a>
+      <a class="link" data-key="soundboard">Soundboard</a>
+      <a class="link" data-key="battleship">Battleship</a>
+      <a class="link" data-key="wings-io">Wings.io</a>
+      <a class="link" data-key="territorial">Territorial</a>
+      <a class="link" data-key="happy-glass">Happy glass</a>
+      <a class="link" data-key="omegle">Omegle</a>
+      <a class="link" data-key="games">Games</a>
+      <a class="link" data-key="fnaf">FNAF</a>
+      <a class="link" data-key="geoguesser">Geoguesser</a>
+      <a class="link" data-key="ai-humanizer">Ai humanizer</a>
+    </div>
 
-  <!-- Search bar styled like the buttons -->
-<input
-  type="text"
-  id="search-input"
-  placeholder="Search..."
-  style="
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 14px;
-    border: 1px solid #334155;
-    background: #1f2937;
-    color: #f8fafc;
-    font-size: 1rem;
-    margin-bottom: 12px;
-    transition: background .15s ease, border-color .15s ease;
-  "
-  onfocus="this.style.background='#111827'; this.style.borderColor='#475569';"
-  onblur="this.style.background='#1f2937'; this.style.borderColor='#334155';"
-/>
-
-  <div class="grid" id="links-grid">
-    <a class="link" data-key="poke-rouge">PokeRouge</a>
-    <a class="link" data-key="thorns-and-balloons">Thorns and balloons</a>
-    <a class="link" data-key="hva-burde-vi-legge-til">Hva burde vi legge til?</a>
-    <a class="link" data-key="best-brownie-recipe">Best brownie recipe</a>
-    <a class="link" data-key="sandboxels">Sandboxels</a>
-    <a class="link" data-key="kikora">Kikora</a>
-    <a class="link" data-key="poki">Poki</a>
-    <a class="link" data-key="classic-minecraft">Classic Minecraft</a>
-    <a class="link" data-key="capybara-clicker">Capybara Clicker</a>
-    <a class="link" data-key="scratch">Scratch</a>
-    <a class="link" data-key="classroom-6x-games">Classroom 6x games</a>
-    <a class="link" data-key="google-dino">Google dino</a>
-    <a class="link" data-key="big-shot-boxing">Big shot boxing</a>
-    <a class="link" data-key="quick-draw">Quick draw</a>
-    <a class="link" data-key="loneliness-game">Loneliness game</a>
-    <a class="link" data-key="granny">Granny</a>
-    <a class="link" data-key="virtual-piano">Virtual piano</a>
-    <a class="link" data-key="bitlife">Bitlife</a>
-    <a class="link" data-key="youtube-library">Youtube library</a>
-    <a class="link" data-key="skribbl-io">Skribbl.io</a>
-    <a class="link" data-key="spotify">Spotify</a>
-    <a class="link" data-key="spillespill">Spillespill</a>
-    <a class="link" data-key="finn">Finn</a>
-    <a class="link" data-key="lag-machine-download">Lag machine download</a>
-    <a class="link" data-key="chess">Chess</a>
-    <a class="link" data-key="make-it-meme">Make it meme</a>
-    <a class="link" data-key="ai-generator">Ai generator</a>
-    <a class="link" data-key="google-doodle">Google Doodle</a>
-    <a class="link" data-key="uno">UNO</a>
-    <a class="link" data-key="agar-io">Agar.io</a>
-    <a class="link" data-key="neal-fun">Neal fun</a>
-    <a class="link" data-key="planet-clicker-2">Planet clicker 2</a>
-    <a class="link" data-key="italian-brainrot-clicker-2">Italian brainrot clicker 2</a>
-    <a class="link" data-key="clash-royale-online">Clash royale online</a>
-    <a class="link" data-key="tung-tung-sahur-clicker">Tung Tung Sahur Clicker</a>
-    <a class="link" data-key="youtube">Youtube</a>
-    <a class="link" data-key="chatgpt">ChatGPT</a>
-    <a class="link" data-key="soundboard">Soundboard</a>
-    <a class="link" data-key="battleship">Battleship</a>
-    <a class="link" data-key="wings-io">Wings.io</a>
-    <a class="link" data-key="territorial">Territorial</a>
-    <a class="link" data-key="happy-glass">Happy glass</a>
-    <a class="link" data-key="omegle">Omegle</a>
-    <a class="link" data-key="games">Games</a>
-    <a class="link" data-key="fnaf">FNAF</a>
-    <a class="link" data-key="geoguesser">Geoguesser</a>
-    <a class="link" data-key="ai-humanizer">Ai humanizer</a>
+    <p class="footer-note">Tip: Du kan trykke <code>T</code> for å lukke nettsiden.</p>
   </div>
 
-  <p class="footer-note">Tip: Du kan trykke <code>T</code> for å lukke nettsiden.</p>
-</div>
+  <script>
 
-<script>
-  const LINKS = {
-    'poke-rouge': 'https://www.google.com/url?q=https%3A%2F%2Fpokerogue.net%2F&sa=D&sntz=1&usg=AOvVaw3LJ6QMXlhXJNBFxsKVqYWA',
-    'thorns-and-balloons': 'https://www.google.com/url?q=https%3A%2F%2Fthornandballoons.com%2F&sa=D&sntz=1&usg=AOvVaw1L7oxQ5sfNMmRce1yRtc4-',
-    'hva-burde-vi-legge-til': 'https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform?usp=header',
-    'best-brownie-recipe': 'https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fbergensskolen.com%2Fbrownies%2Fstart&sa=D&sntz=1&usg=AOvVaw3SqcEy569rFEXnQFDUgGfo',
-    'sandboxels': 'https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fbergensskolen.com%2Fbrownies%2Fstart&sa=D&sntz=1&usg=AOvVaw3SqcEy569rFEXnQFDUgGfo',
-    'kikora': 'https://www.google.com/url?q=https%3A%2F%2Ffeide.kikora.no%2Fc%2F%23%2Fhome&sa=D&sntz=1&usg=AOvVaw3JMgxN1-rcJ3mQ3Q16lAN3',
-    'poki': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2F&sa=D&sntz=1&usg=AOvVaw17U4dNYgitnsd_XMverfq6',
-    'classic-minecraft': 'https://www.google.com/url?q=https%3A%2F%2Fclassic.minecraft.net%2F&sa=D&sntz=1&usg=AOvVaw1g0k6lVIqLxCFb6YJH4fw2',
-    'capybara-clicker': 'https://www.google.com/url?q=https%3A%2F%2Fcapybara-game.com%2F&sa=D&sntz=1&usg=AOvVaw1qxaGCu6BJrC_clmGQUsMA',
-    'scratch': 'https://www.google.com/url?q=https%3A%2F%2Fscratch.mit.edu%2F&sa=D&sntz=1&usg=AOvVaw3Ab8k7zNTOxmFTluod24Ky',
-    'classroom-6x-games': 'https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fclassroom6x%2F&sa=D&sntz=1&usg=AOvVaw1f-uTgazbZUTzEN286RcoD',
-    'google-dino': 'https://www.google.com/url?q=https%3A%2F%2Ftrex-runner.com%2F&sa=D&sntz=1&usg=AOvVaw0CuHbFAgYk39MnTzPtve2K',
-    'big-shot-boxing': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2Fen%2Fg%2Fbig-shot-boxing&sa=D&sntz=1&usg=AOvVaw1glCIfFjOYd5Ae67ngJO6j',
-    'quick-draw': 'https://quickdraw.withgoogle.com/?locale=en_US',
-    'loneliness-game': 'https://www.google.com/url?q=https%3A%2F%2Fwww.necessarygames.com%2Fmy-games%2Floneliness&sa=D&sntz=1&usg=AOvVaw1U2iQz0ZlkMv2awM04R0e3',
-    'granny': 'https://www.google.com/url?q=https%3A%2F%2Fgranny-games.com%2F&sa=D&sntz=1&usg=AOvVaw2_g70vse7QLAY34k89WEwO',
-    'virtual-piano': 'https://www.google.com/url?q=https%3A%2F%2Fvirtualpiano.net%2F&sa=D&sntz=1&usg=AOvVaw0UrbIWY4WSVByEv2mBtEQE',
-    'bitlife': 'https://www.google.com/url?q=https%3A%2F%2Fthornandballoons.com%2Fbitlifesimulator&sa=D&sntz=1&usg=AOvVaw3FxmyHXSolfwyauPIsj-SK',
-    'youtube-library': 'https://docs.google.com/document/d/1AnW937KYcoqtzOSGPY8Y68GjJqjSBId_ZrrPQ4Y6mbE/edit?usp=sharing',
-    'skribbl-io': 'https://www.google.com/url?q=https%3A%2F%2Fskribbl.io%2F&sa=D&sntz=1&usg=AOvVaw1O_gCKkOoGeyttAY-JjE6S',
-    'spotify': 'https://www.google.com/url?q=https%3A%2F%2Fopen.spotify.com%2F&sa=D&sntz=1&usg=AOvVaw09TG-3Hw8xdqYwoq5y0hTV',
-    'spillespill': 'https://www.google.com/url?q=https%3A%2F%2Fwww.spillespill.no%2F&sa=D&sntz=1&usg=AOvVaw3oGmijcAAod7UDtEJnrtPZ',
-    'finn': 'http://www.google.com/url?q=http%3A%2F%2Ffinn.no&sa=D&sntz=1&usg=AOvVaw1FmsrQg9J7zHVEfhZ6By88',
-    'lag-machine-download': 'https://www.google.com/url?q=https%3A%2F%2Fthegrowinggamer.itch.io%2Flagmachine&sa=D&sntz=1&usg=AOvVaw3MTGvgjFAlNTi6nk7q0S-O',
-    'chess': 'http://www.google.com/url?q=http%3A%2F%2Fchess.com&sa=D&sntz=1&usg=AOvVaw0Q0BVDaMVhtKp6u5F5DYPc',
-    'make-it-meme': 'https://www.google.com/url?q=https%3A%2F%2Fmakeitmeme.com%2F&sa=D&sntz=1&usg=AOvVaw1AyLAxxoCXe37fs5szSt0a',
-    'ai-generator': 'https://www.google.com/url?q=https%3A%2F%2Fperchance.org%2Fai-text-to-image-generator&sa=D&sntz=1&usg=AOvVaw3pPrJd0WgGvWSXpDHOA1Yf',
-    'google-doodle': 'https://doodles.google/search/?form_tags=interactive%20game',
-    'uno': 'https://www.google.com/url?q=https%3A%2F%2Fwww.solitaireparadise.com%2Fgames_list%2Funo-online.html&sa=D&sntz=1&usg=AOvVaw0flVq-EdwO4s-lUZEvTQP8',
-    'agar-io': 'https://www.google.com/url?q=https%3A%2F%2Fagar.io%2F&sa=D&sntz=1&usg=AOvVaw0V6q39ML_0W02AA-Vf8SGQ',
-    'neal-fun': 'http://www.google.com/url?q=http%3A%2F%2Fneal.fun&sa=D&sntz=1&usg=AOvVaw3yVGUzCGKfkN4zZFl9jUPh',
-    'planet-clicker-2': 'https://www.google.com/url?q=https%3A%2F%2Fcookieclickercity.com%2Fplanet-clicker-2&sa=D&sntz=1&usg=AOvVaw0vh2iHYDTwohnqc5iTOECY',
-    'italian-brainrot-clicker-2': 'https://www.google.com/url?q=https%3A%2F%2Fazgames.io%2Fitalian-brainrot-clicker-2&sa=D&sntz=1&usg=AOvVaw10XzHTDE56xybCDQ6eJzZD',
-    'clash-royale-online': 'https://www.google.com/url?q=https%3A%2F%2Fwww.greenfoot.org%2Fscenarios%2F27793&sa=D&sntz=1&usg=AOvVaw3L6U4zgXpl53tL22OioqtU',
-    'tung-tung-sahur-clicker': 'http://www.google.com/url?q=http%3A%2F%2Fcapybara-game.com%2Ftung-sahur-clicker&sa=D&sntz=1&usg=AOvVaw1AHefP0BJ7W_LiTG-vEGrG',
-    'youtube': 'http://youtube.com/',
-    'chatgpt': 'http://www.google.com/url?q=http%3A%2F%2Fchatgpt.com&sa=D&sntz=1&usg=AOvVaw0HI0_24tIpHl2Na-2TVrX1',
-    'soundboard': 'https://www.google.com/url?q=https%3A%2F%2Fwww.myinstants.com%2Fen%2Fcategories%2Fsound%2520effects%2F&sa=D&sntz=1&usg=AOvVaw0XPrN5gmX5eCJA5php_E2b',
-    'battleship': 'https://www.google.com/url?q=https%3A%2F%2Fpapergames.io%2Fen%2Fbattleship&sa=D&sntz=1&usg=AOvVaw2QIoii2meINK9qO6O1exK3',
-    'wings-io': 'https://www.google.com/url?q=https%3A%2F%2Fwings.io%2F&sa=D&sntz=1&usg=AOvVaw2QZNpzJ2R8FjWHLmW_rjXy',
-    'territorial': 'https://www.google.com/url?q=https%3A%2F%2Fterritorial.io%2F&sa=D&sntz=1&usg=AOvVaw2CXpab9cubeDlvf7s_7MCA',
-    'happy-glass': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2Fen%2Fg%2Fhappy-glass&sa=D&sntz=1&usg=AOvVaw34_T5qdSsTtN_4kyGfkK8Z',
-    'omegle': 'http://www.google.com/url?q=http%3A%2F%2Fuhmegle.com&sa=D&sntz=1&usg=AOvVaw0iZPECxie5vOVvp5oncuIN',
-    'games': 'https://www.google.com/url?q=https%3A%2F%2Fwatchdocumentaries.com%2Fgames%2F%23google_vignette&sa=D&sntz=1&usg=AOvVaw2VNc42YxZE27yIZp_jvMTZ',
-    'fnaf': 'https://www.google.com/url?q=https%3A%2F%2Ffnafgame.io%2F&sa=D&sntz=1&usg=AOvVaw20QXAnq3S7C90YN4L9FzJR',
-    'geoguesser': 'https://www.google.com/url?q=https%3A%2F%2Fgeotastic.net%2Fhome&sa=D&sntz=1&usg=AOvVaw1Au-hd5K2bPrzr1uhT9E9G',
-    'ai-humanizer': 'https://www.google.com/url?q=https%3A%2F%2Fwww.rephraser.co%2Fno%2Fai-humanizer&sa=D&sntz=1&usg=AOvVaw3nZ-TQp_aFA8VqbpcHn02W'
-  };
+    const LINKS = {
+      'poke-rouge': 'https://www.google.com/url?q=https%3A%2F%2Fpokerogue.net%2F&sa=D&sntz=1&usg=AOvVaw3LJ6QMXlhXJNBFxsKVqYWA',
+      'thorns-and-balloons': 'https://www.google.com/url?q=https%3A%2F%2Fthornandballoons.com%2F&sa=D&sntz=1&usg=AOvVaw1L7oxQ5sfNMmRce1yRtc4-',
+      'hva-burde-vi-legge-til': 'https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform?usp=header',
+      'best-brownie-recipe': 'https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fbergensskolen.com%2Fbrownies%2Fstart&sa=D&sntz=1&usg=AOvVaw3SqcEy569rFEXnQFDUgGfo',
+      'sandboxels': 'https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fbergensskolen.com%2Fbrownies%2Fstart&sa=D&sntz=1&usg=AOvVaw3SqcEy569rFEXnQFDUgGfo',
+      'kikora': 'https://www.google.com/url?q=https%3A%2F%2Ffeide.kikora.no%2Fc%2F%23%2Fhome&sa=D&sntz=1&usg=AOvVaw3JMgxN1-rcJ3mQ3Q16lAN3',
+      'poki': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2F&sa=D&sntz=1&usg=AOvVaw17U4dNYgitnsd_XMverfq6',
+      'classic-minecraft': 'https://www.google.com/url?q=https%3A%2F%2Fclassic.minecraft.net%2F&sa=D&sntz=1&usg=AOvVaw1g0k6lVIqLxCFb6YJH4fw2',
+      'capybara-clicker': 'https://www.google.com/url?q=https%3A%2F%2Fcapybara-game.com%2F&sa=D&sntz=1&usg=AOvVaw1qxaGCu6BJrC_clmGQUsMA',
+      'scratch': 'https://www.google.com/url?q=https%3A%2F%2Fscratch.mit.edu%2F&sa=D&sntz=1&usg=AOvVaw3Ab8k7zNTOxmFTluod24Ky',
+      'classroom-6x-games': 'https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fclassroom6x%2F&sa=D&sntz=1&usg=AOvVaw1f-uTgazbZUTzEN286RcoD',
+      'google-dino': 'https://www.google.com/url?q=https%3A%2F%2Ftrex-runner.com%2F&sa=D&sntz=1&usg=AOvVaw0CuHbFAgYk39MnTzPtve2K',
+      'big-shot-boxing': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2Fen%2Fg%2Fbig-shot-boxing&sa=D&sntz=1&usg=AOvVaw1glCIfFjOYd5Ae67ngJO6j',
+      'quick-draw': 'https://quickdraw.withgoogle.com/?locale=en_US',
+      'loneliness-game': 'https://www.google.com/url?q=https%3A%2F%2Fwww.necessarygames.com%2Fmy-games%2Floneliness&sa=D&sntz=1&usg=AOvVaw1U2iQz0ZlkMv2awM04R0e3',
+      'granny': 'https://www.google.com/url?q=https%3A%2F%2Fgranny-games.com%2F&sa=D&sntz=1&usg=AOvVaw2_g70vse7QLAY34k89WEwO',
+      'virtual-piano': 'https://www.google.com/url?q=https%3A%2F%2Fvirtualpiano.net%2F&sa=D&sntz=1&usg=AOvVaw0UrbIWY4WSVByEv2mBtEQE',
+      'bitlife': 'https://www.google.com/url?q=https%3A%2F%2Fthornandballoons.com%2Fbitlifesimulator&sa=D&sntz=1&usg=AOvVaw3FxmyHXSolfwyauPIsj-SK',
+      'youtube-library': 'https://docs.google.com/document/d/1AnW937KYcoqtzOSGPY8Y68GjJqjSBId_ZrrPQ4Y6mbE/edit?usp=sharing',
+      'skribbl-io': 'https://www.google.com/url?q=https%3A%2F%2Fskribbl.io%2F&sa=D&sntz=1&usg=AOvVaw1O_gCKkOoGeyttAY-JjE6S',
+      'spotify': 'https://www.google.com/url?q=https%3A%2F%2Fopen.spotify.com%2F&sa=D&sntz=1&usg=AOvVaw09TG-3Hw8xdqYwoq5y0hTV',
+      'spillespill': 'https://www.google.com/url?q=https%3A%2F%2Fwww.spillespill.no%2F&sa=D&sntz=1&usg=AOvVaw3oGmijcAAod7UDtEJnrtPZ',
+      'finn': 'http://www.google.com/url?q=http%3A%2F%2Ffinn.no&sa=D&sntz=1&usg=AOvVaw1FmsrQg9J7zHVEfhZ6By88',
+      'lag-machine-download': 'https://www.google.com/url?q=https%3A%2F%2Fthegrowinggamer.itch.io%2Flagmachine&sa=D&sntz=1&usg=AOvVaw3MTGvgjFAlNTi6nk7q0S-O',
+      'chess': 'http://www.google.com/url?q=http%3A%2F%2Fchess.com&sa=D&sntz=1&usg=AOvVaw0Q0BVDaMVhtKp6u5F5DYPc',
+      'make-it-meme': 'https://www.google.com/url?q=https%3A%2F%2Fmakeitmeme.com%2F&sa=D&sntz=1&usg=AOvVaw1AyLAxxoCXe37fs5szSt0a',
+      'ai-generator': 'https://www.google.com/url?q=https%3A%2F%2Fperchance.org%2Fai-text-to-image-generator&sa=D&sntz=1&usg=AOvVaw3pPrJd0WgGvWSXpDHOA1Yf',
+      'google-doodle': 'https://doodles.google/search/?form_tags=interactive%20game',
+      'uno': 'https://www.google.com/url?q=https%3A%2F%2Fwww.solitaireparadise.com%2Fgames_list%2Funo-online.html&sa=D&sntz=1&usg=AOvVaw0flVq-EdwO4s-lUZEvTQP8',
+      'agar-io': 'https://www.google.com/url?q=https%3A%2F%2Fagar.io%2F&sa=D&sntz=1&usg=AOvVaw0V6q39ML_0W02AA-Vf8SGQ',
+      'neal-fun': 'http://www.google.com/url?q=http%3A%2F%2Fneal.fun&sa=D&sntz=1&usg=AOvVaw3yVGUzCGKfkN4zZFl9jUPh',
+      'planet-clicker-2': 'https://www.google.com/url?q=https%3A%2F%2Fcookieclickercity.com%2Fplanet-clicker-2&sa=D&sntz=1&usg=AOvVaw0vh2iHYDTwohnqc5iTOECY',
+      'italian-brainrot-clicker-2': 'https://www.google.com/url?q=https%3A%2F%2Fazgames.io%2Fitalian-brainrot-clicker-2&sa=D&sntz=1&usg=AOvVaw10XzHTDE56xybCDQ6eJzZD',
+      'clash-royale-online': 'https://www.google.com/url?q=https%3A%2F%2Fwww.greenfoot.org%2Fscenarios%2F27793&sa=D&sntz=1&usg=AOvVaw3L6U4zgXpl53tL22OioqtU',
+      'tung-tung-sahur-clicker': 'http://www.google.com/url?q=http%3A%2F%2Fcapybara-game.com%2Ftung-sahur-clicker&sa=D&sntz=1&usg=AOvVaw1AHefP0BJ7W_LiTG-vEGrG',
+      'youtube': 'http://youtube.com/',
+      'chatgpt': 'http://www.google.com/url?q=http%3A%2F%2Fchatgpt.com&sa=D&sntz=1&usg=AOvVaw0HI0_24tIpHl2Na-2TVrX1',
+      'soundboard': 'https://www.google.com/url?q=https%3A%2F%2Fwww.myinstants.com%2Fen%2Fcategories%2Fsound%2520effects%2F&sa=D&sntz=1&usg=AOvVaw0XPrN5gmX5eCJA5php_E2b',
+      'battleship': 'https://www.google.com/url?q=https%3A%2F%2Fpapergames.io%2Fen%2Fbattleship&sa=D&sntz=1&usg=AOvVaw2QIoii2meINK9qO6O1exK3',
+      'wings-io': 'https://www.google.com/url?q=https%3A%2F%2Fwings.io%2F&sa=D&sntz=1&usg=AOvVaw2QZNpzJ2R8FjWHLmW_rjXy',
+      'territorial': 'https://www.google.com/url?q=https%3A%2F%2Fterritorial.io%2F&sa=D&sntz=1&usg=AOvVaw2CXpab9cubeDlvf7s_7MCA',
+      'happy-glass': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2Fen%2Fg%2Fhappy-glass&sa=D&sntz=1&usg=AOvVaw34_T5qdSsTtN_4kyGfkK8Z',
+      'omegle': 'http://www.google.com/url?q=http%3A%2F%2Fuhmegle.com&sa=D&sntz=1&usg=AOvVaw0iZPECxie5vOVvp5oncuIN',
+      'games': 'https://www.google.com/url?q=https%3A%2F%2Fwatchdocumentaries.com%2Fgames%2F%23google_vignette&sa=D&sntz=1&usg=AOvVaw2VNc42YxZE27yIZp_jvMTZ',
+      'fnaf': 'https://www.google.com/url?q=https%3A%2F%2Ffnafgame.io%2F&sa=D&sntz=1&usg=AOvVaw20QXAnq3S7C90YN4L9FzJR',
+      'geoguesser': 'https://www.google.com/url?q=https%3A%2F%2Fgeotastic.net%2Fhome&sa=D&sntz=1&usg=AOvVaw1Au-hd5K2bPrzr1uhT9E9G',
+      'ai-humanizer': 'https://www.google.com/url?q=https%3A%2F%2Fwww.rephraser.co%2Fno%2Fai-humanizer&sa=D&sntz=1&usg=AOvVaw3nZ-TQp_aFA8VqbpcHn02W'
+    };
 
-  // Set URLs for all links
-  document.querySelectorAll('a.link[data-key]').forEach(a => {
-    const key = a.getAttribute('data-key');
-    const url = LINKS[key];
-    if (url && typeof url === 'string' && url.trim() !== '') {
-      a.href = url;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-    } else {
-      a.setAttribute('href', 'javascript:void(0)');
-      a.setAttribute('aria-disabled', 'true');
-    }
-  });
 
-  // Search functionality
-  const searchInput = document.getElementById('search-input');
-  searchInput.addEventListener('input', () => {
-    const query = searchInput.value.toLowerCase();
-    document.querySelectorAll('#links-grid a.link').forEach(link => {
-      const text = link.textContent.toLowerCase();
-      link.style.display = text.includes(query) ? 'inline-block' : 'none';
+    document.querySelectorAll('a.link[data-key]').forEach(a => {
+      const key = a.getAttribute('data-key');
+      const url = LINKS[key];
+      if (url && typeof url === 'string' && url.trim() !== '') {
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      } else {
+        a.setAttribute('href', 'javascript:void(0)');
+        a.setAttribute('aria-disabled', 'true');
+      }
     });
-  });
-</script>
+  </script>
+<script src="closeTab.js"></script>
+</body>
+</html>
+
