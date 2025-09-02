@@ -102,7 +102,7 @@
   </div>
 
   <script>
-    // 1) Add your URLs here. Example: 'poke-rouge': 'https://example.com'
+
     const LINKS = {
       'poke-rouge': 'https://www.google.com/url?q=https%3A%2F%2Fpokerogue.net%2F&sa=D&sntz=1&usg=AOvVaw3LJ6QMXlhXJNBFxsKVqYWA',
       'thorns-and-balloons': 'https://www.google.com/url?q=https%3A%2F%2Fthornandballoons.com%2F&sa=D&sntz=1&usg=AOvVaw1L7oxQ5sfNMmRce1yRtc4-',
@@ -153,7 +153,7 @@
       'ai-humanizer': 'https://www.google.com/url?q=https%3A%2F%2Fwww.rephraser.co%2Fno%2Fai-humanizer&sa=D&sntz=1&usg=AOvVaw3nZ-TQp_aFA8VqbpcHn02W'
     };
 
-    // 2) Wire up the buttons. Disabled if no URL provided.
+
     document.querySelectorAll('a.link[data-key]').forEach(a => {
       const key = a.getAttribute('data-key');
       const url = LINKS[key];
