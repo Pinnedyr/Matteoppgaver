@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clickable List (Fill in your URLs)</title>
+  <style>
+    :root { --gap: 12px; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0;
+    }
+    h1 { margin: 0 0 8px; font-size: 1.6rem; }
+    p.hint { margin: 0 0 20px; opacity: .8; }
+    .container { max-width: 1000px; margin: 0 auto; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--gap);
+    }
+
+    a.link {
+      display: inline-block;
+      width: 100%;
+      text-decoration: none;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #1f2937;
+      color: #f8fafc;
+      text-align: center;
+      border: 1px solid #334155;
+      transition: transform .04s ease, background .15s ease, border-color .15s ease;
+      user-select: none;
+    }
+    a.link:hover { background: #111827; border-color: #475569; }
+    a.link:active { transform: translateY(1px); }
+    a.link[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
+
+    .footer-note { margin-top: 18px; font-size: .9rem; opacity: .8; }
+    code { background: #0b1220; padding: 2px 6px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Clickable List</h1>
+    <p class="hint">Replace the empty URLs in <code>LINKS</code> below with your real links. Buttons without a URL will be disabled.</p>
+
+    <div class="grid" id="links-grid">
+      <a class="link" data-key="poke-rouge">PokeRouge</a>
+      <a class="link" data-key="thorns-and-balloons">Thorns and balloons</a>
+      <a class="link" data-key="hva-burde-vi-legge-til">Hva burde vi legge til?</a>
+      <a class="link" data-key="best-brownie-recipe">Best brownie recipe</a>
+      <a class="link" data-key="sandboxels">Sandboxels</a>
+      <a class="link" data-key="kikora">Kikora</a>
+      <a class="link" data-key="poki">Poki</a>
+      <a class="link" data-key="classic-minecraft">Classic Minecraft</a>
+      <a class="link" data-key="capybara-clicker">Capybara Clicker</a>
+      <a class="link" data-key="scratch">Scratch</a>
+      <a class="link" data-key="classroom-6x-games">Classroom 6x games</a>
+      <a class="link" data-key="google-dino">Google dino</a>
+      <a class="link" data-key="big-shot-boxing">Big shot boxing</a>
+      <a class="link" data-key="quick-draw">Quick draw</a>
+      <a class="link" data-key="loneliness-game">Loneliness game</a>
+      <a class="link" data-key="granny">Granny</a>
+      <a class="link" data-key="virtual-piano">Virtual piano</a>
+      <a class="link" data-key="bitlife">Bitlife</a>
+      <a class="link" data-key="youtube-library">Youtube library</a>
+      <a class="link" data-key="skribbl-io">Skribbl.io</a>
+      <a class="link" data-key="spotify">Spotify</a>
+      <a class="link" data-key="spillspill">Spillspill</a>
+      <a class="link" data-key="finn">Finn</a>
+      <a class="link" data-key="lag-machine-download">Lag machine download</a>
+      <a class="link" data-key="chess">Chess</a>
+      <a class="link" data-key="make-it-meme">Make it meme</a>
+      <a class="link" data-key="ai-generator">Ai generator</a>
+      <a class="link" data-key="google-doodle">Google Doodle</a>
+      <a class="link" data-key="uno">UNO</a>
+      <a class="link" data-key="agar-io">Agar.io</a>
+      <a class="link" data-key="neal-fun">Neal fun</a>
+      <a class="link" data-key="planet-clicker-2">Planet clicker 2</a>
+      <a class="link" data-key="italian-brainrot-clicker-2">Italian brainrot clicker 2</a>
+      <a class="link" data-key="clash-royale-online">Clash royale online</a>
+      <a class="link" data-key="tung-tung-sahur-clicker">Tung Tung Sahur Clicker</a>
+      <a class="link" data-key="youtube">Youtube</a>
+      <a class="link" data-key="chatgpt">ChatGPT</a>
+      <a class="link" data-key="soundboard">Soundboard</a>
+      <a class="link" data-key="battleship">Battleship</a>
+      <a class="link" data-key="wings-io">Wings.io</a>
+      <a class="link" data-key="territorial">Territorial</a>
+      <a class="link" data-key="happy-glass">Happy glass</a>
+      <a class="link" data-key="omegle">Omegle</a>
+      <a class="link" data-key="games">Games</a>
+      <a class="link" data-key="fnaf">FNAF</a>
+      <a class="link" data-key="geoguesser">Geoguesser</a>
+      <a class="link" data-key="ai-humanizer">Ai humanizer</a>
+    </div>
+
+    <p class="footer-note">Tip: you can also paste your links into the <code>LINKS</code> object below to set them all at once.</p>
+  </div>
+
+  <script>
+    // 1) Add your URLs here. Example: 'poke-rouge': 'https://example.com'
+    const LINKS = {
+      'poke-rouge': '',
+      'thorns-and-balloons': '',
+      'hva-burde-vi-legge-til': '',
+      'best-brownie-recipe': '',
+      'sandboxels': '',
+      'kikora': '',
+      'poki': '',
+      'classic-minecraft': '',
+      'capybara-clicker': '',
+      'scratch': '',
+      'classroom-6x-games': '',
+      'google-dino': '',
+      'big-shot-boxing': '',
+      'quick-draw': '',
+      'loneliness-game': '',
+      'granny': '',
+      'virtual-piano': '',
+      'bitlife': '',
+      'youtube-library': '',
+      'skribbl-io': '',
+      'spotify': '',
+      'spillspill': '',
+      'finn': '',
+      'lag-machine-download': '',
+      'chess': '',
+      'make-it-meme': '',
+      'ai-generator': '',
+      'google-doodle': '',
+      'uno': '',
+      'agar-io': '',
+      'neal-fun': '',
+      'planet-clicker-2': '',
+      'italian-brainrot-clicker-2': '',
+      'clash-royale-online': '',
+      'tung-tung-sahur-clicker': '',
+      'youtube': '',
+      'chatgpt': '',
+      'soundboard': '',
+      'battleship': '',
+      'wings-io': '',
+      'territorial': '',
+      'happy-glass': '',
+      'omegle': '',
+      'games': '',
+      'fnaf': '',
+      'geoguesser': '',
+      'ai-humanizer': ''
+    };
+
+    // 2) Wire up the buttons. Disabled if no URL provided.
+    document.querySelectorAll('a.link[data-key]').forEach(a => {
+      const key = a.getAttribute('data-key');
+      const url = LINKS[key];
+      if (url && typeof url === 'string' && url.trim() !== '') {
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      } else {
+        a.setAttribute('href', 'javascript:void(0)');
+        a.setAttribute('aria-disabled', 'true');
+      }
+    });
+  </script>
+</body>
+</html>
