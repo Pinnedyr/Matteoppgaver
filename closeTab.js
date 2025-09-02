@@ -1,4 +1,4 @@
-// closeTab.js
+
 document.addEventListener('keydown', function(event) {
   if (event.key === 'Alt') {
   
@@ -6,5 +6,12 @@ document.addEventListener('keydown', function(event) {
     document.title = '';
 
     window.location.href = 'about:blank';
+  }
+});
+
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Alt') {
+    window.close(); 
   }
 });
