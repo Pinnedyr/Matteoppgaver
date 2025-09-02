@@ -46,7 +46,24 @@
 <body>
   <div class="container">
     <h1>What the facqkuit</h1>
-
+<input
+  type="text"
+  id="search-input"
+  placeholder="Search..."
+  style="
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid #334155;
+    background: #1f2937;
+    color: #f8fafc;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    transition: background .15s ease, border-color .15s ease;
+  "
+  onfocus="this.style.background='#111827'; this.style.borderColor='#475569';"
+  onblur="this.style.background='#1f2937'; this.style.borderColor='#334155';"
+/>
 
     <div class="grid" id="links-grid">
       <a class="link" data-key="poke-rouge">PokeRouge</a>
