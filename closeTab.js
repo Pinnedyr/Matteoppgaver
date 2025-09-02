@@ -1,5 +1,5 @@
 document.addEventListener('keydown', function(event) {
-  if (event.key === 'Alt') {
+  if (event.key === 'z') {
     window.close();
   }
 });
