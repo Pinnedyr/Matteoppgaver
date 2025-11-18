@@ -40,7 +40,7 @@
     a.link:active { transform: translateY(1px); }
     a.link[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
 
-    /* 🔥 NEW-BADGE STYLE */
+    
     .link.new::after {
       content: "NY";
       font-size: 10px;
@@ -150,14 +150,14 @@
       <a class="link" data-key="cineby">Cineby</a>
       <a class="link" data-key="wordle">Wordle</a>
 
-      <!-- 🔥 Leon er NY -->
+      
       <a class="link" data-key="leon" data-new="true">Leon's Favoritt</a>
     </div>
 
-    <p class="footer-note">Tip: Du kan trykke <code>Alt</code> på tastaturet for å lukke nettsiden.</p>
+    <p class="footer-note">Tip: Du kan trykke <code>Alt</code> på tastaturet for å lukke nettsiden. (Dette fungerer bare hvis du åpnet nettsiden via den gamle siden. Ellers blir skjermen bare blank.)</p>
   </div>
 
-  <!-- 🔥 NEW-SYSTEMET -->
+  
   <script>
     const LINKS = {
       'poke-rouge': 'https://www.google.com/url?q=https%3A%2F%2Fpokerogue.net%2F&sa=D&sntz=1&usg=AOvVaw3LJ6QMXlhXJNBFxsKVqYWA',
@@ -237,7 +237,7 @@
       }
     });
 
-    // Flytt NEW-lenker til toppen
+    
     const newLinks = links.filter(a => a.hasAttribute("data-new"));
     const oldLinks = links.filter(a => !a.hasAttribute("data-new"));
 
