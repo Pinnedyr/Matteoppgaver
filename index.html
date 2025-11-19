@@ -41,23 +41,17 @@
     a.link[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
 
     
-.button {
-  position: relative; /* viktig, så badge er relativ til knappen */
-  padding: 10px 20px;
-  background: #1f2937;
-  color: white;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  overflow: hidden;
+.link.new {
+  position: relative;
+  background: #1f2937; 
+  border-color: #334155;
 }
 
-.button::after {
+.link.new::after {
   content: "NY";
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -6px;
+  right: -6px;
   background: blue;
   color: white;
   font-size: 10px;
@@ -65,18 +59,10 @@
   border-radius: 6px;
   font-weight: bold;
   box-shadow: 0 0 6px rgba(0,0,0,0.4);
-
-  /* pulserende animasjon */
-  animation: pulseBadge 1s ease-in-out infinite;
 }
 
-@keyframes pulseBadge {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.3); }
-  100% { transform: scale(1); }
-}
-
-
+    .footer-note { margin-top: 18px; font-size: .9rem; opacity: .8; }
+    code { background: #334155; padding: 2px 6px; border-radius: 6px; }
   </style>
 </head>
 
