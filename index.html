@@ -41,12 +41,6 @@
     a.link[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
 
     
-.link.new {
-  position: relative;
-  background: #1f2937; 
-  border-color: #334155;
-}
-
 .link.new::after {
   content: "NY";
   position: absolute;
@@ -59,10 +53,17 @@
   border-radius: 6px;
   font-weight: bold;
   box-shadow: 0 0 6px rgba(0,0,0,0.4);
+
+  /* Pulse-effekt */
+  animation: pulseBadge 1.2s ease-in-out infinite;
 }
 
-    .footer-note { margin-top: 18px; font-size: .9rem; opacity: .8; }
-    code { background: #334155; padding: 2px 6px; border-radius: 6px; }
+@keyframes pulseBadge {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
   </style>
 </head>
 
