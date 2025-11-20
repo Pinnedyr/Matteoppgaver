@@ -68,8 +68,62 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
+  .link .fav {
+  float: right;
+  cursor: pointer;
+  opacity: .4;
+  transition: .2s;
+  font-size: 14px;
+}
+
+.link.favorited .fav {
+  opacity: 1;
+}
+
   </style>
 </head>
+<script>
+  const FAVORITES_KEY = "favoriteLinks";
+  let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+
+  // Add favorite icons to each link automatically
+  links.forEach(link => {
+    const fav = document.createElement("span");
+    fav.textContent = "⭐";
+    fav.classList.add("fav");
+    link.appendChild(fav);
+
+    const key = link.dataset.key;
+
+    // Highlight favorites on load
+    if (favorites.includes(key)) {
+      link.classList.add("favorited");
+    }
+
+    // Click to toggle favorite
+    fav.addEventListener("click", (event) => {
+      event.stopPropagation(); // Prevent opening link
+      toggleFavorite(key, link);
+    });
+  });
+
+  function toggleFavorite(key, element) {
+    if (favorites.includes(key)) {
+      favorites = favorites.filter(item => item !== key);
+      element.classList.remove("favorited");
+    } else {
+      favorites.push(key);
+      element.classList.add("favorited");
+    }
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+  }
+
+  // Move favorites to the top when page loads
+  favorites.forEach(key => {
+    const el = document.querySelector(`a[data-key="${key}"]`);
+    if (el) grid.prepend(el);
+  });
+</script>
 
 <body>
   <div class="container">
