@@ -1,10 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Matteoppgaver</title>
   <link rel="icon" type="image/png" href="images/Math header.png">
-</head>
   <script src="closeTab.js"></script>
+</head>
+<body>
+
+  <style>
+    :root { --gap: 12px; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0;
+    }
+    h1 { margin: 0 0 16px; font-size: 3rem; text-align: center; }
+    .container { max-width: 1000px; margin: 0 auto; text-align: center; }
+    input[type="text"] {
+      width: 100%; padding: 12px 14px; border-radius: 14px;
+      border: 1px solid #334155; background: #1f2937; color: #f8fafc;
+      font-size: 1rem; margin-bottom: 20px;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    input[type="text"]:focus {
+      background: #111827;
+      border-color: #475569;
+      outline: none;
+    }
+    button {
+      padding: 12px 20px; border-radius: 14px;
+      border: 1px solid #334155; background: #1f2937;
+      color: #f8fafc; font-size: 1rem;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, transform .04s ease;
+    }
+    button:hover { background: #111827; border-color: #475569; }
+    button:active { transform: translateY(1px); }
+    iframe {
+      width: 100%;
+      height: 600px;
+      margin-top: 24px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+    }
+  </style>
+
+  <div class="container">
+    <h1>Videospiller</h1>
+
+    <input type="text" id="video-link" placeholder="Lim inn YouTube-lenke her..." />
+    <button id="load-video">Last video</button>
+
+    <iframe id="video-frame" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+  </div>
+
+  <script>
+    const input = document.getElementById('video-link');
+    const button = document.getElementById('load-video');
+    const iframe = document.getElementById('video-frame');
+
+    function extractVideoID(url) {
+      const regExp = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/;
+      const match = url.match(regExp);
+      return match ? match[1] : null;
+    }
+
+    button.addEventListener('click', () => {
+      const url = input.value.trim();
+      const videoID = extractVideoID(url);
+      if(videoID) {
+        iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1`;
+      } else {
+        alert("Vennligst lim inn en gyldig YouTube-lenke.");
+      }
+    });
+  </script>
+
+</body>
 </html>
