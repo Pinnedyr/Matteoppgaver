@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Matteoppgaver</title>
   <link rel="icon" type="image/png" href="images/Math header.png">
+  <script src="closeTab.js"></script>
   <style>
     :root { --gap: 12px; }
     * { box-sizing: border-box; }
@@ -97,12 +98,11 @@
         if(valid) {
           input.disabled = false;
           btn.disabled = false;
-          return id; // stopper umiddelbart
+          return id;
         }
 
         id = getRandomVideoId();
-        // liten delay for jevn UI
-        await new Promise(r => setTimeout(r, 1));
+        await new Promise(r => setTimeout(r, 0));
       }
     }
 
