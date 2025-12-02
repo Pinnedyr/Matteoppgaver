@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -48,10 +48,10 @@
   </style>
 
   <div class="container">
-    <h1>Videospiller</h1>
+    <h1>Video Player</h1>
 
-    <input type="text" id="video-link" placeholder="Lim inn YouTube-lenke her..." />
-    <button id="load-video">Last video</button>
+    <input type="text" id="video-link" placeholder="Paste YouTube video link here..." />
+    <button id="load-video">Load Video</button>
 
     <iframe id="video-frame" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
   </div>
@@ -73,7 +73,7 @@
       if(videoID) {
         iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1`;
       } else {
-        alert("Vennligst lim inn en gyldig YouTube-lenke.");
+        alert("Please enter a valid YouTube link.");
       }
     });
   </script>
