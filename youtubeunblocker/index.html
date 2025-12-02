@@ -39,12 +39,13 @@
     }
     button:hover { background: #111827; border-color: #475569; }
     button:active { transform: translateY(1px); }
-    iframe {
+    video {
       width: 100%;
       height: 600px;
       margin-top: 24px;
       border-radius: 14px;
       border: 1px solid #334155;
+      background: #000;
     }
   </style>
 
@@ -52,30 +53,28 @@
     <h1>What the facqkuit</h1>
     <p class="subtitle">YouTube Videospiller</p>
 
-    <input type="text" id="video-link" placeholder="Lim inn YouTube-lenke her..." />
+    <input type="text" id="video-link" placeholder="Skriv inn videofilnavn eller URL her..." />
     <button id="load-video">Last video</button>
 
-    <iframe id="video-frame" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+    <video id="video-player" controls autoplay>
+      <source src="" type="video/mp4">
+      Din nettleser støtter ikke videospilleren.
+    </video>
   </div>
 
   <script>
     const input = document.getElementById('video-link');
     const button = document.getElementById('load-video');
-    const iframe = document.getElementById('video-frame');
-
-    function extractVideoID(url) {
-      const regExp = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})/;
-      const match = url.match(regExp);
-      return match ? match[1] : null;
-    }
+    const player = document.getElementById('video-player');
 
     button.addEventListener('click', () => {
       const url = input.value.trim();
-      const videoID = extractVideoID(url);
-      if(videoID) {
-        iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1`;
+      if(url) {
+        player.src = url;
+        player.load();
+        player.play();
       } else {
-        alert("Vennligst lim inn en gyldig YouTube-lenke.");
+        alert("Vennligst skriv inn en gyldig videofil eller URL.");
       }
     });
   </script>
