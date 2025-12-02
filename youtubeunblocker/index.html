@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -16,7 +16,8 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0;
     }
-    h1 { margin: 0 0 16px; font-size: 3rem; text-align: center; }
+    h1 { margin: 0 0 8px; font-size: 4rem; text-align: center; }
+    p.subtitle { margin: 0 0 24px; font-size: 1.4rem; opacity: 0.8; text-align: center; }
     .container { max-width: 1000px; margin: 0 auto; text-align: center; }
     input[type="text"] {
       width: 100%; padding: 12px 14px; border-radius: 14px;
@@ -48,10 +49,11 @@
   </style>
 
   <div class="container">
-    <h1>Video Player</h1>
+    <h1>What the facqkuit</h1>
+    <p class="subtitle">YouTube Videospiller</p>
 
-    <input type="text" id="video-link" placeholder="Paste YouTube video link here..." />
-    <button id="load-video">Load Video</button>
+    <input type="text" id="video-link" placeholder="Lim inn YouTube-lenke her..." />
+    <button id="load-video">Last video</button>
 
     <iframe id="video-frame" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
   </div>
@@ -73,7 +75,7 @@
       if(videoID) {
         iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1`;
       } else {
-        alert("Please enter a valid YouTube link.");
+        alert("Vennligst lim inn en gyldig YouTube-lenke.");
       }
     });
   </script>
