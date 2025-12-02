@@ -30,6 +30,7 @@
     #loading-overlay p { margin: 8px 0; }
     #stop-btn { margin-top: 12px; padding: 10px 16px; font-size: 1rem; border-radius: 10px; border: 1px solid #334155; background: #1f2937; cursor: pointer; }
     #stop-btn:hover { background: #111827; border-color: #475569; }
+    #error-msg { color: #f87171; margin-top: 12px; }
   </style>
 </head>
 <body>
@@ -43,6 +44,7 @@
   </div>
 
   <iframe id="player" src=""></iframe>
+  <p id="error-msg"></p>
 
   <!-- Laste-skjerm -->
   <div id="loading-overlay">
@@ -59,6 +61,7 @@
     const overlay = document.getElementById("loading-overlay");
     const triesCounter = document.getElementById("tries-counter");
     const stopBtn = document.getElementById("stop-btn");
+    const errorMsg = document.getElementById("error-msg");
 
     let stopFlag = false;
 
@@ -92,6 +95,7 @@
           input.disabled = false;
           playBtn.disabled = false;
           loadBtn.disabled = false;
+          overlay.style.display = "none";
           return null;
         }
         tries++;
@@ -102,6 +106,7 @@
           input.disabled = false;
           playBtn.disabled = false;
           loadBtn.disabled = false;
+          overlay.style.display = "none";
           return id; 
         }
 
@@ -111,30 +116,37 @@
     }
 
     playBtn.addEventListener("click", async () => {
-      input.value = ""; // Tøm input-feltet
+      input.value = ""; 
+      errorMsg.textContent = "";
       const validId = await getValidVideo();
-      overlay.style.display = "none";
       if(validId) iframe.src = `https://www.youtube.com/embed/${validId}?autoplay=1`;
     });
 
     loadBtn.addEventListener("click", async () => {
+      errorMsg.textContent = "";
       let id = input.value.trim();
+      if(!id) return;
+
       if(id.includes("youtube.com/watch?v=")) {
         id = id.split("v=")[1].split("&")[0];
       } else if(id.includes("youtu.be/")) {
         id = id.split("youtu.be/")[1].split("?")[0];
       }
-      if(!id) return;
 
-      overlay.style.display = "flex";
-      stopFlag = false;
       input.disabled = true;
       playBtn.disabled = true;
       loadBtn.disabled = true;
 
-      const validId = await getValidVideo(id);
-      overlay.style.display = "none";
-      if(validId) iframe.src = `https://www.youtube.com/embed/${validId}?autoplay=1`;
+      const valid = await checkVideo(id);
+      input.disabled = false;
+      playBtn.disabled = false;
+      loadBtn.disabled = false;
+
+      if(valid) {
+        iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+      } else {
+        errorMsg.textContent = "Videoen ble ikke funnet. Sjekk ID eller link.";
+      }
     });
 
     stopBtn.addEventListener("click", () => {
