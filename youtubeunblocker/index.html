@@ -81,23 +81,35 @@
       let tries = 0;
       overlay.style.display = "flex";
       stopFlag = false;
+      input.disabled = true;
+      btn.disabled = true;
 
       while(true) {
-        if(stopFlag) return null;
+        if(stopFlag) {
+          input.disabled = false;
+          btn.disabled = false;
+          return null;
+        }
         tries++;
         triesCounter.textContent = `Prøvde ${tries} linker...`;
+
         const valid = await checkVideo(id);
-        if(valid) return id; // stopper umiddelbart når video finnes
+        if(valid) {
+          input.disabled = false;
+          btn.disabled = false;
+          return id; // stopper umiddelbart
+        }
+
         id = getRandomVideoId();
-        // Liten delay for å ikke spamme YouTube for hardt
-        await new Promise(r => setTimeout(r, 50));
+        // liten delay for jevn UI
+        await new Promise(r => setTimeout(r, 1));
       }
     }
 
     btn.addEventListener("click", async () => {
       let id = input.value.trim();
       if(id.includes("youtube.com/watch?v=")) {
-        id = id.split("v=")[1].split("&")[0]; // trekk ut ID
+        id = id.split("v=")[1].split("&")[0];
       } else if(id.includes("youtu.be/")) {
         id = id.split("youtu.be/")[1].split("?")[0];
       }
