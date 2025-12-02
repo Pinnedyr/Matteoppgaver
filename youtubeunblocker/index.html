@@ -47,7 +47,7 @@
   <div id="loading-overlay">
     <p>Laster tilfeldig video...</p>
     <p id="tries-counter">Prøvde 0 linker</p>
-    <button id="stop-btn">Stopp / Refresh</button>
+    <button id="stop-btn">Stopp</button>
   </div>
 
   <script>
@@ -87,8 +87,10 @@
         tries++;
         triesCounter.textContent = `Prøvde ${tries} linker...`;
         const valid = await checkVideo(id);
-        if(valid) return id;
+        if(valid) return id; // stopper umiddelbart når video finnes
         id = getRandomVideoId();
+        // Liten delay for å ikke spamme YouTube for hardt
+        await new Promise(r => setTimeout(r, 50));
       }
     }
 
@@ -107,7 +109,7 @@
 
     stopBtn.addEventListener("click", () => {
       stopFlag = true;
-      location.reload(); // refresher siden
+      location.reload();
     });
   </script>
 </body>
