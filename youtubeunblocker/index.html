@@ -22,7 +22,6 @@
     button { padding: 12px 18px; border-radius: 14px; border: 1px solid #334155; background: #1f2937; color: #f8fafc; cursor: pointer; font-size: 1rem; transition: background .15s ease, border-color .15s ease; }
     button:hover { background: #111827; border-color: #475569; }
     iframe { width: 80vw; height: 45vw; max-width: 1280px; max-height: 720px; border: none; border-radius: 12px; background: black; }
-    /* Laste-skjerm */
     #loading-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.85); display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -40,6 +39,7 @@
   <div class="controls">
     <input type="text" id="video-input" placeholder="Skriv inn YouTube-ID eller link" />
     <button id="play-btn">Tilfeldig video</button>
+    <button id="load-btn">Last inn</button>
   </div>
 
   <iframe id="player" src=""></iframe>
@@ -53,7 +53,8 @@
 
   <script>
     const iframe = document.getElementById("player");
-    const btn = document.getElementById("play-btn");
+    const playBtn = document.getElementById("play-btn");
+    const loadBtn = document.getElementById("load-btn");
     const input = document.getElementById("video-input");
     const overlay = document.getElementById("loading-overlay");
     const triesCounter = document.getElementById("tries-counter");
@@ -83,12 +84,14 @@
       overlay.style.display = "flex";
       stopFlag = false;
       input.disabled = true;
-      btn.disabled = true;
+      playBtn.disabled = true;
+      loadBtn.disabled = true;
 
       while(true) {
         if(stopFlag) {
           input.disabled = false;
-          btn.disabled = false;
+          playBtn.disabled = false;
+          loadBtn.disabled = false;
           return null;
         }
         tries++;
@@ -97,24 +100,39 @@
         const valid = await checkVideo(id);
         if(valid) {
           input.disabled = false;
-          btn.disabled = false;
-          return id;
+          playBtn.disabled = false;
+          loadBtn.disabled = false;
+          return id; 
         }
 
         id = getRandomVideoId();
-        await new Promise(r => setTimeout(r, 0));
+        await new Promise(r => setTimeout(r, 50)); 
       }
     }
 
-    btn.addEventListener("click", async () => {
+    playBtn.addEventListener("click", async () => {
+      input.value = ""; // Tøm input-feltet
+      const validId = await getValidVideo();
+      overlay.style.display = "none";
+      if(validId) iframe.src = `https://www.youtube.com/embed/${validId}?autoplay=1`;
+    });
+
+    loadBtn.addEventListener("click", async () => {
       let id = input.value.trim();
       if(id.includes("youtube.com/watch?v=")) {
         id = id.split("v=")[1].split("&")[0];
       } else if(id.includes("youtu.be/")) {
         id = id.split("youtu.be/")[1].split("?")[0];
       }
+      if(!id) return;
 
-      const validId = await getValidVideo(id || null);
+      overlay.style.display = "flex";
+      stopFlag = false;
+      input.disabled = true;
+      playBtn.disabled = true;
+      loadBtn.disabled = true;
+
+      const validId = await getValidVideo(id);
       overlay.style.display = "none";
       if(validId) iframe.src = `https://www.youtube.com/embed/${validId}?autoplay=1`;
     });
