@@ -9,7 +9,7 @@
     :root { --gap: 12px; }
     * { box-sizing: border-box; }
     body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0;
     }
     h1 { margin: 0 0 8px; font-size: 3rem; text-align: center; }
@@ -30,7 +30,7 @@
       color: #f8fafc;
       text-align: center;
       border: 1px solid #334155;
-      transition: transform .04s ease, background .15s ease, border-color .15s ease;
+      transition: transform .04s ease, background .15s ease;
       user-select: none;
     }
     a.link:hover { background: #111827; border-color: #475569; }
@@ -39,11 +39,13 @@
 </head>
 <body>
 
-<h1>HTML Files in Folder</h1>
+<h1>Skoleplaner</h1>
 <div class="grid" id="links-grid"></div>
 
 <script>
-  const htmlFiles = ["index.html", "about.html", "contact.html"];
+  // Add your REAL html files here:
+  const htmlFiles = ["8E.html"];
+
   const grid = document.getElementById("links-grid");
 
   htmlFiles.forEach(file => {
