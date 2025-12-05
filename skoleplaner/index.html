@@ -14,7 +14,7 @@
     }
     h1 { margin: 0 0 8px; font-size: 3rem; text-align: center; }
 
-    /* Default grid for 4 or more buttons */
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -23,7 +23,7 @@
       margin: 0 auto;
     }
 
-    /* Center buttons if there are fewer than 4 */
+   
     .grid.center {
       display: flex;
       justify-content: center;
@@ -54,17 +54,17 @@
 <div class="grid" id="links-grid"></div>
 
 <script>
-  // Put your actual pages here:
+  
   const htmlFiles = ["8E.html"];
 
   const grid = document.getElementById("links-grid");
 
-  // Apply center layout if fewer than 4 buttons
+  
   if (htmlFiles.length < 4) {
     grid.classList.add("center");
   }
 
-  // Create buttons
+  
   htmlFiles.forEach(file => {
     const name = file.replace(/\.html$/, "");
     const a = document.createElement("a");
