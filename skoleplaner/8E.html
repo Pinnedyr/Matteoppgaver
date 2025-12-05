@@ -95,10 +95,10 @@ input, select {
 </head>
 <body>
 
-<h1>Skoleapp</h1>
+<h1>Skoleplaner 8E</h1>
 <button id="settingsButton" onclick="toggleSettings()">Innstillinger</button>
 
-<!-- Friminutt-timer øverst til venstre -->
+
 <div id="breakTimer">Laster...</div>
 
 <div id="settingsPanel">
@@ -139,7 +139,7 @@ input, select {
 <div class="box" id="teacher"></div>
 
 <script>
-// --- Settings ---
+
 function toggleSettings() {
     const panel = document.getElementById("settingsPanel");
     panel.style.display = panel.style.display === "block" ? "none" : "block";
@@ -165,7 +165,7 @@ function saveSettings(){
     alert("Innstillinger lagret!");
 }
 
-// --- Lærere ---
+
 const teachers = {
     Matematikk: "Wendy Gjerstad",
     Engelsk: "Ester Schaffrath",
@@ -183,7 +183,7 @@ const teachers = {
     "Utdanningsvalg": "Ester Schaffrath"
 };
 
-// --- Ukeplan ---
+
 function getWeekSchedule() {
   return {
     1:[
@@ -225,7 +225,7 @@ function getWeekSchedule() {
   };
 }
 
-// --- Klokke og oppdatering ---
+
 function toMinutes(t){ const [h,m]=t.split(":").map(Number); return h*60+m; }
 
 function updateClock(){
@@ -269,7 +269,7 @@ function updateSchedule(now, week){
     document.title = "Neste time: " + (nextClass?nextClass.subject:"Ingen");
 }
 
-// --- Friminutt-timer ---
+
 function updateBreakTimer(now) {
     const day = now.getDay();
     if (day === 0 || day === 6) {
@@ -287,7 +287,7 @@ function updateBreakTimer(now) {
         const s = toMinutes(schedule[i].start);
         const e = toMinutes(schedule[i].end);
 
-        // Er vi i friminutt akkurat nå?
+        
         if (currentMin >= e && i < schedule.length - 1 && currentMin < toMinutes(schedule[i + 1].start)) {
             nextBreakStart = currentMin;
             nextBreakEnd = toMinutes(schedule[i + 1].start);
@@ -299,7 +299,7 @@ function updateBreakTimer(now) {
             return;
         }
 
-        // Finn neste friminutt
+        
         if (currentMin < e && i < schedule.length - 1) {
             nextBreakStart = e;
             nextBreakEnd = toMinutes(schedule[i + 1].start);
@@ -307,7 +307,7 @@ function updateBreakTimer(now) {
         }
     }
 
-    // Hvis ingen flere friminutt i dag
+    
     if (!nextBreakStart) {
         document.getElementById("breakTimer").innerHTML = "Ingen flere friminutt";
         document.getElementById("breakTimer").classList.remove("blink");
@@ -316,7 +316,7 @@ function updateBreakTimer(now) {
 
     const diff = nextBreakStart - currentMin;
 
-    // Blink siste 10 sekunder
+    
     if (diff * 60 <= 10) {
         document.getElementById("breakTimer").classList.add("blink");
     } else {
