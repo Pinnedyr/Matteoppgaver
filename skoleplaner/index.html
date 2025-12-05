@@ -13,6 +13,8 @@
       margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0;
     }
     h1 { margin: 0 0 8px; font-size: 3rem; text-align: center; }
+
+    /* Default grid for 4 or more buttons */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -20,9 +22,18 @@
       max-width: 1000px;
       margin: 0 auto;
     }
+
+    /* Center buttons if there are fewer than 4 */
+    .grid.center {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--gap);
+    }
+
     a.link {
       display: inline-block;
-      width: 100%;
+      width: 220px;
       text-decoration: none;
       padding: 12px 14px;
       border-radius: 14px;
@@ -43,11 +54,17 @@
 <div class="grid" id="links-grid"></div>
 
 <script>
-  // Add your REAL html files here:
+  // Put your actual pages here:
   const htmlFiles = ["8E.html"];
 
   const grid = document.getElementById("links-grid");
 
+  // Apply center layout if fewer than 4 buttons
+  if (htmlFiles.length < 4) {
+    grid.classList.add("center");
+  }
+
+  // Create buttons
   htmlFiles.forEach(file => {
     const name = file.replace(/\.html$/, "");
     const a = document.createElement("a");
