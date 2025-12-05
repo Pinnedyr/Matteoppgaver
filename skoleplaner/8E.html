@@ -1,5 +1,335 @@
 <!DOCTYPE html>
+<html lang="no">
 <head>
+  <meta charset="UTF-8">
   <title>8E Skoleplan</title>
   <link rel="icon" type="image/png" href="images/Math header.png">
 </head>
+  <body></body>
+  body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    margin: 0;
+    padding: 30px;
+    text-align: center;
+}
+
+/* Bokser */
+.box, .card, .panel {
+    background: #1c1c1c;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 600px;
+    box-shadow: 0 0 10px #000;
+}
+
+/* Overskrifter */
+h1, h2, h3 {
+    color: white;
+    font-weight: bold;
+}
+
+/* Knapper */
+button, .btn {
+    background: #222;
+    color: white;
+    border: 1px solid #444;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover, .btn:hover {
+    background: #2f2f2f;
+}
+
+/* Settings-knapp */
+#settingsButton {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #222;
+    border: 1px solid #444;
+    padding: 8px 14px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#settingsButton:hover {
+    background: #2f2f2f;
+}
+
+/* Timer for neste friminutt */
+#breakTimer {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: #222;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    box-shadow: 0 0 10px #000;
+}
+.blink {
+    animation: blink 0.8s steps(2, start) infinite;
+}
+@keyframes blink {
+    to { visibility: hidden; }
+}
+
+/* Input-felt */
+input, select {
+    background: #1a1a1a;
+    color: white;
+    border: 1px solid #333;
+    padding: 8px;
+    border-radius: 6px;
+}
+</style>
+</head>
+<body>
+
+<h1>Skoleapp</h1>
+<button id="settingsButton" onclick="toggleSettings()">Innstillinger</button>
+
+<!-- Friminutt-timer øverst til venstre -->
+<div id="breakTimer">Laster...</div>
+
+<div id="settingsPanel">
+<h2>Innstillinger</h2>
+
+<label>Språkfag:</label><br>
+<select id="languageSelect">
+    <option value="Spansk">Spansk</option>
+    <option value="Tysk">Tysk</option>
+    <option value="Fransk">Fransk</option>
+    <option value="Engelsk fordypning">Engelsk fordypning</option>
+    <option value="ALF">ALF</option>
+</select><br><br>
+
+<label>Valgfag:</label><br>
+<select id="electiveSelect">
+    <option value="Teknologi og design">Teknologi og design</option>
+    <option value="Design og redesign">Design og redesign</option>
+    <option value="Fysisk">Fysisk</option>
+    <option value="Friluftsliv">Friluftsliv</option>
+    <option value="Media og kommunikasjon">Media og kommunikasjon</option>
+</select><br><br>
+
+<label>Vis lærer for:</label><br>
+<select id="teacherSelect">
+    <option value="current">Pågående time</option>
+    <option value="next">Neste time</option>
+</select><br><br>
+
+<button onclick="saveSettings()">Lagre</button>
+</div>
+
+<div class="box" id="clock"></div>
+<div class="box" id="date"></div>
+<div class="box" id="week"></div>
+<div class="box" id="current"></div>
+<div class="box" id="next"></div>
+<div class="box" id="teacher"></div>
+
+<script>
+// --- Settings ---
+function toggleSettings() {
+    const panel = document.getElementById("settingsPanel");
+    panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
+
+let chosenLanguage = localStorage.getItem("chosenLanguage") || "Spansk";
+let chosenElective = localStorage.getItem("chosenElective") || "Teknologi og design";
+let teacherFor = localStorage.getItem("teacherFor") || "current";
+
+document.getElementById("languageSelect").value = chosenLanguage;
+document.getElementById("electiveSelect").value = chosenElective;
+document.getElementById("teacherSelect").value = teacherFor;
+
+function saveSettings(){
+    chosenLanguage = document.getElementById("languageSelect").value;
+    chosenElective = document.getElementById("electiveSelect").value;
+    teacherFor = document.getElementById("teacherSelect").value;
+
+    localStorage.setItem("chosenLanguage", chosenLanguage);
+    localStorage.setItem("chosenElective", chosenElective);
+    localStorage.setItem("teacherFor", teacherFor);
+
+    alert("Innstillinger lagret!");
+}
+
+// --- Lærere ---
+const teachers = {
+    Matematikk: "Wendy Gjerstad",
+    Engelsk: "Ester Schaffrath",
+    Norsk: "Kristine Tråi",
+    KRLE: "Knut Starheim",
+    Samfunnsfag: "Kristine Tråi",
+    Naturfag: "Kristian Morken Bjelland",
+    Spansk: "Wendy Gjerstad",
+    Tysk: "Ester Schaffrath",
+    Fransk: "Scott Olsen",
+    "Engelsk fordypning": "Belinda Berge",
+    ALF: "Erik Langeland og Johanne Jordal",
+    "Kunst og håndtverk": "Belinda Berge og Mariell Aarbakke",
+    Kroppsøving: "Kristian Morken Bjelland",
+    "Utdanningsvalg": "Ester Schaffrath"
+};
+
+// --- Ukeplan ---
+function getWeekSchedule() {
+  return {
+    1:[
+      {start:"08:20",end:"09:20",subject:"Engelsk",teacher:teachers.Engelsk},
+      {start:"09:30",end:"10:30",subject:"Naturfag",teacher:teachers.Naturfag},
+      {start:"11:00",end:"12:00",subject:"Norsk",teacher:teachers.Norsk},
+      {start:"12:10",end:"13:10",subject:"KRLE",teacher:teachers.KRLE},
+      {start:"13:20",end:"14:20",subject:"Valgfag",teacher:teachers["Utdanningsvalg"]}
+    ],
+    2: [
+      (chosenLanguage === "ALF" ?
+        {start:"08:20", end:"09:20", subject:"ALF", teacher:teachers.ALF} :
+        {start:"08:20", end:"09:20", subject:"Fritime", teacher:"--"}
+      ),
+      {start:"09:30", end:"10:30", subject:chosenLanguage, teacher:teachers[chosenLanguage] || "Språklærer"},
+      {start:"11:00", end:"12:00", subject:"Norsk/Samfunnsfag", teacher:teachers.Norsk},
+      {start:"12:10", end:"13:10", subject:"Matematikk", teacher:teachers.Matematikk}
+    ],
+    3:[
+      {start:"08:20",end:"09:20",subject:"Kroppsøving",teacher:teachers.Kroppsøving},
+      {start:"09:30",end:"10:30",subject:"Matematikk",teacher:teachers.Matematikk},
+      {start:"12:10",end:"13:10",subject:"Matematikk",teacher:teachers.Matematikk},
+      {start:"13:20",end:"14:20",subject:"Naturfag",teacher:teachers.Naturfag}
+    ],
+    4:[
+      {start:"08:20",end:"09:20",subject:"Samfunnsfag",teacher:teachers.Samfunnsfag},
+      {start:"09:30",end:"10:30",subject:"Norsk",teacher:teachers.Norsk},
+      {start:"11:00",end:"12:00",subject:"Kroppsøving",teacher:teachers.Kroppsøving},
+      {start:"12:10",end:"13:10",subject:"Matematikk",teacher:teachers.Matematikk},
+      {start:"13:20",end:"14:20",subject:chosenLanguage,teacher:teachers[chosenLanguage] || "Språklærer"}
+    ],
+    5:[
+      {start:"08:20",end:"09:20",subject:"KRLE",teacher:teachers.KRLE},
+      {start:"09:30",end:"10:30",subject:"Norsk",teacher:teachers.Norsk},
+      {start:"11:00",end:"12:00",subject:"Samfunnsfag",teacher:teachers.Samfunnsfag},
+      {start:"12:10",end:"13:10",subject:"Engelsk",teacher:teachers.Engelsk},
+      {start:"13:20",end:"14:20",subject:"Utdanningsvalg",teacher:teachers["Utdanningsvalg"]}
+    ]
+  };
+}
+
+// --- Klokke og oppdatering ---
+function toMinutes(t){ const [h,m]=t.split(":").map(Number); return h*60+m; }
+
+function updateClock(){
+    const now=new Date();
+    document.getElementById("clock").innerHTML = now.toLocaleTimeString("no-NO");
+    document.getElementById("date").innerHTML = now.toLocaleDateString("no-NO", {day:"numeric", month:"long", year:"numeric"});
+    const oneJan = new Date(now.getFullYear(),0,1);
+    const week = Math.ceil((((now-oneJan)/86400000)+oneJan.getDay()+1)/7);
+    document.getElementById("week").innerHTML = "Uke " + week;
+    updateSchedule(now, week);
+    updateBreakTimer(now);
+}
+
+function updateSchedule(now, week){
+    let day = now.getDay();
+    if(day===0 || day===6){
+        document.getElementById("current").innerHTML = "Ingen skole i dag";
+        document.getElementById("next").innerHTML = "Ingen flere timer";
+        document.getElementById("teacher").innerHTML = "";
+        document.title = "Skoleapp";
+        return;
+    }
+
+    const weekSchedule = getWeekSchedule();
+    let periods = weekSchedule[day];
+
+    const currentMin = now.getHours()*60 + now.getMinutes();
+    let currentClass=null, nextClass=null;
+    for(let p of periods){
+        const s = toMinutes(p.start), e = toMinutes(p.end);
+        if(currentMin >= s && currentMin < e){ currentClass=p; }
+        else if(currentMin < s && !nextClass){ nextClass=p; }
+    }
+
+    document.getElementById("current").innerHTML = "Pågående time: " + (currentClass?currentClass.subject:"Ingen");
+    document.getElementById("next").innerHTML = "Neste time: " + (nextClass?nextClass.subject:"Ingen flere timer");
+
+    let teacherClass = (teacherFor === "current") ? currentClass : nextClass;
+    document.getElementById("teacher").innerHTML = "Lærer: " + (teacherClass ? teacherClass.teacher : "--");
+
+    document.title = "Neste time: " + (nextClass?nextClass.subject:"Ingen");
+}
+
+// --- Friminutt-timer ---
+function updateBreakTimer(now) {
+    const day = now.getDay();
+    if (day === 0 || day === 6) {
+        document.getElementById("breakTimer").innerHTML = "Fri (helg)";
+        return;
+    }
+
+    const schedule = getWeekSchedule()[day];
+    const currentMin = now.getHours() * 60 + now.getMinutes();
+
+    let nextBreakStart = null;
+    let nextBreakEnd = null;
+
+    for (let i = 0; i < schedule.length; i++) {
+        const s = toMinutes(schedule[i].start);
+        const e = toMinutes(schedule[i].end);
+
+        // Er vi i friminutt akkurat nå?
+        if (currentMin >= e && i < schedule.length - 1 && currentMin < toMinutes(schedule[i + 1].start)) {
+            nextBreakStart = currentMin;
+            nextBreakEnd = toMinutes(schedule[i + 1].start);
+
+            const remaining = nextBreakEnd - currentMin;
+
+            document.getElementById("breakTimer").classList.remove("blink");
+            document.getElementById("breakTimer").innerHTML = "Friminutt pågår (" + remaining + " min)";
+            return;
+        }
+
+        // Finn neste friminutt
+        if (currentMin < e && i < schedule.length - 1) {
+            nextBreakStart = e;
+            nextBreakEnd = toMinutes(schedule[i + 1].start);
+            break;
+        }
+    }
+
+    // Hvis ingen flere friminutt i dag
+    if (!nextBreakStart) {
+        document.getElementById("breakTimer").innerHTML = "Ingen flere friminutt";
+        document.getElementById("breakTimer").classList.remove("blink");
+        return;
+    }
+
+    const diff = nextBreakStart - currentMin;
+
+    // Blink siste 10 sekunder
+    if (diff * 60 <= 10) {
+        document.getElementById("breakTimer").classList.add("blink");
+    } else {
+        document.getElementById("breakTimer").classList.remove("blink");
+    }
+
+    document.getElementById("breakTimer").innerHTML =
+        "Til friminutt: " + diff + " min";
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+
+</body>
+</html>
