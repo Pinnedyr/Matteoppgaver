@@ -2,6 +2,19 @@
     const BANNER_TEXT = "Vi feirer at vi har fått nytt domene på wtfq.online!!!";
     const SHOW_DURATION = 5 * 1000;
 
+    const today = new Date().toISOString().split("T")[0];
+    const data = JSON.parse(localStorage.getItem("bannerData") || "{}");
+
+    if (data.date !== today) {
+        data.date = today;
+        data.count = 0;
+    }
+
+    if (data.count >= 5) return;
+
+    data.count++;
+    localStorage.setItem("bannerData", JSON.stringify(data));
+
     const banner = document.createElement("div");
     banner.id = "auto-banner";
     banner.innerText = BANNER_TEXT;
