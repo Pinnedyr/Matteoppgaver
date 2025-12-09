@@ -1,39 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Redirecting...</title>
-<!-- Firebase SDKs -->
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBfxrRwTuYVvaUH99ByoRSezEd32Txoezk",
-    authDomain: "wtfq-online.firebaseapp.com",
-    databaseURL: "https://wtfq-online-default-rtdb.firebaseio.com", // Use your database URL
-    projectId: "wtfq-online",
-    storageBucket: "wtfq-online.appspot.com",
-    messagingSenderId: "663547390656",
-    appId: "1:663547390656:web:bbd0c11dc096c2d2339b25",
-    measurementId: "G-F74R7B29BR"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyBfxrRwTuYVvaUH99ByoRSezEd32Txoezk",
+  authDomain: "wtfq-online.firebaseapp.com",
+  databaseURL: "https://wtfq-online-default-rtdb.firebaseio.com",
+  projectId: "wtfq-online",
+  storageBucket: "wtfq-online.appspot.com",
+  messagingSenderId: "663547390656",
+  appId: "1:663547390656:web:bbd0c11dc096c2d2339b25"
+};
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+firebase.initializeApp(firebaseConfig);
 
-  // Increment counter
-  const counterRef = db.ref('qrCounter');
-  counterRef.transaction(current => (current || 0) + 1)
-    .then(() => console.log("Counter updated"))
-    .catch(err => console.error("Error:", err));
+const counterRef = firebase.database().ref("qrCounter");
 
-  // Redirect
-  window.location.href = "http://www.wtfq.online";
+counterRef.transaction(c => (c || 0) + 1)
+  .then(() => {
+    console.log("Counter updated");
+    setTimeout(() => {
+      window.location.href = "https://wtfq.online";
+    }, 800); // ← delay so Firebase can finish writing
+  })
+  .catch(err => {
+    console.error(err);
+    // fallback redirect
+    window.location.href = "https://wtfq.online";
+  });
 </script>
+
+<style>
+body { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  height: 100vh; 
+  background: black; 
+  color: white; 
+  font-size: 32px;
+}
+</style>
+
 </head>
 <body>
-<p style="text-align:center;margin-top:50px;font-size:24px;">Redirecting...</p>
+Redirecting...
 </body>
 </html>
