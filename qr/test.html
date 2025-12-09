@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Test Firebase Counter</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBfxrRwTuYVvaUH99ByoRSezEd32Txoezk",
+  authDomain: "wtfq-online.firebaseapp.com",
+  databaseURL: "https://wtfq-online-default-rtdb.firebaseio.com",
+  projectId: "wtfq-online",
+  storageBucket: "wtfq-online.appspot.com",
+  messagingSenderId: "663547390656",
+  appId: "1:663547390656:web:bbd0c11dc096c2d2339b25"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const counterRef = db.ref('qrCounter');
+
+counterRef.transaction(current => (current || 0) + 1)
+  .then(() => console.log("Counter updated"))
+  .catch(err => console.error("Error:", err));
+</script>
+</head>
+<body>
+<h1>Testing Firebase Counter</h1>
+<p>Check the console for confirmation.</p>
+</body>
+</html>
