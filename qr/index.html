@@ -1,1 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Redirecting...</title>
+<script type="module">
+import { db, ref, runTransaction } from './firebase-config.js';
 
+
+const counterRef = ref(db, 'qrCounter');
+
+
+runTransaction(counterRef, current => (current || 0) + 1);
+
+
+window.location.href = "http://www.wtfq.online";
+</script>
+</head>
+<body>
+<p style="text-align:center;margin-top:50px;font-size:24px;">Redirecting...</p>
+</body>
+</html>
