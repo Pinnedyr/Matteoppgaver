@@ -41,33 +41,54 @@
     a.link[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
 
     
-.link.new {
-  position: relative;
-}
+    .link.new {
+      position: relative;
+    }
+    .link.new::after {
+      content: "NY";
+      position: absolute;
+      justify-content: center;
+      align-items: center;
+      top: -6px;
+      right: -6px;
+      background: blue;
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: bold;
+      box-shadow: 0 0 6px rgba(0,0,0,0.4);
+      animation: pulse 1.2s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%   { transform: scale(1); opacity: 1; }
+      50%  { transform: scale(1.4); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
 
-.link.new::after {
-  content: "NY";
-  position: absolute;
-  justify-content: center;
-  align-items: center;
-  top: -6px;
-  right: -6px;
-  background: blue;
-  color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-weight: bold;
-  box-shadow: 0 0 6px rgba(0,0,0,0.4);
-  animation: pulse 1.2s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0%   { transform: scale(1); opacity: 1; }
-  50%  { transform: scale(1.4); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
+    
+    .link.hot {
+      position: relative;
+    }
+    .link.hot::after {
+      content: "HOT🔥";
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: red;
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: bold;
+      box-shadow: 0 0 6px rgba(0,0,0,0.4);
+      animation: pulse-hot 1.2s infinite ease-in-out;
+    }
+    @keyframes pulse-hot {
+      0%   { transform: scale(1); opacity: 1; }
+      50%  { transform: scale(1.4); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 
@@ -77,17 +98,17 @@
       <h1>What the facqkuit</h1>
     </div>
 
-<p style="white-space: nowrap; text-align: center; font-size: 1.2rem; margin: 4px 0 12px;">
-  <a href="https://pinnedyr.github.io/Matteoppgaver/skoleplaner/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Skoleplaner</a>
-  •
-  <a href="https://discord.gg/FSc2qYaH5y" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Discord</a>
-  •
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform?usp=header" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Forslag</a>
-  •
-  <a href="https://github.com/Pinnedyr/Matteoppgaver/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Kildekoden</a>
-  •
-  <a href="https://pinnedyr.github.io/Matteoppgaver/youtubeunblocker/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Youtube Videospiller</a>
-</p>
+    <p style="white-space: nowrap; text-align: center; font-size: 1.2rem; margin: 4px 0 12px;">
+      <a href="https://pinnedyr.github.io/Matteoppgaver/skoleplaner/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Skoleplaner</a>
+      •
+      <a href="https://discord.gg/FSc2qYaH5y" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Discord</a>
+      •
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform?usp=header" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Forslag</a>
+      •
+      <a href="https://github.com/Pinnedyr/Matteoppgaver/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Kildekoden</a>
+      •
+      <a href="https://pinnedyr.github.io/Matteoppgaver/youtubeunblocker/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Youtube Videospiller</a>
+    </p>
 
     <input
       type="text"
@@ -108,7 +129,7 @@
       searchInput.addEventListener('input', () => {
         const query = searchInput.value.toLowerCase();
         document.querySelectorAll('#links-grid a.link').forEach(link => {
-          const text = link.textContent.toLowerCase();
+          const text = (link.textContent + ' ' + link.dataset.key).toLowerCase();
           link.style.display = text.includes(query) ? 'inline-block' : 'none';
         });
       });
@@ -166,62 +187,59 @@
       <a class="link" data-key="gartic-phone">Gartic Phone</a>
       <a class="link" data-key="cineby">Cineby</a>
       <a class="link" data-key="wordle">Wordle</a>
-
-      
-      <a class="link" data-key="snowrider" data-new="true">Snowrider 3D</a>
+      <a class="link" data-key="snowrider" data-hot="true">Snowrider 3D</a>
     </div>
 
     <p class="footer-note">Tip: Du kan trykke <code>Alt</code> på tastaturet for å lukke nettsiden. (Dette fungerer bare hvis du åpnet nettsiden via den gamle siden. Ellers blir skjermen bare blank.)</p>
   </div>
 
-  
   <script>
     const LINKS = {
       'poke-rouge': 'https://www.google.com/url?q=https%3A%2F%2Fpokerogue.net%2F&sa=D&sntz=1&usg=AOvVaw3LJ6QMXlhXJNBFxsKVqYWA',
-      'thorns-and-balloons': 'https://www.google.com/url?q=https%3A%2F%2Fthornandballoons.com%2F&sa=D&sntz=1&usg=AOvVaw1L7oxQ5sfNMmRce1yRtc4-',
-      'best-brownie-recipe': 'https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fbergensskolen.com%2Fbrownies%2Fstart&sa=D&sntz=1&usg=AOvVaw3SqcEy569rFEXnQFDUgGfo',
+      'thorns-and-balloons': 'https://thornandballoons.com/',
+      'best-brownie-recipe': 'https://sites.google.com/bergensskolen.com/brownies/start',
       'sandboxels': 'https://sandboxels.r74n.com/',
-      'kikora': 'https://www.google.com/url?q=https%3A%2F%2Ffeide.kikora.no%2Fc%2F%23%2Fhome&sa=D&sntz=1&usg=AOvVaw3JMgxN1-rcJ3mQ3Q16lAN3',
-      'poki': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2F&sa=D&sntz=1&usg=AOvVaw17U4dNYgitnsd_XMverfq6',
-      'classic-minecraft': 'https://www.google.com/url?q=https%3A%2F%2Fclassic.minecraft.net%2F&sa=D&sntz=1&usg=AOvVaw1g0k6lVIqLxCFb6YJH4fw2',
-      'capybara-clicker': 'https://www.google.com/url?q=https%3A%2F%2Fcapybara-game.com%2F&sa=D&sntz=1&usg=AOvVaw1qxaGCu6BJrC_clmGQUsMA',
-      'scratch': 'https://www.google.com/url?q=https%3A%2F%2Fscratch.mit.edu%2F&sa=D&sntz=1&usg=AOvVaw3Ab8k7zNTOxmFTluod24Ky',
-      'classroom-6x-games': 'https://www.google.com/url?q=https%3A%2F%2Fsites.google.com%2Fview%2Fclassroom6x%2F&sa=D&sntz=1&usg=AOvVaw1f-uTgazbZUTzEN286RcoD',
-      'google-dino': 'https://www.google.com/url?q=https%3A%2F%2Ftrex-runner.com%2F&sa=D&sntz=1&usg=AOvVaw0CuHbFAgYk39MnTzPtve2K',
-      'big-shot-boxing': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2Fen%2Fg%2Fbig-shot-boxing&sa=D&sntz=1&usg=AOvVaw1glCIfFjOYd5Ae67ngJO6j',
+      'kikora': 'https://feide.kikora.no/c/#/home',
+      'poki': 'https://poki.com/',
+      'classic-minecraft': 'https://classic.minecraft.net/',
+      'capybara-clicker': 'https://capybara-game.com/',
+      'scratch': 'https://scratch.mit.edu/',
+      'classroom-6x-games': 'https://sites.google.com/view/classroom6x/',
+      'google-dino': 'https://trex-runner.com/',
+      'big-shot-boxing': 'https://poki.com/en/g/big-shot-boxing',
       'quick-draw': 'https://quickdraw.withgoogle.com/?locale=en_US',
-      'loneliness-game': 'https://www.google.com/url?q=https%3A%2F%2Fwww.necessarygames.com%2Fmy-games%2Floneliness&sa=D&sntz=1&usg=AOvVaw1U2iQz0ZlkMv2awM04R0e3',
-      'granny': 'https://www.google.com/url?q=https%3A%2F%2Fgranny-games.com%2F&sa=D&sntz=1&usg=AOvVaw2_g70vse7QLAY34k89WEwO',
-      'virtual-piano': 'https://www.google.com/url?q=https%3A%2F%2Fvirtualpiano.net%2F&sa=D&sntz=1&usg=AOvVaw0UrbIWY4WSVByEv2mBtEQE',
-      'bitlife': 'https://www.google.com/url?q=https%3A%2F%2Fthornandballoons.com%2Fbitlifesimulator&sa=D&sntz=1&usg=AOvVaw3FxmyHXSolfwyauPIsj-SK',
+      'loneliness-game': 'https://www.necessarygames.com/my-games/loneliness',
+      'granny': 'https://granny-games.com/',
+      'virtual-piano': 'https://virtualpiano.net/',
+      'bitlife': 'https://thornandballoons.com/bitlifesimulator',
       'youtube-library': 'https://docs.google.com/document/d/1AnW937KYcoqtzOSGPY8Y68GjJqjSBId_ZrrPQ4Y6mbE/edit?usp=sharing',
-      'skribbl-io': 'https://www.google.com/url?q=https%3A%2F%2Fskribbl.io%2F&sa=D&sntz=1&usg=AOvVaw1O_gCKkOoGeyttAY-JjE6S',
-      'spotify': 'https://www.google.com/url?q=https%3A%2F%2Fopen.spotify.com%2F&sa=D&sntz=1&usg=AOvVaw09TG-3Hw8xdqYwoq5y0hTV',
-      'spillespill': 'https://www.google.com/url?q=https%3A%2F%2Fwww.spillespill.no%2F&sa=D&sntz=1&usg=AOvVaw3oGmijcAAod7UDtEJnrtPZ',
-      'finn': 'http://www.google.com/url?q=http%3A%2F%2Ffinn.no&sa=D&sntz=1&usg=AOvVaw1FmsrQg9J7zHVEfhZ6By88',
-      'chess': 'http://www.google.com/url?q=http%3A%2F%2Fchess.com&sa=D&sntz=1&usg=AOvVaw0Q0BVDaMVhtKp6u5F5DYPc',
-      'make-it-meme': 'https://www.google.com/url?q=https%3A%2F%2Fmakeitmeme.com%2F&sa=D&sntz=1&usg=AOvVaw1AyLAxxoCXe37fs5szSt0a',
-      'ai-generator': 'https://www.google.com/url?q=https%3A%2F%2Fperchance.org%2Fai-text-to-image-generator&sa=D&sntz=1&usg=AOvVaw3pPrJd0WgGvWSXpDHOA1Yf',
+      'skribbl-io': 'https://skribbl.io/',
+      'spotify': 'https://open.spotify.com/',
+      'spillespill': 'https://www.spillespill.no/',
+      'finn': 'http://finn.no',
+      'chess': 'http://chess.com',
+      'make-it-meme': 'https://makeitmeme.com/',
+      'ai-generator': 'https://perchance.org/ai-text-to-image-generator',
       'google-doodle': 'https://doodles.google/search/?form_tags=interactive%20game',
-      'uno': 'https://www.google.com/url?q=https%3A%2F%2Fwww.solitaireparadise.com%2Fgames_list%2Funo-online.html&sa=D&sntz=1&usg=AOvVaw0flVq-EdwO4s-lUZEvTQP8',
-      'agar-io': 'https://www.google.com/url?q=https%3A%2F%2Fagar.io%2F&sa=D&sntz=1&usg=AOvVaw0V6q39ML_0W02AA-Vf8SGQ',
-      'neal-fun': 'http://www.google.com/url?q=http%3A%2F%2Fneal.fun&sa=D&sntz=1&usg=AOvVaw3yVGUzCGKfkN4zZFl9jUPh',
-      'planet-clicker-2': 'https://www.google.com/url?q=https%3A%2F%2Fcookieclickercity.com%2Fplanet-clicker-2&sa=D&sntz=1&usg=AOvVaw0vh2iHYDTwohnqc5iTOECY',
-      'italian-brainrot-clicker-2': 'https://www.google.com/url?q=https%3A%2F%2Fazgames.io%2Fitalian-brainrot-clicker-2&sa=D&sntz=1&usg=AOvVaw10XzHTDE56xybCDQ6eJzZD',
-      'clash-royale-online': 'https://www.google.com/url?q=https%3A%2F%2Fwww.greenfoot.org%2Fscenarios%2F27793&sa=D&sntz=1&usg=AOvVaw3L6U4zgXpl53tL22OioqtU',
-      'tung-tung-sahur-clicker': 'http://www.google.com/url?q=http%3A%2F%2Fcapybara-game.com%2Ftung-sahur-clicker&sa=D&sntz=1&usg=AOvVaw1AHefP0BJ7W_LiTG-vEGrG',
+      'uno': 'https://www.solitaireparadise.com/games_list/uno-online.html',
+      'agar-io': 'https://agar.io/',
+      'neal-fun': 'http://neal.fun',
+      'planet-clicker-2': 'https://cookieclickercity.com/planet-clicker-2',
+      'italian-brainrot-clicker-2': 'https://azgames.io/italian-brainrot-clicker-2',
+      'clash-royale-online': 'https://www.greenfoot.org/scenarios/27793',
+      'tung-tung-sahur-clicker': 'http://capybara-game.com/tung-sahur-clicker',
       'youtube': 'http://youtube.com/',
-      'chatgpt': 'http://www.google.com/url?q=http%3A%2F%2Fchatgpt.com&sa=D&sntz=1&usg=AOvVaw0HI0_24tIpHl2Na-2TVrX1',
-      'soundboard': 'https://www.google.com/url?q=https%3A%2F%2Fwww.myinstants.com%2Fen%2Fcategories%2Fsound%2520effects%2F&sa=D&sntz=1&usg=AOvVaw0XPrN5gmX5eCJA5php_E2b',
-      'battleship': 'https://www.google.com/url?q=https%3A%2F%2Fpapergames.io%2Fen%2Fbattleship&sa=D&sntz=1&usg=AOvVaw2QIoii2meINK9qO6O1exK3',
-      'wings-io': 'https://www.google.com/url?q=https%3A%2F%2Fwings.io%2F&sa=D&sntz=1&usg=AOvVaw2QZNpzJ2R8FjWHLmW_rjXy',
-      'territorial': 'https://www.google.com/url?q=https%3A%2F%2Fterritorial.io%2F&sa=D&sntz=1&usg=AOvVaw2CXpab9cubeDlvf7s_7MCA',
-      'happy-glass': 'https://www.google.com/url?q=https%3A%2F%2Fpoki.com%2Fen%2Fg%2Fhappy-glass&sa=D&sntz=1&usg=AOvVaw34_T5qdSsTtN_4kyGfkK8Z',
-      'omegle': 'http://www.google.com/url?q=http%3A%2F%2Fuhmegle.com&sa=D&sntz=1&usg=AOvVaw0iZPECxie5vOVvp5oncuIN',
-      'games': 'https://www.google.com/url?q=https%3A%2F%2Fwatchdocumentaries.com%2Fgames%2F%23google_vignette&sa=D&sntz=1&usg=AOvVaw2VNc42YxZE27yIZp_jvMTZ',
-      'fnaf': 'https://www.google.com/url?q=https%3A%2F%2Ffnafgame.io%2F&sa=D&sntz=1&usg=AOvVaw20QXAnq3S7C90YN4L9FzJR',
-      'geoguesser': 'https://www.google.com/url?q=https%3A%2F%2Fgeotastic.net%2Fhome&sa=D&sntz=1&usg=AOvVaw1Au-hd5K2bPrzr1uhT9E9G',
-      'ai-humanizer': 'https://www.google.com/url?q=https%3A%2F%2Fwww.rephraser.co%2Fno%2Fai-humanizer&sa=D&sntz=1&usg=AOvVaw3nZ-TQp_aFA8VqbpcHn02W',
+      'chatgpt': 'http://chatgpt.com/',
+      'soundboard': 'https://www.myinstants.com/en/categories/sound%20effects/',
+      'battleship': 'https://papergames.io/en/battleship',
+      'wings-io': 'https://wings.io/',
+      'territorial': 'https://territorial.io/',
+      'happy-glass': 'https://poki.com/en/g/happy-glass',
+      'omegle': 'http://uhmegle.com',
+      'games': 'https://watchdocumentaries.com/games/#google_vignette',
+      'fnaf': 'https://fnafgame.io/',
+      'geoguesser': 'https://geotastic.net/home',
+      'ai-humanizer': 'https://www.rephraser.co/no/ai-humanizer',
       'arbeidsplaner': 'https://www.bergen.kommune.no/omkommunen/avdelinger/mjolkeraen-skole/arbeidsplaner',
       'presentasjon': 'https://docs.google.com/presentation/d/1k3QcUUVyv-VYnefghxSU4zXaIK5luwzqjredT-WJwIs/edit?usp=sharing',
       'fake-stake': 'https://fakestake.vercel.app/',
@@ -234,7 +252,6 @@
     const grid = document.getElementById("links-grid");
     const links = Array.from(document.querySelectorAll('a.link[data-key]'));
 
-    
     links.forEach(a => {
       const key = a.getAttribute('data-key');
       const url = LINKS[key];
@@ -248,16 +265,24 @@
         a.setAttribute('aria-disabled', 'true');
       }
 
+      
       if (a.hasAttribute("data-new")) {
         a.classList.add("new");
+      }
+
+      
+      if (a.hasAttribute("data-hot")) {
+        a.classList.add("hot");
       }
     });
 
     
     const newLinks = links.filter(a => a.hasAttribute("data-new"));
-    const oldLinks = links.filter(a => !a.hasAttribute("data-new"));
+    const hotLinks = links.filter(a => a.hasAttribute("data-hot"));
+    const oldLinks = links.filter(a => !a.hasAttribute("data-new") && !a.hasAttribute("data-hot"));
 
     grid.innerHTML = "";
+    hotLinks.forEach(a => grid.appendChild(a));
     newLinks.forEach(a => grid.appendChild(a));
     oldLinks.forEach(a => grid.appendChild(a));
   </script>
