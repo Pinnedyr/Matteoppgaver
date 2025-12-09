@@ -1,5 +1,5 @@
 (function () {
-    const BANNER_TEXT = "Welcome to our website!";
+    const BANNER_TEXT = "Vi feirer at vi har fått nytt domene på wtfq.online!!!";
     const SHOW_DURATION = 5 * 60 * 1000;
 
     const banner = document.createElement("div");
