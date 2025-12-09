@@ -26,13 +26,13 @@ counterRef.transaction(c => (c || 0) + 1)
   .then(() => {
     console.log("Counter updated");
     setTimeout(() => {
-      window.location.href = "https://wtfq.online";
+      window.location.href = "http://www.wtfq.online";
     }, 800); // ← delay so Firebase can finish writing
   })
   .catch(err => {
     console.error(err);
     // fallback redirect
-    window.location.href = "https://www.wtfq.online";
+    window.location.href = "http://www.wtfq.online";
   });
 </script>
 
