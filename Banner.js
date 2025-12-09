@@ -1,6 +1,6 @@
 (function () {
     const BANNER_TEXT = "Vi feirer at vi har fått nytt domene på wtfq.online!!!";
-    const SHOW_DURATION = 5 * 60 * 1000;
+    const SHOW_DURATION = 5 * 1000;
 
     const banner = document.createElement("div");
     banner.id = "auto-banner";
