@@ -1,1 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QR Scan Count</title>
+<script type="module">
+import { db, ref, runTransaction } from './firebase-config.js';
 
+const counterRef = ref(db, 'qrCounter');
+const countElement = document.getElementById('count');
+
+
+counterRef.on('value', snapshot => {
+    document.getElementById('count').innerText = snapshot.val() || 0;
+});
+</script>
+</head>
+<body>
+<h1 style="text-align:center;margin-top:50px;">
+QR Code Visits: <span id="count">0</span>
+</h1>
+</body>
+</html>
