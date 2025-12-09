@@ -3,17 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <title>Redirecting...</title>
-<script type="module">
-import { db, ref, runTransaction } from './firebase-config.js';
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBfxrRwTuYVvaUH99ByoRSezEd32Txoezk",
+    authDomain: "wtfq-online.firebaseapp.com",
+    databaseURL: "https://wtfq-online-default-rtdb.firebaseio.com", // Use your database URL
+    projectId: "wtfq-online",
+    storageBucket: "wtfq-online.appspot.com",
+    messagingSenderId: "663547390656",
+    appId: "1:663547390656:web:bbd0c11dc096c2d2339b25",
+    measurementId: "G-F74R7B29BR"
+  };
 
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-const counterRef = ref(db, 'qrCounter');
+  // Increment counter
+  const counterRef = db.ref('qrCounter');
+  counterRef.transaction(current => (current || 0) + 1)
+    .then(() => console.log("Counter updated"))
+    .catch(err => console.error("Error:", err));
 
-
-runTransaction(counterRef, current => (current || 0) + 1);
-
-
-window.location.href = "http://www.wtfq.online";
+  // Redirect
+  window.location.href = "http://www.wtfq.online";
 </script>
 </head>
 <body>
