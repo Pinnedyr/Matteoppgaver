@@ -5,7 +5,7 @@ import { getDatabase, ref, runTransaction } from "https://www.gstatic.com/fireba
 const firebaseConfig = {
   apiKey: "AIzaSyBfxrRwTuYVvaUH99ByoRSezEd32Txoezk",
   authDomain: "wtfq-online.firebaseapp.com",
-  databaseURL: "https://wtfq-online.firebasestorage.app", 
+  databaseURL: "https://wtfq-online-default-rtdb.firebaseio.com", 
   projectId: "wtfq-online",
   storageBucket: "wtfq-online.appspot.com",
   messagingSenderId: "663547390656",
