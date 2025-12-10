@@ -96,19 +96,6 @@
   </style>
 </head>
 
-<script>
-function autoZoom() {
-    const baseWidth = 1200; // bredden siden din er laget for
-    const scale = Math.min(window.innerWidth / baseWidth, 1); 
-    document.body.style.transformOrigin = "top left";
-    document.body.style.transform = `scale(${scale})`;
-}
-
-window.addEventListener("resize", autoZoom);
-window.addEventListener("load", autoZoom);
-</script>
-
-
 <body>
   <div class="container">
     <div style="text-align: center;">  
