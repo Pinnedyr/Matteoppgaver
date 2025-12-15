@@ -5,7 +5,6 @@
   <meta name="description" content="wtfq.online er en nettside som er laget for skole eller finne spill på nettleseren din. Du kan også sende inn forslag til nettsiden vist du vil det.">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-
   <title>What the facqkuit</title>
 
   <link rel="icon" type="image/png" href="images/Math header.png">
@@ -17,7 +16,24 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0;
     }
-    h1 { margin: 0 0 8px; font-size: 5.6rem; }
+    h1 { 
+      margin: 0 0 8px; 
+      font-size: 5.6rem;
+      display: inline-flex;
+      letter-spacing: 0;
+    }
+    
+    h1 .letter {
+      display: inline-block;
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+    
+    h1 .space {
+      display: inline-block;
+      width: 0;
+    }
     p.hint { margin: 0 0 20px; opacity: .8; }
     .container { max-width: 1000px; margin: 0 auto; }
 
@@ -44,7 +60,6 @@
     a.link:active { transform: translateY(1px); }
     a.link[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
 
-    
     .link.new {
       position: relative;
     }
@@ -70,7 +85,6 @@
       100% { transform: scale(1); opacity: 1; }
     }
 
-    
     .link.hot {
       position: relative;
     }
@@ -93,114 +107,185 @@
       50%  { transform: scale(1.4); opacity: 1; }
       100% { transform: scale(1); opacity: 1; }
     }
+
+    /* Intro Animation Styles - REMOVED */
+
+    h1 .w1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards; }
+    h1 .t1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.6s forwards; }
+    h1 .f1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.7s forwards; }
+    h1 .q-part { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards, fadeOut 0.8s cubic-bezier(0.4, 0, 0.6, 1) 2.3s forwards; }
+    h1 .h1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 3.3s forwards; }
+    h1 .h2 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 3.5s forwards; }
+    h1 .a1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 3.7s forwards; }
+    h1 .a2 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 4.1s forwards; }
+    h1 .e1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 4.3s forwards; }
+    h1 .c1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 4.5s forwards; }
+    h1 .t2 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 4.9s forwards; }
+    h1 .q1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 5.1s forwards; }
+    h1 .u1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 5.3s forwards; }
+    h1 .i1 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 5.5s forwards; }
+    h1 .t3 { animation: letterExpand 0.5s cubic-bezier(0.4, 0, 0.2, 1) 5.7s forwards; }
+    
+    h1 .space {
+      animation: spaceExpand 0.6s cubic-bezier(0.4, 0, 0.2, 1) 3.9s forwards;
+    }
+    
+    h1 .space2 {
+      animation: spaceExpand 0.6s cubic-bezier(0.4, 0, 0.2, 1) 4.7s forwards;
+    }
+
+    @keyframes letterExpand {
+      0% {
+        opacity: 0;
+        width: 0;
+        transform: scaleX(0);
+      }
+      100% {
+        opacity: 1;
+        width: auto;
+        transform: scaleX(1);
+      }
+    }
+
+    @keyframes fadeOut {
+      from { 
+        opacity: 1; 
+        width: auto;
+      }
+      to { 
+        opacity: 0; 
+        width: 0;
+      }
+    }
+
+    #main-content {
+      opacity: 0;
+      animation: fadeInContent 0.8s ease-in 0.5s forwards;
+    }
+
+    @keyframes fadeInContent {
+      to {
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <div style="text-align: center;">  
-      <h1>What the facqkuit</h1>
-    </div>
+  <!-- Main Content -->
+  <div id="main-content">
+    <div class="container">
+      <div style="text-align: center;">  
+        <h1>
+          <span class="letter w1">W</span><span class="letter h1">h</span><span class="letter a2">a</span><span class="letter t2">t</span><span class="space"> </span><span class="letter t1">T</span><span class="letter h2">h</span><span class="letter e1">e</span><span class="space2"> </span><span class="letter f1">F</span><span class="letter a1">a</span><span class="letter c1">c</span><span class="letter q1">q</span><span class="letter u1">u</span><span class="letter i1">i</span><span class="letter t3">t</span><span class="letter q-part">Q.online</span>
+        </h1>
+      </div>
 
-<script>
-  setTimeout(() => {
-    document.title = "Matteoppgaver";
-  }, 5000); 
-</script>
-  
-    <p style="white-space: nowrap; text-align: center; font-size: 1.2rem; margin: 4px 0 12px;">
-      <a href="https://www.wtfq.online/skoleplaner/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Skoleplaner</a>
-      •
-      <a href="https://discord.gg/FSc2qYaH5y" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Discord</a>
-      •
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform?usp=header" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Forslag</a>
-      •
-      <a href="https://github.com/Pinnedyr/Matteoppgaver/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Kildekoden</a>
-      •
-      <a href="https://www.wtfq.online/youtubeunblocker/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Youtube Videospiller</a>
-    </p>
+      <script>
+        setTimeout(() => {
+          document.title = "Matteoppgaver";
+        }, 5000);
+        
+        setTimeout(() => {
+          const h1 = document.querySelector('h1');
+          h1.innerHTML = 'What The Facqkuit';
+        }, 6000);
+      </script>
 
-    <input
-      type="text"
-      id="search-input"
-      placeholder="Søk..."
-      style="
-        width: 100%; padding: 12px 14px; border-radius: 14px;
-        border: 1px solid #334155; background: #1f2937; color: #f8fafc;
-        font-size: 1rem; margin-bottom: 12px;
-        transition: background .15s ease, border-color .15s ease;
-      "
-      onfocus="this.style.background='#111827'; this.style.borderColor='#475569';"
-      onblur="this.style.background='#1f2937'; this.style.borderColor='#334155';"
-    />
+      <p style="white-space: nowrap; text-align: center; font-size: 1.2rem; margin: 4px 0 12px;">
+        <a href="https://www.wtfq.online/skoleplaner/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Skoleplaner</a>
+        •
+        <a href="https://discord.gg/FSc2qYaH5y" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Discord</a>
+        •
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform?usp=header" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Forslag</a>
+        •
+        <a href="https://github.com/Pinnedyr/Matteoppgaver/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Kildekoden</a>
+        •
+        <a href="https://www.wtfq.online/youtubeunblocker/" style="color: lightblue; text-decoration: underline;" target="_blank" rel="noopener noreferrer">Youtube Videospiller</a>
+      </p>
 
-    <script>
-      const searchInput = document.getElementById('search-input');
-      searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase();
-        document.querySelectorAll('#links-grid a.link').forEach(link => {
-          const text = (link.textContent + ' ' + link.dataset.key).toLowerCase();
-          link.style.display = text.includes(query) ? 'inline-block' : 'none';
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Søk..."
+        style="
+          width: 100%; padding: 12px 14px; border-radius: 14px;
+          border: 1px solid #334155; background: #1f2937; color: #f8fafc;
+          font-size: 1rem; margin-bottom: 12px;
+          transition: background .15s ease, border-color .15s ease;
+        "
+        onfocus="this.style.background='#111827'; this.style.borderColor='#475569';"
+        onblur="this.style.background='#1f2937'; this.style.borderColor='#334155';"
+      />
+
+      <script>
+        const searchInput = document.getElementById('search-input');
+        searchInput.addEventListener('input', () => {
+          const query = searchInput.value.toLowerCase();
+          document.querySelectorAll('#links-grid a.link').forEach(link => {
+            const text = (link.textContent + ' ' + link.dataset.key).toLowerCase();
+            link.style.display = text.includes(query) ? 'inline-block' : 'none';
+          });
         });
-      });
-    </script>
+      </script>
 
-    <div class="grid" id="links-grid">
-      <a class="link" data-key="poke-rouge">PokeRouge</a>
-      <a class="link" data-key="thorns-and-balloons">Thorns and balloons</a>
-      <a class="link" data-key="best-brownie-recipe">Best brownie recipe</a>
-      <a class="link" data-key="sandboxels">Sandboxels</a>
-      <a class="link" data-key="kikora">Kikora</a>
-      <a class="link" data-key="poki">Poki</a>
-      <a class="link" data-key="classic-minecraft">Classic Minecraft</a>
-      <a class="link" data-key="capybara-clicker">Capybara Clicker</a>
-      <a class="link" data-key="scratch">Scratch</a>
-      <a class="link" data-key="classroom-6x-games">Classroom 6x games</a>
-      <a class="link" data-key="google-dino">Google dino</a>
-      <a class="link" data-key="big-shot-boxing">Big shot boxing</a>
-      <a class="link" data-key="quick-draw">Quick draw</a>
-      <a class="link" data-key="loneliness-game">Loneliness game</a>
-      <a class="link" data-key="granny">Granny</a>
-      <a class="link" data-key="virtual-piano">Virtual piano</a>
-      <a class="link" data-key="bitlife">Bitlife</a>
-      <a class="link" data-key="youtube-library">Youtube library</a>
-      <a class="link" data-key="skribbl-io">Skribbl.io</a>
-      <a class="link" data-key="spotify">Spotify</a>
-      <a class="link" data-key="spillespill">Spillespill</a>
-      <a class="link" data-key="finn">Finn</a>
-      <a class="link" data-key="chess">Chess</a>
-      <a class="link" data-key="make-it-meme">Make it meme</a>
-      <a class="link" data-key="ai-generator">Ai generator</a>
-      <a class="link" data-key="google-doodle">Google Doodle</a>
-      <a class="link" data-key="uno">UNO</a>
-      <a class="link" data-key="agar-io">Agar.io</a>
-      <a class="link" data-key="neal-fun">Neal fun</a>
-      <a class="link" data-key="planet-clicker-2">Planet clicker 2</a>
-      <a class="link" data-key="italian-brainrot-clicker-2">Italian brainrot clicker 2</a>
-      <a class="link" data-key="clash-royale-online">Clash royale online</a>
-      <a class="link" data-key="tung-tung-sahur-clicker">Tung Tung Sahur Clicker</a>
-      <a class="link" data-key="youtube">Youtube</a>
-      <a class="link" data-key="chatgpt">ChatGPT</a>
-      <a class="link" data-key="soundboard">Soundboard</a>
-      <a class="link" data-key="battleship">Battleship</a>
-      <a class="link" data-key="wings-io">Wings.io</a>
-      <a class="link" data-key="territorial">Territorial</a>
-      <a class="link" data-key="happy-glass">Happy glass</a>
-      <a class="link" data-key="omegle">Omegle</a>
-      <a class="link" data-key="games">Games</a>
-      <a class="link" data-key="fnaf">FNAF</a>
-      <a class="link" data-key="geoguesser">Geoguesser</a>
-      <a class="link" data-key="ai-humanizer">Ai humanizer</a>
-      <a class="link" data-key="arbeidsplaner">Arbeidsplaner</a>
-      <a class="link" data-key="presentasjon">Den Beste Presentasjonen</a>
-      <a class="link" data-key="fake-stake">Fake Stake</a>
-      <a class="link" data-key="gartic-phone">Gartic Phone</a>
-      <a class="link" data-key="cineby">Cineby</a>
-      <a class="link" data-key="wordle">Wordle</a>
-      <a class="link" data-key="snowrider" data-hot="true">Snowrider 3D</a>
+      <div class="grid" id="links-grid">
+        <a class="link" data-key="poke-rouge">PokeRouge</a>
+        <a class="link" data-key="thorns-and-balloons">Thorns and balloons</a>
+        <a class="link" data-key="best-brownie-recipe">Best brownie recipe</a>
+        <a class="link" data-key="sandboxels">Sandboxels</a>
+        <a class="link" data-key="kikora">Kikora</a>
+        <a class="link" data-key="poki">Poki</a>
+        <a class="link" data-key="classic-minecraft">Classic Minecraft</a>
+        <a class="link" data-key="capybara-clicker">Capybara Clicker</a>
+        <a class="link" data-key="scratch">Scratch</a>
+        <a class="link" data-key="classroom-6x-games">Classroom 6x games</a>
+        <a class="link" data-key="google-dino">Google dino</a>
+        <a class="link" data-key="big-shot-boxing">Big shot boxing</a>
+        <a class="link" data-key="quick-draw">Quick draw</a>
+        <a class="link" data-key="loneliness-game">Loneliness game</a>
+        <a class="link" data-key="granny">Granny</a>
+        <a class="link" data-key="virtual-piano">Virtual piano</a>
+        <a class="link" data-key="bitlife">Bitlife</a>
+        <a class="link" data-key="youtube-library">Youtube library</a>
+        <a class="link" data-key="skribbl-io">Skribbl.io</a>
+        <a class="link" data-key="spotify">Spotify</a>
+        <a class="link" data-key="spillespill">Spillespill</a>
+        <a class="link" data-key="finn">Finn</a>
+        <a class="link" data-key="chess">Chess</a>
+        <a class="link" data-key="make-it-meme">Make it meme</a>
+        <a class="link" data-key="ai-generator">Ai generator</a>
+        <a class="link" data-key="google-doodle">Google Doodle</a>
+        <a class="link" data-key="uno">UNO</a>
+        <a class="link" data-key="agar-io">Agar.io</a>
+        <a class="link" data-key="neal-fun">Neal fun</a>
+        <a class="link" data-key="planet-clicker-2">Planet clicker 2</a>
+        <a class="link" data-key="italian-brainrot-clicker-2">Italian brainrot clicker 2</a>
+        <a class="link" data-key="clash-royale-online">Clash royale online</a>
+        <a class="link" data-key="tung-tung-sahur-clicker">Tung Tung Sahur Clicker</a>
+        <a class="link" data-key="youtube">Youtube</a>
+        <a class="link" data-key="chatgpt">ChatGPT</a>
+        <a class="link" data-key="soundboard">Soundboard</a>
+        <a class="link" data-key="battleship">Battleship</a>
+        <a class="link" data-key="wings-io">Wings.io</a>
+        <a class="link" data-key="territorial">Territorial</a>
+        <a class="link" data-key="happy-glass">Happy glass</a>
+        <a class="link" data-key="omegle">Omegle</a>
+        <a class="link" data-key="games">Games</a>
+        <a class="link" data-key="fnaf">FNAF</a>
+        <a class="link" data-key="geoguesser">Geoguesser</a>
+        <a class="link" data-key="ai-humanizer">Ai humanizer</a>
+        <a class="link" data-key="arbeidsplaner">Arbeidsplaner</a>
+        <a class="link" data-key="presentasjon">Den Beste Presentasjonen</a>
+        <a class="link" data-key="fake-stake">Fake Stake</a>
+        <a class="link" data-key="gartic-phone">Gartic Phone</a>
+        <a class="link" data-key="cineby">Cineby</a>
+        <a class="link" data-key="wordle">Wordle</a>
+        <a class="link" data-key="snowrider" data-hot="true">Snowrider 3D</a>
+      </div>
+
+      <p class="footer-note">Tip: Du kan trykke <code>Alt</code> på tastaturet for å lukke nettsiden. (Dette fungerer bare hvis du åpnet nettsiden via den gamle siden. Ellers blir skjermen bare blank.)</p>
     </div>
-
-    <p class="footer-note">Tip: Du kan trykke <code>Alt</code> på tastaturet for å lukke nettsiden. (Dette fungerer bare hvis du åpnet nettsiden via den gamle siden. Ellers blir skjermen bare blank.)</p>
   </div>
 
   <script>
@@ -275,18 +360,15 @@
         a.setAttribute('aria-disabled', 'true');
       }
 
-      
       if (a.hasAttribute("data-new")) {
         a.classList.add("new");
       }
 
-      
       if (a.hasAttribute("data-hot")) {
         a.classList.add("hot");
       }
     });
 
-    
     const newLinks = links.filter(a => a.hasAttribute("data-new"));
     const hotLinks = links.filter(a => a.hasAttribute("data-hot"));
     const oldLinks = links.filter(a => !a.hasAttribute("data-new") && !a.hasAttribute("data-hot"));
@@ -296,14 +378,8 @@
     newLinks.forEach(a => grid.appendChild(a));
     oldLinks.forEach(a => grid.appendChild(a));
   </script>
-
 <script src="closeTab.js"></script>
 <script src="Banner.js"></script>
-
-<script>
-window.addEventListener("resize", autoZoom);
-window.addEventListener("load", autoZoom);
-</script>
 
 </body>
 </html>
