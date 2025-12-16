@@ -220,22 +220,7 @@
       />
 
       <script>
-        const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('input', () => {
-          const query = searchInput.value.toLowerCase();
-          document.querySelectorAll('#links-grid a.link').forEach(link => {
-            const text = (link.textContent + ' ' + link.dataset.key).toLowerCase();
-            link.style.display = text.includes(query) ? 'inline-block' : 'none';
-          });
-        });
-      </script>
-
-      <div class="grid" id="links-grid">
-        <a class="link" data-key="poke-rouge">PokeRouge</a>
-        <a class="link" data-key="thorns-and-balloons">Thorns and balloons</a>
-        <a class="link" data-key="best-brownie-recipe">Best brownie recipe</a>
-        <a class="link" data-key="sandboxels">Sandboxels</a>
-        <a class="link" data-key="kikora">Kikora</a>
+        const searchInput = document.getElementById('search-input'); 
         <a class="link" data-key="poki">Poki</a>
         <a class="link" data-key="classic-minecraft">Classic Minecraft</a>
         <a class="link" data-key="capybara-clicker">Capybara Clicker</a>
@@ -283,7 +268,7 @@
         <a class="link" data-key="cineby">Cineby</a>
         <a class="link" data-key="wordle">Wordle</a>
         <a class="link" data-key="snowrider" data-hot="true">Snowrider 3D</a>
-        <a class="link" data-key="musicla" data-new="true">Chrome Musiclab</a>
+        <a class="link" data-key="musiclab" data-new="true">Chrome Musiclab</a>
       </div>
 
       <p class="footer-note">Tip: Du kan trykke <code>Alt</code> på tastaturet for å lukke nettsiden. (Dette fungerer bare hvis du åpnet nettsiden via den gamle siden. Ellers blir skjermen bare blank.)</p>
