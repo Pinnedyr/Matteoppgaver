@@ -6,158 +6,184 @@
   <title>Matteoppgaver</title>
   <link rel="icon" type="image/png" href="images/Math header.png">
   <script src="closeTab.js"></script>
+
   <style>
-    :root { --gap: 12px; }
     * { box-sizing: border-box; }
     body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0;
-      display: flex; flex-direction: column; align-items: center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      margin: 0;
+      padding: 24px;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    h1 { margin: 0 0 8px; font-size: 5.6rem; text-align: center; }
-    p.subtitle { margin: 0 0 20px; opacity: 0.8; text-align: center; font-size: 1.2rem; }
+
+    h1 { font-size: 5.6rem; margin: 0 0 8px; text-align: center; }
+    .subtitle { opacity: 0.8; margin-bottom: 20px; font-size: 1.2rem; }
+
     .controls { display: flex; gap: 8px; margin-bottom: 6px; }
-    input { padding: 12px 14px; border-radius: 14px; border: 1px solid #334155; background: #1f2937; color: #f8fafc; font-size: 1.1rem; width: 400px; transition: background .15s ease, border-color .15s ease; }
-    input:focus { background: #111827; border-color: #475569; }
-    button { padding: 12px 18px; border-radius: 14px; border: 1px solid #334155; background: #1f2937; color: #f8fafc; cursor: pointer; font-size: 1rem; transition: background .15s ease, border-color .15s ease; }
-    button:hover { background: #111827; border-color: #475569; }
-    iframe { width: 80vw; height: 45vw; max-width: 1280px; max-height: 720px; border: none; border-radius: 12px; background: black; margin-top: 12px; }
-    #error-msg { color: #f87171; margin-bottom: 12px; font-size: 1rem; text-align: center; min-height: 1.2em; }
-    #loading-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); display: flex; flex-direction: column; justify-content: center; align-items: center;
-      color: #f8fafc; font-size: 1.4rem; z-index: 999; display: none;
+    input {
+      width: 400px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+      background: #1f2937;
+      color: white;
+      font-size: 1.1rem;
     }
-    #loading-overlay p { margin: 8px 0; }
-    #stop-btn { margin-top: 12px; padding: 10px 16px; font-size: 1rem; border-radius: 10px; border: 1px solid #334155; background: #1f2937; cursor: pointer; }
-    #stop-btn:hover { background: #111827; border-color: #475569; }
+
+    button {
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+      background: #1f2937;
+      color: white;
+      cursor: pointer;
+    }
+
+    iframe {
+      width: 80vw;
+      height: 45vw;
+      max-width: 1280px;
+      max-height: 720px;
+      border: none;
+      border-radius: 12px;
+      margin-top: 12px;
+      background: black;
+    }
+
+    #error-msg {
+      color: #f87171;
+      min-height: 1.2em;
+      margin-bottom: 12px;
+    }
+
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
   </style>
 </head>
+
 <body>
-  <h1>What the facqkuit</h1>
-  <p class="subtitle">Youtube Videospiller</p>
 
-  <div class="controls">
-    <input type="text" id="video-input" placeholder="Skriv inn YouTube-ID eller link" />
-    <button id="load-btn">Last inn</button>
-    <button id="play-btn">Tilfeldig video</button>
-  </div>
+<h1>What the facqkuit</h1>
+<p class="subtitle">YouTube Videospiller (inkl. Shorts)</p>
 
+<div class="controls">
+  <input id="video-input" placeholder="YouTube-ID eller link" />
+  <button id="load-btn">Last inn</button>
+  <button id="play-btn">Tilfeldig video</button>
+</div>
 
-  <p id="error-msg"></p>
+<p id="error-msg"></p>
 
-  <iframe id="player" src=""></iframe>
+<iframe id="player" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
+<div id="loading-overlay">
+  <p>Laster tilfeldig video...</p>
+  <p id="tries-counter">Prøvde 0 linker</p>
+  <button id="stop-btn">Stopp</button>
+</div>
 
-  <div id="loading-overlay">
-    <p>Laster tilfeldig video...</p>
-    <p id="tries-counter">Prøvde 0 linker</p>
-    <button id="stop-btn">Stopp</button>
-  </div>
+<script>
+  const iframe = document.getElementById("player");
+  const playBtn = document.getElementById("play-btn");
+  const loadBtn = document.getElementById("load-btn");
+  const input = document.getElementById("video-input");
+  const overlay = document.getElementById("loading-overlay");
+  const triesCounter = document.getElementById("tries-counter");
+  const stopBtn = document.getElementById("stop-btn");
+  const errorMsg = document.getElementById("error-msg");
 
-  <script>
-    const iframe = document.getElementById("player");
-    const playBtn = document.getElementById("play-btn");
-    const loadBtn = document.getElementById("load-btn");
-    const input = document.getElementById("video-input");
-    const overlay = document.getElementById("loading-overlay");
-    const triesCounter = document.getElementById("tries-counter");
-    const stopBtn = document.getElementById("stop-btn");
-    const errorMsg = document.getElementById("error-msg");
+  let stopFlag = false;
 
-    let stopFlag = false;
-
-    function getRandomVideoId() {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-      let id = "";
-      for(let i=0;i<11;i++) id += chars.charAt(Math.floor(Math.random()*chars.length));
-      return id;
+  function extractId(text) {
+    if (text.includes("watch?v=")) {
+      return text.split("v=")[1].split("&")[0];
     }
-
-    async function checkVideo(id) {
-      try {
-        const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`);
-        return res.ok;
-      } catch(e) {
-        return false;
-      }
+    if (text.includes("youtu.be/")) {
+      return text.split("youtu.be/")[1].split("?")[0];
     }
-
-    async function getValidVideo(initialId = null) {
-      let id = initialId || getRandomVideoId();
-      let tries = 0;
-      overlay.style.display = "flex";
-      stopFlag = false;
-      input.disabled = true;
-      playBtn.disabled = true;
-      loadBtn.disabled = true;
-
-      while(true) {
-        if(stopFlag) {
-          input.disabled = false;
-          playBtn.disabled = false;
-          loadBtn.disabled = false;
-          overlay.style.display = "none";
-          return null;
-        }
-        tries++;
-        triesCounter.textContent = `Prøvde ${tries} linker...`;
-
-        const valid = await checkVideo(id);
-        if(valid) {
-          input.disabled = false;
-          playBtn.disabled = false;
-          loadBtn.disabled = false;
-          overlay.style.display = "none";
-          return id; 
-        }
-
-        id = getRandomVideoId();
-        await new Promise(r => setTimeout(r, 1)); 
-      }
+    if (text.includes("youtube.com/shorts/")) {
+      return text.split("shorts/")[1].split("?")[0];
     }
+    return text.length === 11 ? text : null;
+  }
 
-    playBtn.addEventListener("click", async () => {
-      input.value = ""; 
-      errorMsg.textContent = "";
-      const validId = await getValidVideo();
-      if(validId) iframe.src = `https://www.youtube.com/embed/${validId}?autoplay=1`;
-    });
+  function randomId() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    return Array.from({ length: 11 }, () =>
+      chars[Math.floor(Math.random() * chars.length)]
+    ).join("");
+  }
 
-    loadBtn.addEventListener("click", async () => {
-      errorMsg.textContent = "";
-      let id = input.value.trim();
-      if(!id) return;
+  async function checkVideo(id) {
+    try {
+      const res = await fetch(
+        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`
+      );
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
 
-      if(id.includes("youtube.com/watch?v=")) {
-        id = id.split("v=")[1].split("&")[0];
-      } else if(id.includes("youtu.be/")) {
-        id = id.split("youtu.be/")[1].split("?")[0];
+  async function getValidVideo() {
+    overlay.style.display = "flex";
+    stopFlag = false;
+    let tries = 0;
+
+    while (!stopFlag) {
+      tries++;
+      triesCounter.textContent = `Prøvde ${tries} linker...`;
+      const id = randomId();
+      if (await checkVideo(id)) {
+        overlay.style.display = "none";
+        return id;
       }
+      await new Promise(r => setTimeout(r, 100));
+    }
+    overlay.style.display = "none";
+    return null;
+  }
 
-      input.disabled = true;
-      playBtn.disabled = true;
-      loadBtn.disabled = true;
+  function playVideo(id) {
+    iframe.src =
+      `https://www.youtube.com/embed/${id}` +
+      `?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+  }
 
-      const valid = await checkVideo(id);
+  playBtn.onclick = async () => {
+    errorMsg.textContent = "";
+    const id = await getValidVideo();
+    if (id) playVideo(id);
+  };
 
-      input.disabled = false;
-      playBtn.disabled = false;
-      loadBtn.disabled = false;
+  loadBtn.onclick = async () => {
+    errorMsg.textContent = "";
+    const id = extractId(input.value.trim());
+    if (!id) {
+      errorMsg.textContent = "Ugyldig YouTube-link eller ID";
+      return;
+    }
+    if (await checkVideo(id)) {
+      playVideo(id);
+    } else {
+      errorMsg.textContent = "Videoen ble ikke funnet";
+    }
+  };
 
-      if(valid) {
-        iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-      } else {
-        errorMsg.textContent = "Videoen ble ikke funnet. Sjekk ID eller link.";
-      }
-    });
-
-    stopBtn.addEventListener("click", () => {
-      stopFlag = true;
-      location.reload();
-    });
-  </script>
-
+  stopBtn.onclick = () => stopFlag = true;
+</script>
 
 </body>
 </html>
