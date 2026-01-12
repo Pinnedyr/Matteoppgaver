@@ -3,16 +3,24 @@
   const MIN_WAIT = 5 * 60 * 1000;   // 5 minutter
   const MAX_WAIT = 10 * 60 * 1000;  // 10 minutter
 
-  // Her setter vi base-URL for bannere
-  const BASE_URL = "https://wtfq.online"; // Endre hvis du bruker annet domene
+  // Finn URL til dette JS-scriptet
+  function getScriptBaseURL() {
+    const scripts = document.getElementsByTagName("script");
+    const thisScript = scripts[scripts.length - 1].src;
+    return thisScript.substring(0, thisScript.lastIndexOf("/"));
+  }
+
+  const BASE_URL = getScriptBaseURL(); // dynamisk base URL
 
   async function loadBanners() {
-    const res = await fetch(`${BASE_URL}/banners.json`);
-    if (!res.ok) {
-      console.error("Kunne ikke hente banners.json");
+    try {
+      const res = await fetch(`${BASE_URL}/banners.json`);
+      if (!res.ok) throw new Error("Kunne ikke hente banners.json");
+      return await res.json();
+    } catch (e) {
+      console.error(e);
       return [];
     }
-    return await res.json();
   }
 
   function getRandomDelay() {
@@ -53,7 +61,6 @@
 
   async function showBannerLoop() {
     const banners = await loadBanners();
-
     if (!banners.length) return;
 
     while (true) {
