@@ -1,27 +1,14 @@
 (() => {
-  const BANNER_VISIBLE_TIME = 5000; // 5 sekunder
+  const BANNER_VISIBLE_TIME = 5000; // 5 sekunder synlig
   const MIN_WAIT = 5 * 60 * 1000;   // 5 minutter
   const MAX_WAIT = 10 * 60 * 1000;  // 10 minutter
 
-  // Finn URL til dette JS-scriptet dynamisk
-  function getScriptBaseURL() {
-    const scripts = document.getElementsByTagName("script");
-    const thisScript = scripts[scripts.length - 1].src;
-    return thisScript.substring(0, thisScript.lastIndexOf("/"));
-  }
-
-  const BASE_URL = getScriptBaseURL();
-
-  async function loadBanners() {
-    try {
-      const res = await fetch(`${BASE_URL}/banners.json`);
-      if (!res.ok) throw new Error("Kunne ikke hente banners.json");
-      return await res.json();
-    } catch (e) {
-      console.error(e);
-      return [];
-    }
-  }
+  // Bannere innebygd
+  const banners = [
+    { bannertekst: "Test 01", bannerfarge: "#ff4757" },
+    { bannertekst: "Test 02", bannerfarge: "#1e90ff" },
+    { bannertekst: "Test 03", bannerfarge: "#2ed573" }
+  ];
 
   function getRandomDelay() {
     return Math.random() * (MAX_WAIT - MIN_WAIT) + MIN_WAIT;
@@ -42,7 +29,7 @@
     div.style.fontSize = "18px";
     div.style.fontFamily = "Arial, sans-serif";
     div.style.boxShadow = "0 10px 25px rgba(0,0,0,0.3)";
-    div.style.transition = "top 0.8s ease"; // smooth sliding
+    div.style.transition = "top 0.8s ease";
     div.style.zIndex = "9999";
 
     document.body.appendChild(div);
@@ -60,10 +47,7 @@
   }
 
   async function showBannerLoop() {
-    const banners = await loadBanners();
-    if (!banners.length) return;
-
-    // Vent tilfeldig tid før første banner
+    // Første banner vises etter tilfeldig pause
     await new Promise(r => setTimeout(r, getRandomDelay()));
 
     while (true) {
