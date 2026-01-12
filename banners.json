@@ -1,0 +1,14 @@
+[
+  {
+    "bannertekst": "Test 01",
+    "bannerfarge": "#ff4757"
+  },
+  {
+    "bannertekst": "Test 02",
+    "bannerfarge": "#1e90ff"
+  },
+  {
+    "bannertekst": "Test 03",
+    "bannerfarge": "#2ed573"
+  }
+]
