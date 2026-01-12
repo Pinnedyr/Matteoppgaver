@@ -3,14 +3,14 @@
   const MIN_WAIT = 5 * 60 * 1000;   // 5 minutter
   const MAX_WAIT = 10 * 60 * 1000;  // 10 minutter
 
-  // Finn URL til dette JS-scriptet
+  // Finn URL til dette JS-scriptet dynamisk
   function getScriptBaseURL() {
     const scripts = document.getElementsByTagName("script");
     const thisScript = scripts[scripts.length - 1].src;
     return thisScript.substring(0, thisScript.lastIndexOf("/"));
   }
 
-  const BASE_URL = getScriptBaseURL(); // dynamisk base URL
+  const BASE_URL = getScriptBaseURL();
 
   async function loadBanners() {
     try {
@@ -32,7 +32,7 @@
 
     div.textContent = banner.bannertekst;
     div.style.position = "fixed";
-    div.style.top = "-100px";
+    div.style.top = "-150px"; // start utenfor skjermen
     div.style.left = "50%";
     div.style.transform = "translateX(-50%)";
     div.style.background = banner.bannerfarge;
@@ -42,20 +42,20 @@
     div.style.fontSize = "18px";
     div.style.fontFamily = "Arial, sans-serif";
     div.style.boxShadow = "0 10px 25px rgba(0,0,0,0.3)";
-    div.style.transition = "top 0.6s ease";
+    div.style.transition = "top 0.8s ease"; // smooth sliding
     div.style.zIndex = "9999";
 
     document.body.appendChild(div);
 
     // Slide ned
     setTimeout(() => {
-      div.style.top = "20px";
+      div.style.top = "20px"; // ønsket posisjon
     }, 50);
 
-    // Fjern etter 5 sekunder
+    // Slide opp og fjern etter BANNER_VISIBLE_TIME
     setTimeout(() => {
-      div.style.top = "-100px";
-      setTimeout(() => div.remove(), 600);
+      div.style.top = "-150px";
+      setTimeout(() => div.remove(), 800); // match transition
     }, BANNER_VISIBLE_TIME);
   }
 
@@ -63,13 +63,16 @@
     const banners = await loadBanners();
     if (!banners.length) return;
 
+    // Vent tilfeldig tid før første banner
+    await new Promise(r => setTimeout(r, getRandomDelay()));
+
     while (true) {
       const randomBanner =
         banners[Math.floor(Math.random() * banners.length)];
 
       createBanner(randomBanner);
 
-      // Vent 5 sekunder + tilfeldig 5–10 minutter
+      // Vent 5 sekunder + tilfeldig 5–10 minutter før neste banner
       await new Promise(r => setTimeout(r, BANNER_VISIBLE_TIME + getRandomDelay()));
     }
   }
