@@ -79,7 +79,7 @@
   }
 
   async function loop() {
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 7500));
 
     while (true) {
       const banner = banners[Math.floor(Math.random() * banners.length)];
