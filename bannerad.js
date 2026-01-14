@@ -11,12 +11,12 @@
       bannerlink: "https://www.wtfq.online/skoleplaner/"
     },
     {
-      bannertekst: "Test 02",
+      bannertekst: "Har du forslag til nettsiden? Trykk her.",
       bannerfarge: "#1e90ff",
-      bannerlink: ""
+      bannerlink: "https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform"
     },
     {
-      bannertekst: "Test 03",
+      bannertekst: "Husk at du kan trykke Alt for å lukke nettsiden!",
       bannerfarge: "#2ed573"
     }
   ];
