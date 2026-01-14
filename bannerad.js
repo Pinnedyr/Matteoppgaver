@@ -1,7 +1,7 @@
 (() => {
   const BANNER_VISIBLE_TIME = 5000; // 5 sek
-  const MIN_WAIT = 5 * 60 * 1000;   // 5 min
-  const MAX_WAIT = 10 * 60 * 1000;  // 10 min
+  const MIN_WAIT = 5 * 60 * 1000;
+  const MAX_WAIT = 10 * 60 * 1000;
 
   const banners = [
     {
@@ -18,7 +18,6 @@
     {
       bannertekst: "Test 03",
       bannerfarge: "#2ed573"
-      // ingen bannerlink i det hele tatt
     }
   ];
 
@@ -32,7 +31,6 @@
 
     textDiv.textContent = banner.bannertekst;
 
-    // Banner styling
     Object.assign(bannerDiv.style, {
       position: "fixed",
       top: "-150px",
@@ -51,10 +49,13 @@
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      textAlign: "center"
+      textAlign: "center",
+      whiteSpace: "nowrap",           // standard: hold alt på en linje
+      overflowWrap: "break-word",     // bryt bare hvis må
+      wordBreak: "break-word"
     });
 
-    // Klikk KUN hvis gyldig link finnes
+    // Klikk kun hvis link finnes
     if (typeof banner.bannerlink === "string" && banner.bannerlink.trim() !== "") {
       bannerDiv.style.cursor = "pointer";
       bannerDiv.addEventListener("click", () => {
@@ -78,7 +79,6 @@
   }
 
   async function loop() {
-    // Første visning raskt (endre til getRandomDelay() i produksjon)
     await new Promise(r => setTimeout(r, 1000));
 
     while (true) {
