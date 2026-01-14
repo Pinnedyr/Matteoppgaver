@@ -17,8 +17,8 @@
     },
     {
       bannertekst: "Test 03",
-      bannerfarge: "#2ed573",
-      bannerlink: ""
+      bannerfarge: "#2ed573"
+      // ingen bannerlink i det hele tatt
     }
   ];
 
@@ -32,6 +32,7 @@
 
     textDiv.textContent = banner.bannertekst;
 
+    // Banner styling
     Object.assign(bannerDiv.style, {
       position: "fixed",
       top: "-150px",
@@ -53,8 +54,8 @@
       textAlign: "center"
     });
 
-    // Kun klikkbar hvis link finnes
-    if (banner.bannerlink && banner.bannerlink.trim() !== "") {
+    // Klikk KUN hvis gyldig link finnes
+    if (typeof banner.bannerlink === "string" && banner.bannerlink.trim() !== "") {
       bannerDiv.style.cursor = "pointer";
       bannerDiv.addEventListener("click", () => {
         window.open(banner.bannerlink, "_blank", "noopener,noreferrer");
@@ -77,7 +78,7 @@
   }
 
   async function loop() {
-    // Første banner etter kort ventetid (kan endres til getRandomDelay())
+    // Første visning raskt (endre til getRandomDelay() i produksjon)
     await new Promise(r => setTimeout(r, 1000));
 
     while (true) {
