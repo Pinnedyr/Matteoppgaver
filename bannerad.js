@@ -1,9 +1,8 @@
 (() => {
-  const BANNER_VISIBLE_TIME = 5000; // 5 sekunder synlig
-  const MIN_WAIT = 5 * 60 * 1000;   // 5 minutter
-  const MAX_WAIT = 10 * 60 * 1000;  // 10 minutter
+  const BANNER_VISIBLE_TIME = 5000; // 5 sek
+  const MIN_WAIT = 5 * 60 * 1000;
+  const MAX_WAIT = 10 * 60 * 1000;
 
-  // Bannere innebygd
   const banners = [
     { bannertekst: "Test 01", bannerfarge: "#ff4757" },
     { bannertekst: "Test 02", bannerfarge: "#1e90ff" },
@@ -15,51 +14,56 @@
   }
 
   function createBanner(banner) {
-    const div = document.createElement("div");
+    console.log("Viser banner:", banner.bannertekst);
 
+    const div = document.createElement("div");
     div.textContent = banner.bannertekst;
-    div.style.position = "fixed";
-    div.style.top = "-150px"; // start utenfor skjermen
-    div.style.left = "50%";
-    div.style.transform = "translateX(-50%)";
-    div.style.background = banner.bannerfarge;
-    div.style.color = "#fff";
-    div.style.padding = "20px 40px";
-    div.style.borderRadius = "15px";
-    div.style.fontSize = "18px";
-    div.style.fontFamily = "Arial, sans-serif";
-    div.style.boxShadow = "0 10px 25px rgba(0,0,0,0.3)";
-    div.style.transition = "top 0.8s ease";
-    div.style.zIndex = "9999";
+
+    Object.assign(div.style, {
+      position: "fixed",
+      top: "-150px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      background: banner.bannerfarge,
+      color: "#fff",
+      padding: "20px 40px",
+      borderRadius: "15px",
+      fontSize: "18px",
+      fontFamily: "Arial, sans-serif",
+      boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+      transition: "top 0.8s ease",
+      zIndex: "9999"
+    });
 
     document.body.appendChild(div);
 
-    // Slide ned
-    setTimeout(() => {
-      div.style.top = "20px"; // ønsket posisjon
-    }, 50);
+    // Slide inn
+    setTimeout(() => div.style.top = "20px", 50);
 
-    // Slide opp og fjern etter BANNER_VISIBLE_TIME
+    // Slide ut
     setTimeout(() => {
       div.style.top = "-150px";
-      setTimeout(() => div.remove(), 800); // match transition
+      setTimeout(() => div.remove(), 800);
     }, BANNER_VISIBLE_TIME);
   }
 
-  async function showBannerLoop() {
-    // Første banner vises etter tilfeldig pause
-    await new Promise(r => setTimeout(r, getRandomDelay()));
+  async function loop() {
+    // 🔥 TEST: vis første banner nesten med en gang
+    await new Promise(r => setTimeout(r, 1000));
 
     while (true) {
-      const randomBanner =
-        banners[Math.floor(Math.random() * banners.length)];
+      const banner = banners[Math.floor(Math.random() * banners.length)];
+      createBanner(banner);
 
-      createBanner(randomBanner);
-
-      // Vent 5 sekunder + tilfeldig 5–10 minutter før neste banner
-      await new Promise(r => setTimeout(r, BANNER_VISIBLE_TIME + getRandomDelay()));
+      await new Promise(r =>
+        setTimeout(r, BANNER_VISIBLE_TIME + getRandomDelay())
+      );
     }
   }
 
-  document.addEventListener("DOMContentLoaded", showBannerLoop);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loop);
+  } else {
+    loop();
+  }
 })();
