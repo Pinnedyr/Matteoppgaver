@@ -1,12 +1,12 @@
 (() => {
   const BANNER_VISIBLE_TIME = 5000; // 5 sek
-  const MIN_WAIT = 5 * 60 * 1000;
-  const MAX_WAIT = 10 * 60 * 1000;
+  const MIN_WAIT = 5 * 60 * 1000;   // 5 min
+  const MAX_WAIT = 10 * 60 * 1000;  // 10 min
 
-  // Bannere (med link)
   const banners = [
     {
-      bannertekst: "Kommer du altid inn i timen med feil bok? Prøv våres Skoleplaner ved å trykke her.",
+      bannertekst:
+        "Kommer du alltid inn i timen med feil bok? Prøv våre Skoleplaner ved å trykke her.",
       bannerfarge: "#ff4757",
       bannerlink: "https://www.wtfq.online/skoleplaner/"
     },
@@ -27,10 +27,12 @@
   }
 
   function createBanner(banner) {
-    const div = document.createElement("div");
-    div.textContent = banner.bannertekst;
+    const bannerDiv = document.createElement("div");
+    const textDiv = document.createElement("div");
 
-    Object.assign(div.style, {
+    textDiv.textContent = banner.bannertekst;
+
+    Object.assign(bannerDiv.style, {
       position: "fixed",
       top: "-150px",
       left: "50%",
@@ -44,30 +46,38 @@
       boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
       transition: "top 0.8s ease",
       zIndex: "9999",
-      cursor: "pointer"
+      maxWidth: "90%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      textAlign: "center"
     });
 
-    // 👉 Klikk åpner link
-    div.addEventListener("click", () => {
-      window.open(banner.bannerlink, "_blank", "noopener,noreferrer");
-    });
+    // Kun klikkbar hvis link finnes
+    if (banner.bannerlink && banner.bannerlink.trim() !== "") {
+      bannerDiv.style.cursor = "pointer";
+      bannerDiv.addEventListener("click", () => {
+        window.open(banner.bannerlink, "_blank", "noopener,noreferrer");
+      });
+    }
 
-    document.body.appendChild(div);
+    bannerDiv.appendChild(textDiv);
+    document.body.appendChild(bannerDiv);
 
     // Slide inn
     setTimeout(() => {
-      div.style.top = "20px";
+      bannerDiv.style.top = "20px";
     }, 50);
 
     // Slide ut
     setTimeout(() => {
-      div.style.top = "-150px";
-      setTimeout(() => div.remove(), 800);
+      bannerDiv.style.top = "-150px";
+      setTimeout(() => bannerDiv.remove(), 800);
     }, BANNER_VISIBLE_TIME);
   }
 
   async function loop() {
-    // Test: vis første banner raskt
+    // Første banner etter kort ventetid (kan endres til getRandomDelay())
     await new Promise(r => setTimeout(r, 1000));
 
     while (true) {
