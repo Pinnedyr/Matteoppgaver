@@ -4,65 +4,124 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tokens / Coins</title>
+<link rel="icon" type="image/png" href="/images/Math header.png">
+
 <style>
 :root { --gap: 12px; }
 * { box-sizing: border-box; }
 
 body {
-  margin:0; padding:24px;
-  background:#0f172a; color:#e2e8f0;
-  font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  overflow-x: hidden;
+  margin: 0;
+  padding: 24px;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 }
 
-.container { max-width:1000px; margin:0 auto; text-align:center; }
-h1 { font-size:3rem; margin-bottom:16px; }
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1 { font-size: 3rem; margin-bottom: 16px; }
 
 .currency-display {
-  display:flex; justify-content:center; gap:32px; margin-bottom:24px;
-  font-size:1.8rem; align-items:center;
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 24px;
+  font-size: 1.8rem;
+  align-items: center;
 }
-.currency-display img { width:36px; height:36px; }
+
+.currency-display img {
+  width: 36px;
+  height: 36px;
+}
 
 .button {
-  display:inline-block; padding:12px 18px; border-radius:14px;
-  background:#1f2937; color:#f8fafc; border:1px solid #334155;
-  text-decoration:none; cursor:pointer; margin-bottom:24px;
+  display: inline-block;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: #1f2937;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 24px;
   transition: background .15s ease, border-color .15s ease, transform .04s ease;
-  font-weight:600;
+  font-weight: 600;
 }
-.button:hover { background:#111827; border-color:#475569; }
-.button:active { transform:translateY(1px); }
 
-.scroll-wrapper { display:flex; justify-content:center; width:100%; }
-.scroll-bar { display:flex; overflow-x:auto; gap:var(--gap); padding-bottom:12px; margin-bottom:24px; }
-.scroll-bar::-webkit-scrollbar { height:8px; }
-.scroll-bar::-webkit-scrollbar-thumb { background:#334155; border-radius:4px; }
+.button:hover { background: #111827; border-color: #475569; }
+.button:active { transform: translateY(1px); }
+
+.scroll-wrapper { display: flex; justify-content: center; width: 100%; }
+.scroll-bar {
+  display: flex;
+  overflow-x: auto;
+  gap: var(--gap);
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+}
+.scroll-bar::-webkit-scrollbar { height: 8px; }
+.scroll-bar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
 .game-button {
-  position:relative; width:160px; aspect-ratio:1/1; flex-shrink:0;
-  border-radius:14px; overflow:hidden; border:1px solid #334155;
-  cursor:pointer; transition: transform .1s ease, border-color .15s ease;
-  background:#1f2937; text-decoration:none;
+  position: relative;
+  width: 160px;
+  aspect-ratio: 1/1;
+  flex-shrink: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: transform .1s ease, border-color .15s ease;
+  background: #1f2937;
+  text-decoration: none;
 }
-.game-button:hover { transform:translateY(-2px); border-color:#475569; }
-.game-button img { width:100%; height:80%; object-fit:cover; display:block; }
+.game-button:hover { transform: translateY(-2px); border-color: #475569; }
+.game-button img { width: 100%; height: 80%; object-fit: cover; display: block; }
 .game-label {
-  position:absolute; bottom:0; left:0; width:100%; height:20%;
-  background:rgba(0,0,0,0.8); color:#f8fafc;
-  display:flex; align-items:center; justify-content:center;
-  font-weight:600; font-size:0.9rem; text-align:center; padding:2px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  background: rgba(0,0,0,0.8);
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 2px;
 }
 
-/* MODAL/IFRAME */
+/* Modal iframe */
 #game-modal {
-  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-  background:rgba(0,0,0,0.85); justify-content:center; align-items:center;
-  z-index:9999;
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  width: calc(100% - 100px);
+  height: calc(100% - 100px);
+  background: #0f172a;
+  border: 2px solid #334155;
+  border-radius: 14px;
+  display: none;
+  z-index: 1000;
 }
-#game-modal iframe {
-  width:calc(100% - 200px); height:calc(100% - 200px);
-  border:none; border-radius:10px;
+#game-modal iframe { width: 100%; height: 100%; border: none; border-radius: 12px; }
+
+#modal-overlay {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.7);
+  display:none;
+  z-index: 900;
 }
 </style>
 </head>
@@ -72,122 +131,122 @@ h1 { font-size:3rem; margin-bottom:16px; }
   <h1>What The Facqkuit</h1>
 
   <div class="currency-display">
-    <div><img src="coin.png" alt="Coin"><div><span id="coins-count">0</span> Coins</div></div>
-    <div><img src="token.png" alt="Token"><div><span id="tokens-count">0</span> Tokens</div></div>
+    <div>
+      <img src="coin.png" alt="Coin">
+      <div><span id="coins-count">0</span> Coins</div>
+    </div>
+    <div>
+      <img src="token.png" alt="Token">
+      <div><span id="tokens-count">0</span> Tokens</div>
+    </div>
   </div>
 
   <button class="button" id="convert-button">Bytt Coins til Tokens</button>
 
   <h2>Spill for å tjene Coins:</h2>
   <div class="scroll-wrapper">
-    <div class="scroll-bar" id="games-scrollbar"></div>
+    <div class="scroll-bar" id="games-scrollbar">
+      <!-- Spillknapper legges til her -->
+    </div>
   </div>
 </div>
 
-<!-- MODAL/IFRAME -->
+<!-- Modal overlay og iframe -->
+<div id="modal-overlay"></div>
 <div id="game-modal">
-  <iframe id="game-frame" src=""></iframe>
+  <iframe id="game-iframe"></iframe>
 </div>
 
 <script>
-// Unique id for denne fane
-const tabId = Date.now() + "-" + Math.random();
-const lockKey = "clickerActiveTab";
-
-// Sjekk om lock finnes
-if(localStorage.getItem(lockKey)){
-    alert("En annen meny-tab er allerede åpen. Lukk den først!");
-    document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Kun én meny-tab tillatt!</h1>";
-    throw new Error("En annen meny-tab er åpen");
-}
-
-// Sett lock
-localStorage.setItem(lockKey, tabId);
-
-// Fjern lock når tab lukkes
-window.addEventListener("beforeunload", ()=>{
-    if(localStorage.getItem(lockKey) === tabId){
-        localStorage.removeItem(lockKey);
-    }
-});
-
-/* ================= COOKIES ================= */
+/* ================== COOKIE FUNKSJONER ================== */
 function getCookie(name){
-  const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
-  return m && !isNaN(parseInt(m[2])) ? parseInt(m[2]) : 0;
+  const m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+  return m && !isNaN(parseFloat(m[2])) ? parseFloat(m[2]) : 0;
 }
 function setCookie(name,value,days=365){
   const d=new Date();
-  d.setTime(d.getTime()+(days*24*60*60*1000));
-  document.cookie=name+'='+value+';path=/;expires='+d.toUTCString();
+  d.setTime(d.getTime()+days*24*60*60*1000);
+  document.cookie=name+"="+value+";path=/;expires="+d.toUTCString();
 }
 
-/* ================= LIVE DISPLAY ================= */
+/* ================== DATA ================== */
+let coins = getCookie("coins");
+let tokens = getCookie("tokens");
+
+/* ================== ELEMENTER ================== */
 const coinsCountEl = document.getElementById("coins-count");
 const tokensCountEl = document.getElementById("tokens-count");
-function updateDisplay(){
-  coinsCountEl.textContent=getCookie("coins");
-  tokensCountEl.textContent=getCookie("tokens");
-}
-updateDisplay();
-setInterval(updateDisplay,1000);
+const convertBtn = document.getElementById("convert-button");
 
-/* ================= CONVERT ================= */
-document.getElementById("convert-button").addEventListener("click",()=>{
-  let coins = getCookie("coins");
-  let tokens = getCookie("tokens");
+function updateDisplay(){
+  coinsCountEl.textContent = coins;
+  tokensCountEl.textContent = tokens;
+}
+
+/* Live-oppdatering hvert sekund */
+setInterval(()=>{
+  coins = getCookie("coins");
+  tokens = getCookie("tokens");
+  updateDisplay();
+},1000);
+
+updateDisplay();
+
+/* Bytt coins til tokens */
+convertBtn.addEventListener("click",()=>{
   if(coins >= 10000){
     const newTokens = Math.floor(coins/10000);
     tokens += newTokens;
     coins -= newTokens*10000;
-    setCookie("coins",coins,365);
-    setCookie("tokens",tokens,365);
+    setCookie("coins",coins);
+    setCookie("tokens",tokens);
     updateDisplay();
-    alert(newTokens+" Token(s) er lagt til!");
+    alert(`${newTokens} Token(s) er lagt til!`);
   } else alert("Du trenger minst 10 000 Coins for 1 Token.");
 });
 
-/* ================= GAMES ================= */
+/* ================== SPILL ================== */
 const games = [
-  {name:"Clicker", url:"https://wtfq.online/Tokens/games/Clicker.html", img:"game1.png"}
+  {name:"Clicker", img:"game1.png", url:"/Tokens/games/Clicker.html"}
 ];
 
 const scrollbar = document.getElementById("games-scrollbar");
-const modal = document.getElementById("game-modal");
-const iframe = document.getElementById("game-frame");
+const modalOverlay = document.getElementById("modal-overlay");
+const gameModal = document.getElementById("game-modal");
+const gameIframe = document.getElementById("game-iframe");
 
 games.forEach(game=>{
-  const a = document.createElement("a");
-  a.className="game-button"; a.href="#";
+  const btn = document.createElement("div");
+  btn.className = "game-button";
 
-  const img = document.createElement("img"); img.src=game.img; img.alt=game.name;
-  const label = document.createElement("div"); label.className="game-label"; label.textContent=game.name;
+  const img = document.createElement("img");
+  img.src = game.img;
+  img.alt = game.name;
 
-  a.appendChild(img); a.appendChild(label);
-  scrollbar.appendChild(a);
+  const label = document.createElement("div");
+  label.className = "game-label";
+  label.textContent = game.name;
 
-  a.addEventListener("click",(e)=>{
-    e.preventDefault();
-    iframe.src = game.url;
-    modal.style.display = "flex";
+  btn.appendChild(img);
+  btn.appendChild(label);
+
+  btn.addEventListener("click",()=>{
+    // Åpne modal iframe
+    modalOverlay.style.display = "block";
+    gameModal.style.display = "block";
+    gameIframe.src = game.url;
   });
+
+  scrollbar.appendChild(btn);
 });
 
-// CLOSE MODAL
-modal.addEventListener("click",(e)=>{
-  if(e.target===modal){ modal.style.display="none"; iframe.src=""; }
+/* Lukk modal ved klikk på overlay */
+modalOverlay.addEventListener("click",()=>{
+  gameIframe.src="";
+  gameModal.style.display="none";
+  modalOverlay.style.display="none";
 });
-
-/* ==================== ANTI-JUKS (OPTIONAL) ==================== */
-// Sjekker om coins plutselig øker på menyen selv om Clicker kjører i iframe
-let lastCoins = getCookie("coins");
-setInterval(()=>{
-  const currentCoins = getCookie("coins");
-  if(currentCoins > lastCoins + 1){ 
-    alert("Multiple tabs detected! Closing.");
-    window.close();
-  } else lastCoins = currentCoins;
-},500);
 </script>
+
 </body>
 </html>
