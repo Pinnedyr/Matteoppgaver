@@ -66,6 +66,13 @@
       transform: translateY(1px);
     }
 
+    /* Wrapper for scroll-bar for å sentrere */
+    .scroll-wrapper {
+      display: flex;
+      justify-content: center; /* sentrerer scrollbar horisontalt */
+      width: 100%;
+    }
+
     .scroll-bar {
       display: flex;
       overflow-x: auto;
@@ -147,8 +154,10 @@
     <button class="button" id="convert-button">Bytt Coins til Tokens</button>
 
     <h2>Spill for å tjene Coins:</h2>
-    <div class="scroll-bar" id="games-scrollbar">
-      <!-- Spillknapper legges til her -->
+    <div class="scroll-wrapper">
+      <div class="scroll-bar" id="games-scrollbar">
+        <!-- Spillknapper legges til her -->
+      </div>
     </div>
   </div>
 
@@ -179,18 +188,18 @@
 
     updateDisplay();
 
-    // Bytt coins til tokens (1000 coins = 1 token)
+    // Bytt coins til tokens (10000 coins = 1 token)
     document.getElementById("convert-button").addEventListener("click", () => {
-      if (coins >= 1000) {
-        const newTokens = Math.floor(coins / 1000);
+      if (coins >= 10000) {
+        const newTokens = Math.floor(coins / 10000);
         tokens += newTokens;
-        coins -= newTokens * 1000;
+        coins -= newTokens * 10000;
         setCookie("coins", coins, 365);
         setCookie("tokens", tokens, 365);
         updateDisplay();
         alert(`${newTokens} Token(s) er lagt til!`);
       } else {
-        alert("Du trenger minst 1000 Coins for 1 Token.");
+        alert("Du trenger minst 10 000 Coins for 1 Token.");
       }
     });
 
@@ -224,7 +233,7 @@
 
       // Klikk for å tjene coins
       a.addEventListener("click", (e) => {
-        e.preventDefault(); // Hindrer at siden navigerer
+        e.preventDefault();
         const earned = Math.floor(Math.random() * 100) + 10; // tjener 10-109 coins
         coins += earned;
         setCookie("coins", coins, 365);
