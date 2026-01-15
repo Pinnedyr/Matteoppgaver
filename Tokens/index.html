@@ -3,9 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>Tokens / Coins</title>
-
   <link rel="icon" type="image/png" href="/images/Math header.png">
 
   <style>
@@ -56,6 +54,7 @@
       cursor: pointer;
       margin-bottom: 24px;
       transition: background .15s ease, border-color .15s ease, transform .04s ease;
+      font-weight: 600;
     }
 
     .button:hover {
@@ -70,7 +69,7 @@
     .scroll-bar {
       display: flex;
       overflow-x: auto;
-      gap: 12px;
+      gap: var(--gap);
       padding-bottom: 12px;
       margin-bottom: 24px;
     }
@@ -84,22 +83,47 @@
       border-radius: 4px;
     }
 
-    .scroll-bar a {
-      min-width: 160px;
-      background: #1f2937;
-      color: #f8fafc;
-      padding: 12px;
-      border-radius: 14px;
-      text-decoration: none;
-      text-align: center;
-      border: 1px solid #334155;
+    .game-button {
+      position: relative;
+      width: 160px;
+      aspect-ratio: 1 / 1;
       flex-shrink: 0;
-      transition: background .15s ease, border-color .15s ease;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #334155;
+      cursor: pointer;
+      transition: transform .1s ease, border-color .15s ease;
+      background: #1f2937;
+      text-decoration: none;
     }
 
-    .scroll-bar a:hover {
-      background: #111827;
+    .game-button:hover {
+      transform: translateY(-2px);
       border-color: #475569;
+    }
+
+    .game-button img {
+      width: 100%;
+      height: 80%; /* 4/5 av knapp */
+      object-fit: cover;
+      display: block;
+    }
+
+    .game-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 20%; /* 1/5 av knapp */
+      background: rgba(0,0,0,0.8);
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 2px;
     }
   </style>
 </head>
@@ -124,17 +148,15 @@
 
     <h2>Spill for å tjene Coins:</h2>
     <div class="scroll-bar" id="games-scrollbar">
-      <!-- Spill 1, Spill 2, … -->
+      <!-- Spillknapper legges til her -->
     </div>
   </div>
 
   <script>
-    // Hent og sett cookie
+    // Cookie-funksjoner
     function getCookie(name) {
-      const match = document.cookie.match(
-        new RegExp("(^| )" + name + "=([^;]+)")
-      );
-      return match ? parseInt(decodeURIComponent(match[2])) : 0;
+      const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+      return match && !isNaN(parseInt(match[2])) ? parseInt(match[2]) : 0;
     }
 
     function setCookie(name, value, days) {
@@ -143,6 +165,7 @@
       document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
     }
 
+    // Hent coins og tokens
     let coins = getCookie("coins");
     let tokens = getCookie("tokens");
 
@@ -171,21 +194,44 @@
       }
     });
 
-    // Generiske spill (kan byttes senere)
+    // Spilldata
     const games = [
-      {name: "Spill 1", url: "#"},
-      {name: "Spill 2", url: "#"},
-      {name: "Spill 3", url: "#"},
-      {name: "Spill 4", url: "#"},
-      {name: "Spill 5", url: "#"}
+      {name: "Spill 1", url: "#", img: "game1.jpg"},
+      {name: "Spill 2", url: "#", img: "game2.jpg"},
+      {name: "Spill 3", url: "#", img: "game3.jpg"},
+      {name: "Spill 4", url: "#", img: "game4.jpg"},
+      {name: "Spill 5", url: "#", img: "game5.jpg"}
     ];
 
     const scrollbar = document.getElementById("games-scrollbar");
+
     games.forEach(game => {
       const a = document.createElement("a");
       a.href = game.url;
       a.target = "_blank";
-      a.textContent = game.name;
+      a.className = "game-button";
+
+      const img = document.createElement("img");
+      img.src = game.img;
+      img.alt = game.name;
+
+      const label = document.createElement("div");
+      label.className = "game-label";
+      label.textContent = game.name;
+
+      a.appendChild(img);
+      a.appendChild(label);
+
+      // Klikk for å tjene coins
+      a.addEventListener("click", (e) => {
+        e.preventDefault(); // Hindrer at siden navigerer
+        const earned = Math.floor(Math.random() * 100) + 10; // tjener 10-109 coins
+        coins += earned;
+        setCookie("coins", coins, 365);
+        updateDisplay();
+        alert(`Du tjente ${earned} Coins fra ${game.name}!`);
+      });
+
       scrollbar.appendChild(a);
     });
   </script>
