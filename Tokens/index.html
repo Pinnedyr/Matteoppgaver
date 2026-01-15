@@ -90,6 +90,27 @@ h1 { font-size:3rem; margin-bottom:16px; }
 </div>
 
 <script>
+// Unique id for denne fane
+const tabId = Date.now() + "-" + Math.random();
+const lockKey = "clickerActiveTab";
+
+// Sjekk om lock finnes
+if(localStorage.getItem(lockKey)){
+    alert("En annen meny-tab er allerede åpen. Lukk den først!");
+    document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Kun én meny-tab tillatt!</h1>";
+    throw new Error("En annen meny-tab er åpen");
+}
+
+// Sett lock
+localStorage.setItem(lockKey, tabId);
+
+// Fjern lock når tab lukkes
+window.addEventListener("beforeunload", ()=>{
+    if(localStorage.getItem(lockKey) === tabId){
+        localStorage.removeItem(lockKey);
+    }
+});
+
 /* ================= COOKIES ================= */
 function getCookie(name){
   const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
