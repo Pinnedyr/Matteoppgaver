@@ -5,77 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clicker Game</title>
   <style>
+    :root { --gap: 12px; }
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #1e1e2f;
-      color: #fff;
+      padding: 24px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       min-height: 100vh;
     }
-    h1 { margin-bottom: 20px; }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
     #coin-btn {
       width: 200px;
       height: 200px;
-      font-size: 2rem;
+      font-size: 1.8rem;
       border-radius: 50%;
-      border: none;
+      border: 2px solid #334155;
+      background: #1f2937;
+      color: #f8fafc;
       cursor: pointer;
-      background: #6b5dd2;
-      color: #fff;
-      transition: transform 0.05s ease;
+      transition: transform 0.05s ease, background 0.2s ease;
+      margin-bottom: 20px;
     }
-    #coin-btn:active {
-      transform: scale(0.95);
-    }
+    #coin-btn:hover { background: #111827; }
+    #coin-btn:active { transform: scale(0.95); }
+
     .stats {
-      margin-top: 20px;
       font-size: 1.2rem;
+      margin-bottom: 20px;
+      text-align: center;
     }
-    .upgrade-container {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
+
     .upgrade-btn {
       padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
+      border-radius: 14px;
+      border: 1px solid #334155;
+      background: #1f2937;
+      color: #f8fafc;
+      font-weight: 600;
       cursor: pointer;
-      background: #ffa500;
-      color: #000;
-      font-weight: bold;
-      transition: background 0.2s ease;
+      margin-bottom: 20px;
+      transition: background 0.15s ease, border-color 0.15s ease;
     }
-    .upgrade-btn:hover {
-      background: #ffb733;
+    .upgrade-btn:hover { background: #111827; border-color: #475569; }
+
+    .progress-container {
+      width: 200px;
+      height: 20px;
+      background: #334155;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #6b5dd2;
+      transition: width 0.1s linear;
     }
   </style>
 </head>
 <body>
 
   <h1>Clicker Game</h1>
-  <button id="coin-btn">Coin</button>
+
+  <button id="coin-btn">Trykk Meg</button>
+
   <div class="stats">
     Coins: <span id="coins">0</span><br>
-    AutoClicker: <span id="autoclick-speed">4.0</span>s per coin
+    Autoclicker: <span id="autoclick-speed">-</span>
   </div>
 
-  <div class="upgrade-container">
-    <button class="upgrade-btn" id="upgrade-btn">
-      Kjøp Autoclicker (+1 coin)<br>
-      Pris: <span id="upgrade-cost">20</span> coins
-    </button>
+  <button id="upgrade-btn" class="upgrade-btn">
+    Kjøp Autoclicker (+1 coin)
+    <br>Pris: <span id="upgrade-cost">20</span> coins
+  </button>
+
+  <div class="progress-container">
+    <div id="progress-bar" class="progress-bar"></div>
   </div>
 
   <script>
     let coins = 0;
-
+    let autoclickBought = false;
     let autoclickSpeed = 4.0; // sekunder per coin
     let upgradeCost = 20;
 
@@ -84,6 +107,7 @@
     const upgradeBtn = document.getElementById('upgrade-btn');
     const upgradeCostEl = document.getElementById('upgrade-cost');
     const autoclickSpeedEl = document.getElementById('autoclick-speed');
+    const progressBar = document.getElementById('progress-bar');
 
     // Klikk på coin
     coinBtn.addEventListener('click', () => {
@@ -91,12 +115,13 @@
       updateDisplay();
     });
 
-    // Oppgrader autoclicker
+    // Kjøp autoclicker
     upgradeBtn.addEventListener('click', () => {
       if(coins >= Math.floor(upgradeCost)) {
         coins -= Math.floor(upgradeCost);
-        autoclickSpeed = Math.max(0.1, autoclickSpeed - 0.1); // hvert kjøp gjør autoclicker raskere
+        autoclickSpeed = Math.max(0.1, autoclickSpeed - 0.1);
         upgradeCost *= 1.3;
+        autoclickBought = true;
         updateDisplay();
       } else {
         alert("Du har ikke nok coins!");
@@ -106,19 +131,34 @@
     function updateDisplay() {
       coinsEl.textContent = coins;
       upgradeCostEl.textContent = Math.floor(upgradeCost);
-      autoclickSpeedEl.textContent = autoclickSpeed.toFixed(1);
+      autoclickSpeedEl.textContent = autoclickBought ? autoclickSpeed.toFixed(1) + "s/coin" : "-";
     }
 
-    // Autoclicker loop
-    function autoclickLoop() {
-      coins++;
+    // Autoclicker progress
+    let progress = 0;
+    let lastTime = Date.now();
+
+    function loop() {
+      const now = Date.now();
+      const delta = (now - lastTime) / 1000; // sekunder
+      lastTime = now;
+
+      if(autoclickBought) {
+        progress += delta / autoclickSpeed;
+        if(progress >= 1) {
+          coins++;
+          progress = 0;
+        }
+        progressBar.style.width = Math.min(progress * 100, 100) + "%";
+      } else {
+        progressBar.style.width = "0%";
+      }
+
       updateDisplay();
-      setTimeout(autoclickLoop, autoclickSpeed * 1000);
+      requestAnimationFrame(loop);
     }
 
-    setTimeout(autoclickLoop, autoclickSpeed * 1000);
-
-    updateDisplay();
+    loop();
   </script>
 
 </body>
