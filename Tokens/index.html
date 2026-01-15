@@ -161,19 +161,36 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 /* ================== SINGLE MENU TAB LOCK ================== */
 const tabId = Date.now() + "-" + Math.random();
 localStorage.setItem("activeMenuTab", tabId);
+console.log("Meny-tab ID:", tabId);
 
-// Lytt etter andre tabs som setter activeMenuTab
-window.addEventListener("storage", e=>{
-  if(e.key==="activeMenuTab" && e.newValue!==tabId){
-    alert("En annen meny-tab er åpen! Denne tabben vil lukke seg.");
-    window.close();
-  }
+// Sjekk kontinuerlig om vi fortsatt er aktiv meny-tab
+function checkSingleTab(){
+    const activeTab = localStorage.getItem("activeMenuTab");
+    if(activeTab !== tabId){
+        console.log("En annen meny-tab er åpen. Lukker denne...");
+        try{
+            window.close();
+        }catch(e){
+            document.body.innerHTML="<h1 style='color:white;text-align:center;margin-top:50px;'>En annen meny-tab er åpen! Denne tabben er deaktivert.</h1>";
+        }
+    }
+}
+
+// Sjekk hvert 500ms
+setInterval(checkSingleTab, 500);
+
+// Lytt etter storage events fra andre tabs
+window.addEventListener("storage", (e)=>{
+    if(e.key==="activeMenuTab" && e.newValue!==tabId){
+        console.log("Storage event: En annen tab ble aktiv.");
+        checkSingleTab();
+    }
 });
 
 // Fjern lock når tabben lukkes
 window.addEventListener("beforeunload", ()=>{
-  const current = localStorage.getItem("activeMenuTab");
-  if(current===tabId) localStorage.removeItem("activeMenuTab");
+    const current = localStorage.getItem("activeMenuTab");
+    if(current===tabId) localStorage.removeItem("activeMenuTab");
 });
 
 /* ================== COOKIE FUNKSJONER ================== */
@@ -249,6 +266,7 @@ games.forEach(game=>{
   btn.appendChild(label);
 
   btn.addEventListener("click",()=>{
+    // Åpne modal iframe
     modalOverlay.style.display = "block";
     gameModal.style.display = "block";
     gameIframe.src = game.url;
@@ -257,7 +275,7 @@ games.forEach(game=>{
   scrollbar.appendChild(btn);
 });
 
-/* Lukk modal ved klikk på overlay */
+// Lukk modal ved klikk på overlay
 modalOverlay.addEventListener("click",()=>{
   gameIframe.src="";
   gameModal.style.display="none";
