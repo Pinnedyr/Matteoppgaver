@@ -41,6 +41,7 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 }
 
 .button {
+  display: inline-block;
   padding: 12px 18px;
   border-radius: 14px;
   background: #1f2937;
@@ -48,70 +49,106 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
   border: 1px solid #334155;
   cursor: pointer;
   margin-bottom: 24px;
+  transition: background .15s ease, border-color .15s ease, transform .04s ease;
   font-weight: 600;
 }
+.button:hover { background: #111827; border-color: #475569; }
 .button:disabled { opacity: .5; cursor: not-allowed; }
-
-/* ================== SPILL ================== */
 
 .scroll-wrapper {
   display: flex;
   justify-content: center;
   width: 100%;
-  overflow: visible; /* VIKTIG: hindrer klipping */
+  overflow: visible;
 }
-
 .scroll-bar {
   display: flex;
-  gap: var(--gap);
   overflow-x: auto;
-  padding: 24px 12px; /* luft for hover */
+  gap: var(--gap);
+  padding: 20px 0;
+  margin-bottom: 24px;
 }
+.scroll-bar::-webkit-scrollbar { height: 8px; }
+.scroll-bar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
-/* KNAPP 5:6 */
+/* ===== SPILLKNAPP ===== */
 .game-button {
-  width: 170px;
+  width: 160px;
   aspect-ratio: 5 / 6;
-  background: #1f2937;
-  border: 1px solid #334155;
+  flex-shrink: 0;
   border-radius: 16px;
+  border: 1px solid #334155;
+  background: #1f2937;
   cursor: pointer;
   transition: transform .15s ease, border-color .15s ease;
-  display: flex;
-  flex-direction: column;
-  overflow: visible; /* IKKE hidden */
+  overflow: visible;
+  position: relative;
 }
-
 .game-button:hover {
-  transform: translateY(-8px);
+  transform: translateY(-10px);
   border-color: #475569;
 }
 
-/* BILDE 1:1 */
+.game-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1:1 bilde uten crop */
 .game-image {
   width: 100%;
   aspect-ratio: 1 / 1;
-  padding: 10px;
+  background: #020617;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.game-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
-.game-image img {
+/* Tekst under bildet */
+.game-label {
+  flex: 1;
+  background: rgba(0,0,0,.8);
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: .95rem;
+  padding: 6px;
+  text-align: center;
+}
+
+/* ===== MODAL ===== */
+#game-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 1200px;
+  height: 80%;
+  transform: translate(-50%, -50%);
+  background: #0f172a;
+  border: 2px solid #334155;
+  border-radius: 14px;
+  display: none;
+  z-index: 1000;
+}
+#game-modal iframe {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* IKKE croppet */
+  border: none;
+  border-radius: 12px;
 }
 
-/* TEKST UNDER */
-.game-label {
-  padding: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-align: center;
-  background: rgba(0,0,0,0.35);
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-/* ================== MODAL ================== */
 #modal-overlay {
   position: fixed;
   inset: 0;
@@ -119,28 +156,9 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
   display: none;
   z-index: 900;
 }
-
-#game-modal {
-  position: fixed;
-  inset: 50%;
-  transform: translate(-50%,-50%);
-  width: 90%;
-  height: 80%;
-  background: #0f172a;
-  border: 2px solid #334155;
-  border-radius: 16px;
-  display: none;
-  z-index: 1000;
-}
-
-#game-modal iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 14px;
-}
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -166,62 +184,75 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 </div>
 
 <div id="modal-overlay"></div>
-<div id="game-modal"><iframe id="game-iframe"></iframe></div>
+<div id="game-modal">
+  <iframe id="game-iframe"></iframe>
+</div>
 
 <script>
-/* ================== EN TOKEN-FANE ================== */
+/* ================== EN FANE /Tokens/ ================== */
 (function(){
-  const key = "activeTokensTab";
-  const msg = `
-    <h1 style="text-align:center;margin-top:60px">
-    En annen Token meny er åpnet!<br>
-    Denne fanen er deaktivert.
-    </h1>`;
+  const lockKey="activeTokensTab";
 
-  if(localStorage.getItem(key)){
-    document.body.innerHTML = msg;
+  if(localStorage.getItem(lockKey)){
+    document.body.innerHTML=`
+      <h1 style="color:white;text-align:center;margin-top:60px;">
+      En annen Token meny er åpnet!<br>
+      Denne fanen er deaktivert.
+      </h1>`;
     return;
   }
 
-  const id = Date.now()+"-"+Math.random();
-  localStorage.setItem(key,id);
+  const tabId=Date.now()+"-"+Math.random();
+  localStorage.setItem(lockKey,tabId);
 
   window.addEventListener("beforeunload",()=>{
-    if(localStorage.getItem(key)===id) localStorage.removeItem(key);
+    if(localStorage.getItem(lockKey)===tabId)
+      localStorage.removeItem(lockKey);
   });
 
   setInterval(()=>{
-    if(localStorage.getItem(key)!==id){
-      document.body.innerHTML = msg;
+    if(localStorage.getItem(lockKey)!==tabId){
+      document.body.innerHTML=`
+        <h1 style="color:white;text-align:center;margin-top:60px;">
+        En annen Token meny er åpnet!<br>
+        Denne fanen er deaktivert.
+        </h1>`;
     }
   },500);
 
   window.addEventListener("storage",e=>{
-    if(e.key===key && e.newValue!==id){
-      document.body.innerHTML = msg;
+    if(e.key===lockKey && e.newValue!==tabId){
+      document.body.innerHTML=`
+        <h1 style="color:white;text-align:center;margin-top:60px;">
+        En annen Token meny er åpnet!<br>
+        Denne fanen er deaktivert.
+        </h1>`;
     }
   });
 })();
 
-/* ================== COINS ================== */
-function getCookie(n){
-  const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));
-  return m?+m[2]:0;
+/* ================== COOKIES ================== */
+function getCookie(name){
+  const m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+  return m && !isNaN(m[2]) ? parseInt(m[2]) : 0;
 }
-function setCookie(n,v,d=365){
-  const t=new Date(Date.now()+d*864e5).toUTCString();
-  document.cookie=`${n}=${v};expires=${t};path=/`;
+function setCookie(name,value,days=365){
+  const d=new Date();
+  d.setTime(d.getTime()+days*864e5);
+  document.cookie=`${name}=${value};path=/;expires=${d.toUTCString()}`;
 }
 
-let coins=getCookie("coins"),tokens=getCookie("tokens");
+let coins=getCookie("coins");
+let tokens=getCookie("tokens");
+
 const coinsEl=document.getElementById("coins-count");
 const tokensEl=document.getElementById("tokens-count");
-const btn=document.getElementById("convert-button");
+const convertBtn=document.getElementById("convert-button");
 
 function update(){
   coinsEl.textContent=coins.toLocaleString();
   tokensEl.textContent=tokens.toLocaleString();
-  btn.disabled=coins<10000;
+  convertBtn.disabled=coins<10000;
 }
 setInterval(()=>{
   coins=getCookie("coins");
@@ -230,7 +261,7 @@ setInterval(()=>{
 },1000);
 update();
 
-btn.onclick=()=>{
+convertBtn.onclick=()=>{
   if(coins>=10000){
     const t=Math.floor(coins/10000);
     coins-=t*10000;
@@ -238,6 +269,7 @@ btn.onclick=()=>{
     setCookie("coins",coins);
     setCookie("tokens",tokens);
     update();
+    alert(`${t} Token(s) lagt til!`);
   }
 };
 
@@ -252,8 +284,11 @@ const modal=document.getElementById("game-modal");
 const iframe=document.getElementById("game-iframe");
 
 games.forEach(g=>{
-  const b=document.createElement("div");
-  b.className="game-button";
+  const btn=document.createElement("div");
+  btn.className="game-button";
+
+  const inner=document.createElement("div");
+  inner.className="game-inner";
 
   const imgWrap=document.createElement("div");
   imgWrap.className="game-image";
@@ -265,13 +300,17 @@ games.forEach(g=>{
   label.className="game-label";
   label.textContent=g.name;
 
-  b.append(imgWrap,label);
-  b.onclick=()=>{
+  inner.appendChild(imgWrap);
+  inner.appendChild(label);
+  btn.appendChild(inner);
+
+  btn.onclick=()=>{
     overlay.style.display="block";
     modal.style.display="block";
     iframe.src=g.url;
   };
-  bar.appendChild(b);
+
+  bar.appendChild(btn);
 });
 
 overlay.onclick=()=>{
@@ -279,13 +318,8 @@ overlay.onclick=()=>{
   modal.style.display="none";
   overlay.style.display="none";
 };
-
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){
-    iframe.src="";
-    modal.style.display="none";
-    overlay.style.display="none";
-  }
+  if(e.key==="Escape") overlay.click();
 });
 </script>
 
