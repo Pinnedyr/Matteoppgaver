@@ -56,6 +56,7 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 
 .button:hover { background: #111827; border-color: #475569; }
 .button:active { transform: translateY(1px); }
+.button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .scroll-wrapper { display: flex; justify-content: center; width: 100%; }
 .scroll-bar {
@@ -103,10 +104,13 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 /* Modal iframe */
 #game-modal {
   position: fixed;
-  top: 50px;
-  left: 50px;
-  width: calc(100% - 100px);
-  height: calc(100% - 100px);
+  top: 50%;
+  left: 50%;
+  width: 90%;
+  max-width: 1200px;
+  height: 80%;
+  max-height: 800px;
+  transform: translate(-50%, -50%);
   background: #0f172a;
   border: 2px solid #334155;
   border-radius: 14px;
@@ -158,39 +162,39 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 </div>
 
 <script>
-/* ================== SINGLE MENU TAB LOCK ================== */
+/* ================== SINGLE URL TAB LOCK ================== */
+const lockKey = "activeTokensTab";
 const tabId = Date.now() + "-" + Math.random();
-localStorage.setItem("activeMenuTab", tabId);
-console.log("Meny-tab ID:", tabId);
 
-// Sjekk kontinuerlig om vi fortsatt er aktiv meny-tab
-function checkSingleTab(){
-    const activeTab = localStorage.getItem("activeMenuTab");
-    if(activeTab !== tabId){
-        console.log("En annen meny-tab er åpen. Lukker denne...");
-        try{
-            window.close();
-        }catch(e){
-            document.body.innerHTML="<h1 style='color:white;text-align:center;margin-top:50px;'>En annen meny-tab er åpen! Denne tabben er deaktivert.</h1>";
+// Sett denne tabben som aktiv
+localStorage.setItem(lockKey, tabId);
+
+// Funksjon som sjekker om vi fortsatt er den aktive tabben
+function checkSingleTokensTab() {
+    const activeTab = localStorage.getItem(lockKey);
+    if (activeTab !== tabId) {
+        try { window.close(); } 
+        catch(e){
+            document.body.innerHTML = `<h1 style="color:white;text-align:center;margin-top:50px;">
+            En annen Tokens-tab er åpen! Denne tabben er deaktivert.</h1>`;
         }
     }
 }
 
 // Sjekk hvert 500ms
-setInterval(checkSingleTab, 500);
+setInterval(checkSingleTokensTab, 500);
 
-// Lytt etter storage events fra andre tabs
-window.addEventListener("storage", (e)=>{
-    if(e.key==="activeMenuTab" && e.newValue!==tabId){
-        console.log("Storage event: En annen tab ble aktiv.");
-        checkSingleTab();
+// Lytt etter storage events
+window.addEventListener("storage", (e) => {
+    if (e.key === lockKey && e.newValue !== tabId) {
+        checkSingleTokensTab();
     }
 });
 
 // Fjern lock når tabben lukkes
-window.addEventListener("beforeunload", ()=>{
-    const current = localStorage.getItem("activeMenuTab");
-    if(current===tabId) localStorage.removeItem("activeMenuTab");
+window.addEventListener("beforeunload", () => {
+    const current = localStorage.getItem(lockKey);
+    if (current === tabId) localStorage.removeItem(lockKey);
 });
 
 /* ================== COOKIE FUNKSJONER ================== */
@@ -214,12 +218,13 @@ const tokensCountEl = document.getElementById("tokens-count");
 const convertBtn = document.getElementById("convert-button");
 
 function updateDisplay(){
-  coinsCountEl.textContent = coins;
-  tokensCountEl.textContent = tokens;
+  coinsCountEl.textContent = coins.toLocaleString();
+  tokensCountEl.textContent = tokens.toLocaleString();
+  convertBtn.disabled = coins < 10000;
 }
 
 /* Live-oppdatering hvert sekund */
-setInterval(()=>{
+setInterval(()=> {
   coins = getCookie("coins");
   tokens = getCookie("tokens");
   updateDisplay();
@@ -266,7 +271,6 @@ games.forEach(game=>{
   btn.appendChild(label);
 
   btn.addEventListener("click",()=>{
-    // Åpne modal iframe
     modalOverlay.style.display = "block";
     gameModal.style.display = "block";
     gameIframe.src = game.url;
@@ -280,6 +284,15 @@ modalOverlay.addEventListener("click",()=>{
   gameIframe.src="";
   gameModal.style.display="none";
   modalOverlay.style.display="none";
+});
+
+// ESC-tast lukker modal
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    gameIframe.src="";
+    gameModal.style.display="none";
+    modalOverlay.style.display="none";
+  }
 });
 </script>
 
