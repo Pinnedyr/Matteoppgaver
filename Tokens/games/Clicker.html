@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clicker Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1e1e2f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    h1 { margin-bottom: 20px; }
+    #coin-btn {
+      width: 200px;
+      height: 200px;
+      font-size: 2rem;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: #6b5dd2;
+      color: #fff;
+      transition: transform 0.05s ease;
+    }
+    #coin-btn:active {
+      transform: scale(0.95);
+    }
+    .stats {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+    .upgrade-container {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .upgrade-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #ffa500;
+      color: #000;
+      font-weight: bold;
+      transition: background 0.2s ease;
+    }
+    .upgrade-btn:hover {
+      background: #ffb733;
+    }
+  </style>
+</head>
+<body>
 
+  <h1>Clicker Game</h1>
+  <button id="coin-btn">Coin</button>
+  <div class="stats">
+    Coins: <span id="coins">0</span><br>
+    AutoClicker: <span id="autoclick-speed">4.0</span>s per coin
+  </div>
+
+  <div class="upgrade-container">
+    <button class="upgrade-btn" id="upgrade-btn">
+      Kjøp Autoclicker (+1 coin)<br>
+      Pris: <span id="upgrade-cost">20</span> coins
+    </button>
+  </div>
+
+  <script>
+    let coins = 0;
+
+    let autoclickSpeed = 4.0; // sekunder per coin
+    let upgradeCost = 20;
+
+    const coinBtn = document.getElementById('coin-btn');
+    const coinsEl = document.getElementById('coins');
+    const upgradeBtn = document.getElementById('upgrade-btn');
+    const upgradeCostEl = document.getElementById('upgrade-cost');
+    const autoclickSpeedEl = document.getElementById('autoclick-speed');
+
+    // Klikk på coin
+    coinBtn.addEventListener('click', () => {
+      coins++;
+      updateDisplay();
+    });
+
+    // Oppgrader autoclicker
+    upgradeBtn.addEventListener('click', () => {
+      if(coins >= Math.floor(upgradeCost)) {
+        coins -= Math.floor(upgradeCost);
+        autoclickSpeed = Math.max(0.1, autoclickSpeed - 0.1); // hvert kjøp gjør autoclicker raskere
+        upgradeCost *= 1.3;
+        updateDisplay();
+      } else {
+        alert("Du har ikke nok coins!");
+      }
+    });
+
+    function updateDisplay() {
+      coinsEl.textContent = coins;
+      upgradeCostEl.textContent = Math.floor(upgradeCost);
+      autoclickSpeedEl.textContent = autoclickSpeed.toFixed(1);
+    }
+
+    // Autoclicker loop
+    function autoclickLoop() {
+      coins++;
+      updateDisplay();
+      setTimeout(autoclickLoop, autoclickSpeed * 1000);
+    }
+
+    setTimeout(autoclickLoop, autoclickSpeed * 1000);
+
+    updateDisplay();
+  </script>
+
+</body>
+</html>
