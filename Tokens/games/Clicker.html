@@ -74,11 +74,32 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 </div>
 
 <script>
-// Sjekk iframe
-if(window.top===window.self || window.top.location.href.indexOf("https://wtfq.online/Tokens/")!==0){
-    document.body.innerHTML="<h1 style='color:white;margin-top:50px;'>Dette spillet kan kun brukes fra menyen!</h1>";
-    throw new Error("Clicker kan kun brukes i iframe fra menyen");
+// Sjekk at Clicker kjører i iframe
+if(window.top === window.self){
+    // Ikke i iframe
+    document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Dette spillet kan kun brukes fra menyen!</h1>";
+    throw new Error("Clicker kan kun brukes i iframe");
 }
+
+// Sjekk at parent er riktig meny
+try {
+    const parentHref = window.top.location.href;
+    if(!parentHref.startsWith("https://www.wtfq.online/Tokens/")){
+        document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Clicker kan kun brukes fra menyen!</h1>";
+        throw new Error("Feil parent URL");
+    }
+} catch(e){
+    // Hvis vi ikke kan lese top.location (cross-origin)
+    document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Clicker kan kun brukes fra menyen!</h1>";
+    throw new Error("Feil parent URL");
+}
+
+// Sjekk at meny-tab er aktiv (single instance lock)
+if(!localStorage.getItem("clickerActiveTab")){
+    document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Ingen aktiv meny-tab! Åpne menyen først.</h1>";
+    throw new Error("Ingen aktiv meny-tab");
+}
+
 
 // Sjekk at meny-tab er aktiv
 if(!localStorage.getItem("clickerActiveTab")){
