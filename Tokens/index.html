@@ -161,7 +161,7 @@
   </div>
 
   <script>
-    // Cookie-funksjoner
+    // Hent cookie-verdi
     function getCookie(name) {
       const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
       return match && !isNaN(parseInt(match[2])) ? parseInt(match[2]) : 0;
@@ -173,22 +173,24 @@
       document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
     }
 
-    // Hent coins og tokens
-    let coins = getCookie("coins");
-    let tokens = getCookie("tokens");
-
     const coinsCountEl = document.getElementById("coins-count");
     const tokensCountEl = document.getElementById("tokens-count");
 
+    // Live-oppdatering av coins og tokens
     function updateDisplay() {
-      coinsCountEl.textContent = coins;
-      tokensCountEl.textContent = tokens;
+      coinsCountEl.textContent = getCookie("coins");
+      tokensCountEl.textContent = getCookie("tokens");
     }
 
-    updateDisplay();
+    updateDisplay(); // initial visning
+
+    // Polling hvert 1 sekund
+    setInterval(updateDisplay, 1000);
 
     // Bytt coins til tokens (10 000 coins = 1 token)
     document.getElementById("convert-button").addEventListener("click", () => {
+      let coins = getCookie("coins");
+      let tokens = getCookie("tokens");
       if (coins >= 10000) {
         const newTokens = Math.floor(coins / 10000);
         tokens += newTokens;
@@ -202,7 +204,7 @@
       }
     });
 
-    // Spilldata – legg inn link til din egen nettside for hvert spill
+    // Spillene dine – lenke til egne sider
     const games = [
       {name: "Spill 1", url: "https://din-nettside.no/spill1", img: "game1.jpg"},
       {name: "Spill 2", url: "https://din-nettside.no/spill2", img: "game2.jpg"},
@@ -216,7 +218,7 @@
     games.forEach(game => {
       const a = document.createElement("a");
       a.href = game.url;
-      a.target = "_blank"; // åpner nytt vindu
+      a.target = "_blank";
       a.className = "game-button";
 
       const img = document.createElement("img");
@@ -230,7 +232,6 @@
       a.appendChild(img);
       a.appendChild(label);
 
-      // Ingen coins gis på klikk – spillene håndterer cookies selv
       scrollbar.appendChild(a);
     });
   </script>
