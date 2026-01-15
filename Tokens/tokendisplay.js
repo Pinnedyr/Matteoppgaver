@@ -1,9 +1,9 @@
 (function () {
   const COOKIE_NAME = "tokens";
-  const TOKEN_PAGE = "/tokens/"; // små bokstaver
-  const ICON_URL = "/tokens/token.png"; // bruker token.png nå
+  const TOKEN_PAGE = "/Tokens/";        // Merk stor T
+  const ICON_URL = "/Tokens/token.png"; // Stor T
 
-  // ---- HENT TOKENS FRA COOKIE ----
+  // ---- HENT COOKIE ----
   function getCookie(name) {
     const match = document.cookie.match(
       new RegExp("(^| )" + name + "=([^;]+)")
@@ -13,7 +13,7 @@
 
   const tokens = getCookie(COOKIE_NAME);
 
-  // ---- STYLE (SAMME SOM HOVEDSIDEN DIN) ----
+  // ---- STYLE ----
   const style = document.createElement("style");
   style.textContent = `
     .wtfq-token-box {
@@ -84,7 +84,7 @@
   `;
 
   box.addEventListener("click", () => {
-    window.open(TOKEN_PAGE, "_self"); // åpner samme vindu
+    window.open(TOKEN_PAGE, "_self"); // åpner Tokens-siden
   });
 
   document.body.appendChild(box);
