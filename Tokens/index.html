@@ -1,1 +1,179 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <title>Tokens / Coins</title>
+
+  <link rel="icon" type="image/png" href="/images/Math header.png">
+
+  <style>
+    :root { --gap: 12px; }
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .coins-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      font-size: 2rem;
+    }
+
+    .coins-display img {
+      width: 36px;
+      height: 36px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: #1f2937;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: background .15s ease, border-color .15s ease, transform .04s ease;
+    }
+
+    .button:hover {
+      background: #111827;
+      border-color: #475569;
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    .scroll-bar {
+      display: flex;
+      overflow-x: auto;
+      gap: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+
+    .scroll-bar::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .scroll-bar::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    .scroll-bar a {
+      min-width: 160px;
+      background: #1f2937;
+      color: #f8fafc;
+      padding: 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      text-align: center;
+      border: 1px solid #334155;
+      flex-shrink: 0;
+      transition: background .15s ease, border-color .15s ease;
+    }
+
+    .scroll-bar a:hover {
+      background: #111827;
+      border-color: #475569;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>What The Facqkuit</h1>
+
+    <div class="coins-display">
+      <img src="coin.png" alt="Coin">
+      <span id="coins-count">0</span> Coins
+    </div>
+
+    <button class="button" id="convert-button">Bytt Coins til Tokens</button>
+
+    <h2>Spill for å tjene coins:</h2>
+    <div class="scroll-bar" id="games-scrollbar">
+      <!-- Spill lenker legges her med JS -->
+    </div>
+  </div>
+
+  <script>
+    // Hent coins fra cookie
+    function getCookie(name) {
+      const match = document.cookie.match(
+        new RegExp("(^| )" + name + "=([^;]+)")
+      );
+      return match ? decodeURIComponent(match[2]) : "0";
+    }
+
+    function setCookie(name, value, days) {
+      const d = new Date();
+      d.setTime(d.getTime() + (days*24*60*60*1000));
+      document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
+    }
+
+    const coinsCountEl = document.getElementById("coins-count");
+    let coins = parseInt(getCookie("coins")) || 0;
+    coinsCountEl.textContent = coins;
+
+    // Bytt coins til tokens
+    document.getElementById("convert-button").addEventListener("click", () => {
+      if (coins > 0) {
+        let tokens = parseInt(getCookie("tokens")) || 0;
+        tokens += coins;
+        coins = 0;
+        setCookie("coins", coins, 365);
+        setCookie("tokens", tokens, 365);
+        coinsCountEl.textContent = coins;
+        alert("Coins er byttet til Tokens!");
+      } else {
+        alert("Du har ingen Coins å bytte!");
+      }
+    });
+
+    // Spill du kan spille for coins
+    const games = [
+      {name: "PokeRouge", url: "https://pokerogue.net/"},
+      {name: "Sandboxels", url: "https://sandboxels.r74n.com/"},
+      {name: "Scratch", url: "https://scratch.mit.edu/"},
+      {name: "Classic Minecraft", url: "https://classic.minecraft.net/"},
+      {name: "Big Shot Boxing", url: "https://poki.com/en/g/big-shot-boxing"},
+    ];
+
+    const scrollbar = document.getElementById("games-scrollbar");
+    games.forEach(game => {
+      const a = document.createElement("a");
+      a.href = game.url;
+      a.target = "_blank";
+      a.textContent = game.name;
+      scrollbar.appendChild(a);
+    });
+  </script>
+
+</body>
+</html>
