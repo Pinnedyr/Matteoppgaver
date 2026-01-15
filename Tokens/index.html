@@ -158,6 +158,24 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 </div>
 
 <script>
+/* ================== SINGLE MENU TAB LOCK ================== */
+const tabId = Date.now() + "-" + Math.random();
+localStorage.setItem("activeMenuTab", tabId);
+
+// Lytt etter andre tabs som setter activeMenuTab
+window.addEventListener("storage", e=>{
+  if(e.key==="activeMenuTab" && e.newValue!==tabId){
+    alert("En annen meny-tab er åpen! Denne tabben vil lukke seg.");
+    window.close();
+  }
+});
+
+// Fjern lock når tabben lukkes
+window.addEventListener("beforeunload", ()=>{
+  const current = localStorage.getItem("activeMenuTab");
+  if(current===tabId) localStorage.removeItem("activeMenuTab");
+});
+
 /* ================== COOKIE FUNKSJONER ================== */
 function getCookie(name){
   const m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
@@ -231,7 +249,6 @@ games.forEach(game=>{
   btn.appendChild(label);
 
   btn.addEventListener("click",()=>{
-    // Åpne modal iframe
     modalOverlay.style.display = "block";
     gameModal.style.display = "block";
     gameIframe.src = game.url;
