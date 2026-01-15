@@ -12,10 +12,10 @@ body {
   margin:0; padding:24px;
   background:#0f172a; color:#e2e8f0;
   font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  overflow-x: hidden;
 }
 
 .container { max-width:1000px; margin:0 auto; text-align:center; }
-
 h1 { font-size:3rem; margin-bottom:16px; }
 
 .currency-display {
@@ -90,19 +90,20 @@ h1 { font-size:3rem; margin-bottom:16px; }
 </div>
 
 <script>
-// COOKIES
+/* ================= COOKIES ================= */
 function getCookie(name){
-  const match=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
-  return match&& !isNaN(parseInt(match[2]))?parseInt(match[2]):0;
+  const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+  return m && !isNaN(parseInt(m[2])) ? parseInt(m[2]) : 0;
 }
 function setCookie(name,value,days=365){
-  const d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000));
+  const d=new Date();
+  d.setTime(d.getTime()+(days*24*60*60*1000));
   document.cookie=name+'='+value+';path=/;expires='+d.toUTCString();
 }
 
-// LIVE DISPLAY
-const coinsCountEl=document.getElementById("coins-count");
-const tokensCountEl=document.getElementById("tokens-count");
+/* ================= LIVE DISPLAY ================= */
+const coinsCountEl = document.getElementById("coins-count");
+const tokensCountEl = document.getElementById("tokens-count");
 function updateDisplay(){
   coinsCountEl.textContent=getCookie("coins");
   tokensCountEl.textContent=getCookie("tokens");
@@ -110,40 +111,44 @@ function updateDisplay(){
 updateDisplay();
 setInterval(updateDisplay,1000);
 
-// CONVERT
+/* ================= CONVERT ================= */
 document.getElementById("convert-button").addEventListener("click",()=>{
-  let coins=getCookie("coins");
-  let tokens=getCookie("tokens");
-  if(coins>=10000){
-    const newTokens=Math.floor(coins/10000);
-    tokens+=newTokens; coins-=newTokens*10000;
+  let coins = getCookie("coins");
+  let tokens = getCookie("tokens");
+  if(coins >= 10000){
+    const newTokens = Math.floor(coins/10000);
+    tokens += newTokens;
+    coins -= newTokens*10000;
     setCookie("coins",coins,365);
     setCookie("tokens",tokens,365);
     updateDisplay();
     alert(newTokens+" Token(s) er lagt til!");
-  }else{ alert("Du trenger minst 10 000 Coins for 1 Token."); }
+  } else alert("Du trenger minst 10 000 Coins for 1 Token.");
 });
 
-// GAMES
-const games=[{name:"Clicker", url:"https://wtfq.online/Tokens/games/Clicker.html", img:"game1.png"}];
-const scrollbar=document.getElementById("games-scrollbar");
-const modal=document.getElementById("game-modal");
-const iframe=document.getElementById("game-frame");
+/* ================= GAMES ================= */
+const games = [
+  {name:"Clicker", url:"https://wtfq.online/Tokens/games/Clicker.html", img:"game1.png"}
+];
+
+const scrollbar = document.getElementById("games-scrollbar");
+const modal = document.getElementById("game-modal");
+const iframe = document.getElementById("game-frame");
 
 games.forEach(game=>{
-  const a=document.createElement("a");
+  const a = document.createElement("a");
   a.className="game-button"; a.href="#";
 
-  const img=document.createElement("img"); img.src=game.img; img.alt=game.name;
-  const label=document.createElement("div"); label.className="game-label"; label.textContent=game.name;
+  const img = document.createElement("img"); img.src=game.img; img.alt=game.name;
+  const label = document.createElement("div"); label.className="game-label"; label.textContent=game.name;
 
   a.appendChild(img); a.appendChild(label);
   scrollbar.appendChild(a);
 
   a.addEventListener("click",(e)=>{
     e.preventDefault();
-    iframe.src=game.url;
-    modal.style.display="flex";
+    iframe.src = game.url;
+    modal.style.display = "flex";
   });
 });
 
@@ -151,6 +156,17 @@ games.forEach(game=>{
 modal.addEventListener("click",(e)=>{
   if(e.target===modal){ modal.style.display="none"; iframe.src=""; }
 });
+
+/* ==================== ANTI-JUKS (OPTIONAL) ==================== */
+// Sjekker om coins plutselig øker på menyen selv om Clicker kjører i iframe
+let lastCoins = getCookie("coins");
+setInterval(()=>{
+  const currentCoins = getCookie("coins");
+  if(currentCoins > lastCoins + 1){ 
+    alert("Multiple tabs detected! Closing.");
+    window.close();
+  } else lastCoins = currentCoins;
+},500);
 </script>
 </body>
 </html>
