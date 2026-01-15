@@ -1,8 +1,9 @@
 (function () {
   const COOKIE_NAME = "tokens";
-  const TOKEN_PAGE = "https://wtfq.online/tokens/";
-  const ICON_URL = "https://wtfq.online/tokens/token.png";
+  const TOKEN_PAGE = "/tokens/"; // små bokstaver
+  const ICON_URL = "/tokens/token.png"; // bruker token.png nå
 
+  // ---- HENT TOKENS FRA COOKIE ----
   function getCookie(name) {
     const match = document.cookie.match(
       new RegExp("(^| )" + name + "=([^;]+)")
@@ -12,7 +13,7 @@
 
   const tokens = getCookie(COOKIE_NAME);
 
-  // ---- STYLE (SAMME SOM SIDEN DIN) ----
+  // ---- STYLE (SAMME SOM HOVEDSIDEN DIN) ----
   const style = document.createElement("style");
   style.textContent = `
     .wtfq-token-box {
@@ -83,7 +84,7 @@
   `;
 
   box.addEventListener("click", () => {
-    window.open(TOKEN_PAGE, "_blank", "noopener noreferrer");
+    window.open(TOKEN_PAGE, "_self"); // åpner samme vindu
   });
 
   document.body.appendChild(box);
