@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clicker Game</title>
+
   <style>
-    :root { --gap: 12px; }
     * { box-sizing: border-box; }
 
     body {
@@ -18,6 +18,7 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      text-align: center;
     }
 
     h1 {
@@ -25,39 +26,47 @@
       margin-bottom: 16px;
     }
 
-    #coin-btn {
-      width: 200px;
-      height: 200px;
-      font-size: 1.8rem;
-      border-radius: 50%;
-      border: 2px solid #334155;
-      background: #1f2937;
-      color: #f8fafc;
-      cursor: pointer;
-      transition: transform 0.05s ease, background 0.2s ease;
-      margin-bottom: 20px;
-    }
-    #coin-btn:hover { background: #111827; }
-    #coin-btn:active { transform: scale(0.95); }
-
     .stats {
       font-size: 1.2rem;
       margin-bottom: 20px;
-      text-align: center;
+    }
+
+    #coin-btn {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: #1f2937;
+      border: 2px solid #334155;
+      color: #f8fafc;
+      font-size: 1.8rem;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+
+    #coin-btn:hover {
+      background: #111827;
+    }
+
+    #coin-btn:active {
+      transform: scale(0.95);
     }
 
     .upgrade-btn {
-      padding: 10px 20px;
+      padding: 12px 18px;
       border-radius: 14px;
-      border: 1px solid #334155;
       background: #1f2937;
       color: #f8fafc;
-      font-weight: 600;
+      border: 1px solid #334155;
       cursor: pointer;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       transition: background 0.15s ease, border-color 0.15s ease;
     }
-    .upgrade-btn:hover { background: #111827; border-color: #475569; }
+
+    .upgrade-btn:hover {
+      background: #111827;
+      border-color: #475569;
+    }
 
     .progress-container {
       width: 200px;
@@ -65,7 +74,6 @@
       background: #334155;
       border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 20px;
     }
 
     .progress-bar {
@@ -76,110 +84,129 @@
     }
   </style>
 </head>
+
 <body>
 
   <h1>Clicker Game</h1>
 
-  <button id="coin-btn">Trykk Meg</button>
-
   <div class="stats">
     Coins: <span id="coins">0</span><br>
-    Autoclicker: <span id="autoclick-speed">-</span>
+    Autoclicker: <span id="speed">-</span>
   </div>
 
+  <button id="coin-btn">Trykk Meg</button>
+
   <button id="upgrade-btn" class="upgrade-btn">
-    Kjøp Autoclicker (+1 coin)
-    <br>Pris: <span id="upgrade-cost">20</span> coins
+    Kjøp Autoclicker (+1 coin)<br>
+    Pris: <span id="cost">20</span> coins
   </button>
 
   <div class="progress-container">
     <div id="progress-bar" class="progress-bar"></div>
   </div>
 
-  <script>
-    // Hjelpefunksjoner for cookies
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      return match ? parseFloat(match[2]) : 0;
+<script>
+  /* ================= COOKIES ================= */
+
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? parseFloat(match[2]) : 0;
+  }
+
+  function setCookie(name, value, days = 365) {
+    const d = new Date();
+    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
+  }
+
+  /* ================= DATA ================= */
+
+  let coins = getCookie("coins") || 0;
+  let autoclickBought = getCookie("autoclickBought") === 1;
+  let autoclickUpgrades = getCookie("autoclickUpgrades") || 0;
+
+  // 🔥 RIKTIG hastighet ved oppstart
+  let autoclickSpeed = Math.max(0.1, 4.0 - autoclickUpgrades * 0.1);
+  let upgradeCost = 20 * Math.pow(1.3, autoclickUpgrades);
+
+  /* ================= ELEMENTER ================= */
+
+  const coinsEl = document.getElementById("coins");
+  const speedEl = document.getElementById("speed");
+  const costEl = document.getElementById("cost");
+  const progressBar = document.getElementById("progress-bar");
+
+  /* ================= UI ================= */
+
+  function updateUI() {
+    coinsEl.textContent = coins;
+    costEl.textContent = Math.floor(upgradeCost);
+    speedEl.textContent = autoclickBought
+      ? autoclickSpeed.toFixed(1) + "s / coin"
+      : "-";
+  }
+
+  updateUI();
+
+  /* ================= MANUELL CLICK ================= */
+
+  document.getElementById("coin-btn").addEventListener("click", () => {
+    coins++;
+    setCookie("coins", coins);
+    updateUI();
+  });
+
+  /* ================= OPPGRADERING ================= */
+
+  document.getElementById("upgrade-btn").addEventListener("click", () => {
+    if (coins < Math.floor(upgradeCost)) {
+      alert("Ikke nok coins!");
+      return;
     }
 
-    function setCookie(name, value, days = 365) {
-      const d = new Date();
-      d.setTime(d.getTime() + (days*24*60*60*1000));
-      document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
-    }
+    coins -= Math.floor(upgradeCost);
+    autoclickBought = true;
+    autoclickUpgrades++;
 
-    // Hent data fra cookies eller init
-    let coins = getCookie("coins") || 0;
-    let autoclickBought = getCookie("autoclickBought") == 1 ? true : false;
-    let autoclickSpeed = 4.0; // sekunder per coin
-    let autoclickUpgrades = getCookie("autoclickUpgrades") || 0;
-    let upgradeCost = 20 * Math.pow(1.3, autoclickUpgrades);
+    autoclickSpeed = Math.max(0.1, 4.0 - autoclickUpgrades * 0.1);
+    upgradeCost = 20 * Math.pow(1.3, autoclickUpgrades);
 
-    const coinBtn = document.getElementById('coin-btn');
-    const coinsEl = document.getElementById('coins');
-    const upgradeBtn = document.getElementById('upgrade-btn');
-    const upgradeCostEl = document.getElementById('upgrade-cost');
-    const autoclickSpeedEl = document.getElementById('autoclick-speed');
-    const progressBar = document.getElementById('progress-bar');
+    setCookie("coins", coins);
+    setCookie("autoclickBought", 1);
+    setCookie("autoclickUpgrades", autoclickUpgrades);
 
-    // Klikk på coin
-    coinBtn.addEventListener('click', () => {
-      coins++;
-      setCookie("coins", coins);
-      updateDisplay();
-    });
+    updateUI();
+  });
 
-    // Kjøp/oppgrader autoclicker
-    upgradeBtn.addEventListener('click', () => {
-      if(coins >= Math.floor(upgradeCost)) {
-        coins -= Math.floor(upgradeCost);
-        autoclickBought = true;
-        autoclickUpgrades++;
-        setCookie("autoclickBought", 1);
-        setCookie("autoclickUpgrades", autoclickUpgrades);
+  /* ================= AUTOCLICKER LOOP ================= */
+
+  let progress = 0;
+  let lastTime = performance.now();
+
+  function gameLoop(now) {
+    const delta = (now - lastTime) / 1000;
+    lastTime = now;
+
+    if (autoclickBought) {
+      progress += delta / autoclickSpeed;
+
+      if (progress >= 1) {
+        coins++;
         setCookie("coins", coins);
-        autoclickSpeed = Math.max(0.1, 4.0 - autoclickUpgrades * 0.1);
-        upgradeCost = 20 * Math.pow(1.3, autoclickUpgrades);
-        updateDisplay();
-      } else {
-        alert("Du har ikke nok coins!");
-      }
-    });
-
-    function updateDisplay() {
-      coinsEl.textContent = coins;
-      upgradeCostEl.textContent = Math.floor(upgradeCost);
-      autoclickSpeedEl.textContent = autoclickBought ? autoclickSpeed.toFixed(1) + "s/coin" : "-";
-    }
-
-    // Autoclicker med progress-bar
-    let progress = 0;
-    let lastTime = Date.now();
-
-    function loop() {
-      const now = Date.now();
-      const delta = (now - lastTime) / 1000;
-      lastTime = now;
-
-      if(autoclickBought) {
-        progress += delta / autoclickSpeed;
-        if(progress >= 1) {
-          coins++;
-          setCookie("coins", coins);
-          progress = 0;
-        }
-        progressBar.style.width = Math.min(progress*100, 100) + "%";
-      } else {
-        progressBar.style.width = "0%";
+        progress = 0;
       }
 
-      updateDisplay();
-      requestAnimationFrame(loop);
+      progressBar.style.width = Math.min(progress * 100, 100) + "%";
+    } else {
+      progressBar.style.width = "0%";
     }
 
-    loop();
-  </script>
+    updateUI();
+    requestAnimationFrame(gameLoop);
+  }
+
+  requestAnimationFrame(gameLoop);
+</script>
 
 </body>
 </html>
