@@ -31,16 +31,16 @@
       margin-bottom: 16px;
     }
 
-    .coins-display {
+    .currency-display {
       display: flex;
-      align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 32px;
       margin-bottom: 24px;
-      font-size: 2rem;
+      font-size: 1.8rem;
+      align-items: center;
     }
 
-    .coins-display img {
+    .currency-display img {
       width: 36px;
       height: 36px;
     }
@@ -109,26 +109,32 @@
   <div class="container">
     <h1>What The Facqkuit</h1>
 
-    <div class="coins-display">
-      <img src="coin.png" alt="Coin">
-      <span id="coins-count">0</span> Coins
+    <div class="currency-display">
+      <div>
+        <img src="coin.png" alt="Coin">
+        <div><span id="coins-count">0</span> Coins</div>
+      </div>
+      <div>
+        <img src="coin.png" alt="Token">
+        <div><span id="tokens-count">0</span> Tokens</div>
+      </div>
     </div>
 
     <button class="button" id="convert-button">Bytt Coins til Tokens</button>
 
-    <h2>Spill for å tjene coins:</h2>
+    <h2>Spill for å tjene Coins:</h2>
     <div class="scroll-bar" id="games-scrollbar">
-      <!-- Spill lenker legges her med JS -->
+      <!-- Spill 1, Spill 2, … -->
     </div>
   </div>
 
   <script>
-    // Hent coins fra cookie
+    // Hent og sett cookie
     function getCookie(name) {
       const match = document.cookie.match(
         new RegExp("(^| )" + name + "=([^;]+)")
       );
-      return match ? decodeURIComponent(match[2]) : "0";
+      return match ? parseInt(decodeURIComponent(match[2])) : 0;
     }
 
     function setCookie(name, value, days) {
@@ -137,32 +143,41 @@
       document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
     }
 
-    const coinsCountEl = document.getElementById("coins-count");
-    let coins = parseInt(getCookie("coins")) || 0;
-    coinsCountEl.textContent = coins;
+    let coins = getCookie("coins");
+    let tokens = getCookie("tokens");
 
-    // Bytt coins til tokens
+    const coinsCountEl = document.getElementById("coins-count");
+    const tokensCountEl = document.getElementById("tokens-count");
+
+    function updateDisplay() {
+      coinsCountEl.textContent = coins;
+      tokensCountEl.textContent = tokens;
+    }
+
+    updateDisplay();
+
+    // Bytt coins til tokens (1000 coins = 1 token)
     document.getElementById("convert-button").addEventListener("click", () => {
-      if (coins > 0) {
-        let tokens = parseInt(getCookie("tokens")) || 0;
-        tokens += coins;
-        coins = 0;
+      if (coins >= 1000) {
+        const newTokens = Math.floor(coins / 1000);
+        tokens += newTokens;
+        coins -= newTokens * 1000;
         setCookie("coins", coins, 365);
         setCookie("tokens", tokens, 365);
-        coinsCountEl.textContent = coins;
-        alert("Coins er byttet til Tokens!");
+        updateDisplay();
+        alert(`${newTokens} Token(s) er lagt til!`);
       } else {
-        alert("Du har ingen Coins å bytte!");
+        alert("Du trenger minst 1000 Coins for 1 Token.");
       }
     });
 
-    // Spill du kan spille for coins
+    // Generiske spill (kan byttes senere)
     const games = [
-      {name: "PokeRouge", url: "https://pokerogue.net/"},
-      {name: "Sandboxels", url: "https://sandboxels.r74n.com/"},
-      {name: "Scratch", url: "https://scratch.mit.edu/"},
-      {name: "Classic Minecraft", url: "https://classic.minecraft.net/"},
-      {name: "Big Shot Boxing", url: "https://poki.com/en/g/big-shot-boxing"},
+      {name: "Spill 1", url: "#"},
+      {name: "Spill 2", url: "#"},
+      {name: "Spill 3", url: "#"},
+      {name: "Spill 4", url: "#"},
+      {name: "Spill 5", url: "#"}
     ];
 
     const scrollbar = document.getElementById("games-scrollbar");
