@@ -4,211 +4,149 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clicker Game</title>
-
 <style>
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  padding: 24px;
-  background: #0f172a;
-  color: #e2e8f0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  text-align: center;
-}
-
-h1 { font-size: 3rem; margin-bottom: 16px; }
-
-.stats { font-size: 1.2rem; margin-bottom: 20px; }
-
-#coin-btn {
-  width: 200px; height: 200px; border-radius: 50%;
-  background: #1f2937; border: 2px solid #334155; color: #f8fafc;
-  font-size: 1.8rem; cursor: pointer; margin-bottom: 20px;
-  transition: background 0.15s ease, transform 0.05s ease;
-}
-#coin-btn:hover { background: #111827; }
-#coin-btn:active { transform: scale(0.95); }
-
-.upgrade-btn {
-  padding: 12px 18px; border-radius: 14px;
-  background: #1f2937; color: #f8fafc; border: 1px solid #334155;
-  cursor: pointer; margin-bottom: 16px;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-.upgrade-btn:hover { background: #111827; border-color: #475569; }
-
-.progress-container {
-  width: 200px; height: 20px; background: #334155;
-  border-radius: 10px; overflow: hidden;
-}
-.progress-bar {
-  height: 100%; width: 0%; background: #6b5dd2;
-  transition: width 0.1s linear;
-}
+*{box-sizing:border-box;}
+body{margin:0;padding:24px;background:#0f172a;color:#f8fafc;font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;display:flex;flex-direction:column;align-items:center;min-height:100vh;text-align:center;}
+h1{font-size:3rem;margin-bottom:16px;}
+.stats{font-size:1.2rem;margin-bottom:20px;}
+#coin-btn{width:200px;height:200px;border-radius:50%;background:#1f2937;border:2px solid #334155;color:#f8fafc;font-size:1.8rem;cursor:pointer;margin-bottom:20px;transition:background .15s ease, transform .05s ease;}
+#coin-btn:hover{background:#111827;}
+#coin-btn:active{transform:scale(0.95);}
+.upgrade-btn{padding:12px 18px;border-radius:14px;background:#1f2937;color:#f8fafc;border:1px solid #334155;cursor:pointer;margin-bottom:16px;transition:background .15s ease,border-color .15s ease;}
+.upgrade-btn:hover{background:#111827;border-color:#475569;}
+.progress-container{width:200px;height:20px;background:#334155;border-radius:10px;overflow:hidden;}
+.progress-bar{height:100%;width:0%;background:#6b5dd2;transition:width .1s linear;}
 </style>
 </head>
-
 <body>
 
 <h1>Clicker Game</h1>
 
 <div class="stats">
-  Coins: <span id="coins">0</span><br>
-  Autoclicker: <span id="speed">-</span>
+Coins: <span id="coins">0</span><br>
+Autoclicker: <span id="speed">-</span>
 </div>
 
 <button id="coin-btn">Trykk Meg</button>
 
 <button id="upgrade-btn" class="upgrade-btn">
-  Kjøp Autoclicker (+1 coin)<br>
-  Pris: <span id="cost">20</span> coins
+Kjøp Autoclicker (+1 coin)<br>
+Pris: <span id="cost">20</span> coins
 </button>
 
 <div class="progress-container">
-  <div id="progress-bar" class="progress-bar"></div>
+<div id="progress-bar" class="progress-bar"></div>
 </div>
 
 <script>
+/* =================== SAFETY / IFRAME CHECK =================== */
 // Sjekk at Clicker kjører i iframe
 if(window.top === window.self){
-    // Ikke i iframe
-    document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Dette spillet kan kun brukes fra menyen!</h1>";
+    document.body.innerHTML="<h1 style='color:white;margin-top:50px;'>Dette spillet kan kun brukes fra menyen!</h1>";
     throw new Error("Clicker kan kun brukes i iframe");
 }
 
-// Sjekk at parent er riktig meny
-try {
-    const parentHref = window.top.location.href;
-    if(!parentHref.startsWith("https://www.wtfq.online/Tokens/")){
-        document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Clicker kan kun brukes fra menyen!</h1>";
-        throw new Error("Feil parent URL");
-    }
-} catch(e){
-    // Hvis vi ikke kan lese top.location (cross-origin)
-    document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Clicker kan kun brukes fra menyen!</h1>";
-    throw new Error("Feil parent URL");
+// Sjekk at referrer er menyen
+if(!document.referrer.startsWith("https://www.wtfq.online/Tokens/")){
+    document.body.innerHTML="<h1 style='color:white;margin-top:50px;'>Clicker kan kun brukes fra menyen!</h1>";
+    throw new Error("Clicker kan kun brukes fra menyen");
 }
 
-// Sjekk at meny-tab er aktiv (single instance lock)
-if(!localStorage.getItem("clickerActiveTab")){
-    document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Ingen aktiv meny-tab! Åpne menyen først.</h1>";
-    throw new Error("Ingen aktiv meny-tab");
-}
-
-
-// Sjekk at meny-tab er aktiv
-if(!localStorage.getItem("clickerActiveTab")){
+/* =================== SINGLE INSTANCE LOCK =================== */
+const lockKey = "clickerActiveTab";
+const parentLock = localStorage.getItem(lockKey);
+if(!parentLock){
     document.body.innerHTML="<h1 style='color:white;margin-top:50px;'>Ingen aktiv meny-tab! Åpne menyen først.</h1>";
     throw new Error("Ingen aktiv meny-tab");
 }
-/* ==================== IFRAME CHECK ==================== */
 
-const allowedParent = "https://wtfq.online/Tokens/";
-
-if (window.top === window.self || window.top.location.href.indexOf(allowedParent) !== 0) {
-  document.body.innerHTML = "<h1 style='color:white;margin-top:50px;'>Dette spillet kan kun brukes fra menyen!</h1>";
-  throw new Error("Clicker kan kun brukes i iframe fra menyen");
-}
-
-/* ==================== COOKIES ==================== */
-
+/* =================== COOKIES =================== */
 function getCookie(name){
-  const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
-  return m && !isNaN(parseFloat(m[2])) ? parseFloat(m[2]) : 0;
+  const m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+  return m && !isNaN(parseFloat(m[2]))?parseFloat(m[2]):0;
 }
-
 function setCookie(name,value,days=365){
-  const d = new Date();
-  d.setTime(d.getTime() + (days*24*60*60*1000));
-  document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
+  const d=new Date();
+  d.setTime(d.getTime()+days*24*60*60*1000);
+  document.cookie=name+"="+value+";path=/;expires="+d.toUTCString();
 }
 
-/* ==================== DATA ==================== */
-
+/* =================== DATA =================== */
 let coins = getCookie("coins") || 0;
-let autoclickBought = getCookie("autoclickBought") === 1;
+let antiJuksVar = getCookie("antiJuksVar") || 0;
+let autoclickBought = getCookie("autoclickBought")===1;
 let autoclickUpgrades = getCookie("autoclickUpgrades") || 0;
+let autoclickSpeed = Math.max(0.1,4.0-autoclickUpgrades*0.1);
+let upgradeCost = 20*Math.pow(1.3,autoclickUpgrades);
 
-let autoclickSpeed = Math.max(0.1, 4.0 - autoclickUpgrades * 0.1);
-let upgradeCost = 20 * Math.pow(1.3, autoclickUpgrades);
+/* =================== ELEMENTS =================== */
+const coinsEl=document.getElementById("coins");
+const speedEl=document.getElementById("speed");
+const costEl=document.getElementById("cost");
+const progressBar=document.getElementById("progress-bar");
 
-/* ==================== ELEMENTS ==================== */
-
-const coinsEl = document.getElementById("coins");
-const speedEl = document.getElementById("speed");
-const costEl = document.getElementById("cost");
-const progressBar = document.getElementById("progress-bar");
-
+/* =================== UI UPDATE =================== */
 function updateUI(){
-  coinsEl.textContent = coins;
-  costEl.textContent = Math.floor(upgradeCost);
-  speedEl.textContent = autoclickBought ? autoclickSpeed.toFixed(1) + "s / coin" : "-";
+  coinsEl.textContent=coins;
+  costEl.textContent=Math.floor(upgradeCost);
+  speedEl.textContent=autoclickBought ? autoclickSpeed.toFixed(1)+"s / coin" : "-";
 }
-
 updateUI();
 
-/* ==================== MANUAL CLICK ==================== */
-
-document.getElementById("coin-btn").addEventListener("click", ()=>{
-  coins++; setCookie("coins", coins);
+/* =================== MANUAL CLICK =================== */
+document.getElementById("coin-btn").addEventListener("click",()=>{
+  coins++;
+  setCookie("coins",coins);
   updateUI();
 });
 
-/* ==================== AUTOCLICKER UPGRADE ==================== */
-
-document.getElementById("upgrade-btn").addEventListener("click", ()=>{
-  if(coins < Math.floor(upgradeCost)){ alert("Ikke nok coins!"); return; }
-
-  coins -= Math.floor(upgradeCost);
-  autoclickBought = true;
+/* =================== UPGRADE =================== */
+document.getElementById("upgrade-btn").addEventListener("click",()=>{
+  if(coins<Math.floor(upgradeCost)){alert("Ikke nok coins!"); return;}
+  coins-=Math.floor(upgradeCost);
+  autoclickBought=true;
   autoclickUpgrades++;
-
-  autoclickSpeed = Math.max(0.1, 4.0 - autoclickUpgrades * 0.1);
-  upgradeCost = 20 * Math.pow(1.3, autoclickUpgrades);
-
-  setCookie("coins", coins);
-  setCookie("autoclickBought", 1);
-  setCookie("autoclickUpgrades", autoclickUpgrades);
-
+  autoclickSpeed=Math.max(0.1,4.0-autoclickUpgrades*0.1);
+  upgradeCost=20*Math.pow(1.3,autoclickUpgrades);
+  setCookie("coins",coins);
+  setCookie("autoclickBought",1);
+  setCookie("autoclickUpgrades",autoclickUpgrades);
   updateUI();
 });
 
-/* ==================== AUTOCLICKER LOOP ==================== */
-
-let progress = 0;
-let lastTime = performance.now();
-let lastCoins = coins;
-
+/* =================== AUTOCLICKER + PROGRESS =================== */
+let progress=0;
+let lastTime=performance.now();
 function gameLoop(now){
-  const delta = (now - lastTime)/1000;
-  lastTime = now;
+  const delta=(now-lastTime)/1000;
+  lastTime=now;
 
   if(autoclickBought){
-    progress += delta / autoclickSpeed;
-    if(progress >= 1){
-      coins++; setCookie("coins", coins);
-      progress = 0;
+    progress+=delta/autoclickSpeed;
+    if(progress>=1){
+      coins++;
+      antiJuksVar++;
+      setCookie("coins",coins);
+      setCookie("antiJuksVar",antiJuksVar);
+      progress=0;
     }
-    progressBar.style.width = Math.min(progress*100, 100) + "%";
-  } else { progressBar.style.width = "0%"; }
-
+    progressBar.style.width=Math.min(progress*100,100)+"%";
+  } else progressBar.style.width="0%";
   updateUI();
-
-  // ==================== ANTI-JUKS ====================
-  const currentCoins = getCookie("coins");
-  if(currentCoins > lastCoins + 1){ alert("Multiple tabs detected! Closing."); window.close(); }
-  else lastCoins = currentCoins;
-
   requestAnimationFrame(gameLoop);
 }
-
 requestAnimationFrame(gameLoop);
 
+/* =================== ANTI-JUKS =================== */
+// Sjekk +1 variabel hvert 0.5s
+let lastVar = antiJuksVar;
+setInterval(()=>{
+  const currentVar = getCookie("antiJuksVar");
+  if(currentVar>lastVar+1){ 
+    alert("Flere meny-tabber åpne! Clicker lukkes.");
+    window.close();
+  } else lastVar=currentVar;
+},500);
 </script>
 
 </body>
