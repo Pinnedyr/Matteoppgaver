@@ -72,7 +72,6 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
   display:none; z-index: 900;
 }
 </style>
-
 </head>
 <body>
 
@@ -80,7 +79,6 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 /* ================== PARENT / REFERRER LOCK ================== */
 (function () {
     const allowedParent = "https://www.wtfq.online/Tokens/";
-
     if (!document.referrer || !document.referrer.startsWith(allowedParent)) {
         document.documentElement.innerHTML = "";
         window.close();
@@ -116,18 +114,23 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 
 <script>
 /* ================== KILL SWITCH COOKIE ================== */
+// Sett cookien til 0 umiddelbart når siden lastes
+document.cookie = "killSwitch=0; path=/";
+
+// Funksjon for å hente killSwitch
 function getKillCookie() {
     const m = document.cookie.match(new RegExp('(^| )killSwitch=([^;]+)'));
     return m ? m[2] : "0";
 }
 
+// Sjekk killSwitch hver 0,1 sekund
 setInterval(() => {
     if(getKillCookie() === "1"){
         window.location.href = "about:blank";
     }
 }, 100);
 
-/* ================== EN FANE /Tokens/ MED FIX LINK ================== */
+/* ================== SINGLE TAB LOCK MED FIX LINK ================== */
 (function() {
     const lockKey = "activeTokensTab";
 
@@ -144,6 +147,7 @@ setInterval(() => {
 
         const fixBtn = document.getElementById("fix-tab");
         fixBtn.addEventListener("click", () => {
+            // midlertidig killSwitch for sikkerhet
             document.cookie = "killSwitch=1; path=/";
             setTimeout(() => { document.cookie = "killSwitch=0; path=/"; }, 50);
             localStorage.removeItem(lockKey);
