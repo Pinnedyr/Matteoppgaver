@@ -5,79 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tokens / Coins</title>
 <link rel="icon" type="image/png" href="/images/Math header.png">
-
 <style>
 :root { --gap: 12px; }
 * { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  padding: 24px;
-  background: #0f172a;
-  color: #e2e8f0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-}
-
+body { margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
 .container { max-width: 1000px; margin: 0 auto; text-align: center; }
 h1 { font-size: 3rem; margin-bottom: 16px; }
-
 .currency-display { display: flex; justify-content: center; gap: 32px; margin-bottom: 24px; font-size: 1.8rem; align-items: center; }
 .currency-display img { width: 36px; height: 36px; }
-
-.button {
-  display: inline-block; padding: 12px 18px; border-radius: 14px; background: #1f2937; color: #f8fafc;
-  border: 1px solid #334155; text-decoration: none; cursor: pointer; margin-bottom: 24px;
-  transition: background .15s ease, border-color .15s ease, transform .04s ease; font-weight: 600;
-}
+.button { display: inline-block; padding: 12px 18px; border-radius: 14px; background: #1f2937; color: #f8fafc; border: 1px solid #334155; text-decoration: none; cursor: pointer; margin-bottom: 24px; transition: background .15s ease, border-color .15s ease, transform .04s ease; font-weight: 600; }
 .button:hover { background: #111827; border-color: #475569; }
 .button:active { transform: translateY(1px); }
 .button:disabled { opacity: 0.5; cursor: not-allowed; }
-
 .scroll-wrapper { display: flex; justify-content: center; width: 100%; }
 .scroll-bar { display: flex; overflow-x: auto; gap: var(--gap); padding-bottom: 12px; margin-bottom: 24px; }
 .scroll-bar::-webkit-scrollbar { height: 8px; }
 .scroll-bar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-
-.game-button {
-  position: relative;
-  width: 160px;
-  aspect-ratio: 4/5; 
-  flex-shrink: 0;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid #334155;
-  cursor: pointer;
-  transition: transform .1s ease, border-color .15s ease;
-  background: #1f2937;
-  text-decoration: none;
-}
+.game-button { position: relative; width: 160px; aspect-ratio: 4/5; flex-shrink: 0; border-radius: 14px; overflow: hidden; border: 1px solid #334155; cursor: pointer; transition: transform .1s ease, border-color .15s ease; background: #1f2937; text-decoration: none; }
 .game-button:hover { transform: translateY(-2px); border-color: #475569; }
 .game-button img { width: 100%; height: 80%; object-fit: cover; display: block; }
-.game-label {
-  position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: rgba(0,0,0,0.8);
-  color: #f8fafc; display: flex; align-items: center; justify-content: center;
-  font-weight: 600; font-size: 0.9rem; text-align: center; padding: 2px;
-}
-
-/* Modal iframe */
-#game-modal {
-  position: fixed; top: 50%; left: 50%; width: 90%; max-width: 1200px; height: 80%; max-height: 800px;
-  transform: translate(-50%, -50%); background: #0f172a; border: 2px solid #334155; border-radius: 14px;
-  display: none; z-index: 1000;
-}
+.game-label { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: rgba(0,0,0,0.8); color: #f8fafc; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; text-align: center; padding: 2px; }
+#game-modal { position: fixed; top: 50%; left: 50%; width: 90%; max-width: 1200px; height: 80%; max-height: 800px; transform: translate(-50%, -50%); background: #0f172a; border: 2px solid #334155; border-radius: 14px; display: none; z-index: 1000; }
 #game-modal iframe { width: 100%; height: 100%; border: none; border-radius: 12px; }
-
-#modal-overlay {
-  position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7);
-  display:none; z-index: 900;
-}
+#modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display:none; z-index: 900; }
 </style>
-
 </head>
 <body>
 
 <script>
-/* ================== PARENT / REFERRER LOCK ================== */
 (function () {
     const allowedParent = "https://www.wtfq.online/Tokens/";
     if (!document.referrer || !document.referrer.startsWith(allowedParent)) {
@@ -90,109 +45,48 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 
 <div class="container">
   <h1>What The Facqkuit</h1>
-
   <div class="currency-display">
-    <div>
-      <img src="coin.png" alt="Coin">
-      <div><span id="coins-count">0</span> Coins</div>
-    </div>
-    <div>
-      <img src="token.png" alt="Token">
-      <div><span id="tokens-count">0</span> Tokens</div>
-    </div>
+    <div><img src="coin.png" alt="Coin"><div><span id="coins-count">0</span> Coins</div></div>
+    <div><img src="token.png" alt="Token"><div><span id="tokens-count">0</span> Tokens</div></div>
   </div>
-
   <button class="button" id="convert-button">Bytt Coins til Tokens</button>
-
   <h2>Spill for å tjene Coins:</h2>
-  <div class="scroll-wrapper">
-    <div class="scroll-bar" id="games-scrollbar"></div>
-  </div>
+  <div class="scroll-wrapper"><div class="scroll-bar" id="games-scrollbar"></div></div>
 </div>
 
 <div id="modal-overlay"></div>
 <div id="game-modal"><iframe id="game-iframe"></iframe></div>
 
 <script>
-/* ================== KILL SWITCH COOKIE MED 0.5s FORSINKELSE ================== */
-// Sett cookien til 0 når siden lastes
+/* ================== KILL SWITCH ================== */
 document.cookie = "killSwitch=0; path=/";
+function getKillCookie() { const m = document.cookie.match(new RegExp('(^| )killSwitch=([^;]+)')); return m ? m[2] : "0"; }
+setTimeout(() => { setInterval(() => { if(getKillCookie() === "1") window.location.href = "about:blank"; }, 100); }, 500);
 
-// Funksjon for å hente killSwitch
-function getKillCookie() {
-    const m = document.cookie.match(new RegExp('(^| )killSwitch=([^;]+)'));
-    return m ? m[2] : "0";
-}
-
-// Vent 0,5 sekund før vi starter å sjekke
-setTimeout(() => {
-    setInterval(() => {
-        if(getKillCookie() === "1"){
-            window.location.href = "about:blank";
-        }
-    }, 100);
-}, 500);
-
-/* ================== SINGLE TAB LOCK MED FIX LINK ================== */
+/* ================== SINGLE TAB LOCK ================== */
 (function() {
     const lockKey = "activeTokensTab";
-
     function showDisabledMessage() {
-        document.body.innerHTML = `
-        <h1 style="color:white;text-align:center;margin-top:50px;">
-        En annen Token meny er åpnet!<br>
-        Denne fanen er deaktivert.
-        </h1>
-        <div style="color:#3b82f6; font-size:0.9rem; text-decoration:underline; cursor:pointer; margin-top:12px;" id="fix-tab">
-        Har du blitt låst ut av nettsiden? Trykk her.
-        </div>
-        `;
-
-        const fixBtn = document.getElementById("fix-tab");
-        fixBtn.addEventListener("click", () => {
+        document.body.innerHTML = `<h1 style="color:white;text-align:center;margin-top:50px;">En annen Token meny er åpnet!<br>Denne fanen er deaktivert.</h1>
+        <div style="color:#3b82f6; font-size:0.9rem; text-decoration:underline; cursor:pointer; margin-top:12px;" id="fix-tab">Har du blitt låst ut av nettsiden? Trykk her.</div>`;
+        document.getElementById("fix-tab").addEventListener("click", () => {
             document.cookie = "killSwitch=1; path=/";
             setTimeout(() => { document.cookie = "killSwitch=0; path=/"; }, 50);
             localStorage.removeItem(lockKey);
             location.reload();
         });
     }
-
-    if(localStorage.getItem(lockKey)){
-        showDisabledMessage();
-        return;
-    }
-
+    if(localStorage.getItem(lockKey)){ showDisabledMessage(); return; }
     const tabId = Date.now() + "-" + Math.random();
     localStorage.setItem(lockKey, tabId);
-
-    window.addEventListener("beforeunload", () => {
-        if(localStorage.getItem(lockKey) === tabId)
-            localStorage.removeItem(lockKey);
-    });
-
-    setInterval(() => {
-        if(localStorage.getItem(lockKey) !== tabId){
-            showDisabledMessage();
-        }
-    }, 500);
-
-    window.addEventListener("storage", (e) => {
-        if(e.key === lockKey && e.newValue !== tabId){
-            showDisabledMessage();
-        }
-    });
+    window.addEventListener("beforeunload", () => { if(localStorage.getItem(lockKey) === tabId) localStorage.removeItem(lockKey); });
+    setInterval(() => { if(localStorage.getItem(lockKey) !== tabId) showDisabledMessage(); }, 500);
+    window.addEventListener("storage", (e) => { if(e.key === lockKey && e.newValue !== tabId) showDisabledMessage(); });
 })();
 
 /* ================== COOKIE FUNKSJONER ================== */
-function getCookie(name){
-  const m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
-  return m && !isNaN(parseFloat(m[2])) ? parseFloat(m[2]) : 0;
-}
-function setCookie(name,value,days=365){
-  const d=new Date();
-  d.setTime(d.getTime()+days*24*60*60*1000);
-  document.cookie=name+"="+value+";path=/;expires="+d.toUTCString();
-}
+function getCookie(name){ const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)')); return m && !isNaN(parseFloat(m[2])) ? parseFloat(m[2]) : 0; }
+function setCookie(name,value,days=365){ const d=new Date(); d.setTime(d.getTime()+days*24*60*60*1000); document.cookie=name+"="+value+";path=/;expires="+d.toUTCString(); }
 
 /* ================== DATA ================== */
 let coins = getCookie("coins");
@@ -234,7 +128,6 @@ const games = [
   {name:"Clicker", img:"game1.png", url:"/Tokens/games/Clicker.html"},
   {name:"Dice", img:"game2.png", url:"/Tokens/games/Dice.html"}
 ];
-
 const scrollbar = document.getElementById("games-scrollbar");
 const modalOverlay = document.getElementById("modal-overlay");
 const gameModal = document.getElementById("game-modal");
@@ -243,41 +136,21 @@ const gameIframe = document.getElementById("game-iframe");
 games.forEach(game=>{
   const btn = document.createElement("div");
   btn.className = "game-button";
-
-  const img = document.createElement("img");
-  img.src = game.img;
-  img.alt = game.name;
-
-  const label = document.createElement("div");
-  label.className = "game-label";
-  label.textContent = game.name;
-
-  btn.appendChild(img);
-  btn.appendChild(label);
-
+  const img = document.createElement("img"); img.src = game.img; img.alt = game.name;
+  const label = document.createElement("div"); label.className = "game-label"; label.textContent = game.name;
+  btn.appendChild(img); btn.appendChild(label);
   btn.addEventListener("click",()=>{
     modalOverlay.style.display = "block";
     gameModal.style.display = "block";
     gameIframe.src = game.url;
   });
-
   scrollbar.appendChild(btn);
 });
 
 modalOverlay.addEventListener("click",()=>{
-  gameIframe.src="";
-  gameModal.style.display="none";
-  modalOverlay.style.display="none";
+  gameIframe.src=""; gameModal.style.display="none"; modalOverlay.style.display="none";
 });
-
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape'){
-    gameIframe.src="";
-    gameModal.style.display="none";
-    modalOverlay.style.display="none";
-  }
-});
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ gameIframe.src=""; gameModal.style.display="none"; modalOverlay.style.display="none"; } });
 </script>
-
 </body>
 </html>
