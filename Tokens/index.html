@@ -72,6 +72,7 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
   display:none; z-index: 900;
 }
 </style>
+
 </head>
 <body>
 
@@ -113,8 +114,8 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 <div id="game-modal"><iframe id="game-iframe"></iframe></div>
 
 <script>
-/* ================== KILL SWITCH COOKIE ================== */
-// Sett cookien til 0 umiddelbart når siden lastes
+/* ================== KILL SWITCH COOKIE MED 0.5s FORSINKELSE ================== */
+// Sett cookien til 0 når siden lastes
 document.cookie = "killSwitch=0; path=/";
 
 // Funksjon for å hente killSwitch
@@ -123,12 +124,14 @@ function getKillCookie() {
     return m ? m[2] : "0";
 }
 
-// Sjekk killSwitch hver 0,1 sekund
-setInterval(() => {
-    if(getKillCookie() === "1"){
-        window.location.href = "about:blank";
-    }
-}, 100);
+// Vent 0,5 sekund før vi starter å sjekke
+setTimeout(() => {
+    setInterval(() => {
+        if(getKillCookie() === "1"){
+            window.location.href = "about:blank";
+        }
+    }, 100);
+}, 500);
 
 /* ================== SINGLE TAB LOCK MED FIX LINK ================== */
 (function() {
@@ -147,7 +150,6 @@ setInterval(() => {
 
         const fixBtn = document.getElementById("fix-tab");
         fixBtn.addEventListener("click", () => {
-            // midlertidig killSwitch for sikkerhet
             document.cookie = "killSwitch=1; path=/";
             setTimeout(() => { document.cookie = "killSwitch=0; path=/"; }, 50);
             localStorage.removeItem(lockKey);
