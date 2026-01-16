@@ -58,6 +58,33 @@ h1{font-size:3rem;margin-bottom:16px;}
 </head>
 <body>
 
+<script>
+/* ================== BESKYTTELSE ================== */
+(function(){
+    const allowedParent = "https://www.wtfq.online/Tokens/";
+
+    let valid = false;
+
+    try {
+        // Hvis vi er i en iframe, sjekk parent
+        if(window.top !== window.self){
+            valid = window.parent.location.href.startsWith(allowedParent);
+        } else {
+            // Hvis ikke iframe, fallback til referrer
+            valid = document.referrer.startsWith(allowedParent);
+        }
+    } catch(e){
+        // cross-origin, da er det ikke lov
+        valid = false;
+    }
+
+    if(!valid){
+        document.documentElement.innerHTML = "";
+        setTimeout(()=>{ window.location.href = allowedParent; }, 100);
+    }
+})();
+</script>
+
 <h1>Clicker Game</h1>
 
 <div class="stats">
@@ -78,12 +105,8 @@ Pris: <span id="cost">20</span> coins
 
 <script>
 /* =================== STORAGE =================== */
-function get(name){
-  return parseFloat(localStorage.getItem(name)) || 0;
-}
-function set(name,value){
-  localStorage.setItem(name,value);
-}
+function get(name){ return parseFloat(localStorage.getItem(name)) || 0; }
+function set(name,value){ localStorage.setItem(name,value); }
 
 /* =================== DATA =================== */
 let coins = get("coins");
