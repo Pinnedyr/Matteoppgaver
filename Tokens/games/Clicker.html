@@ -5,76 +5,84 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clicker Game</title>
 <style>
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  padding:24px;
-  background:#0f172a;
-  color:#f8fafc;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  min-height:100vh;
-  text-align:center;
+/* ================== GLOBAL ================== */
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* låser scroll */
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
-h1{font-size:3rem;margin-bottom:16px;}
-.stats{font-size:1.2rem;margin-bottom:20px;}
-#coin-btn{
-  width:200px;height:200px;
-  border-radius:50%;
-  background:#1f2937;
-  border:2px solid #334155;
-  color:#f8fafc;
-  font-size:1.8rem;
-  cursor:pointer;
-  margin-bottom:20px;
-  transition:background .15s ease, transform .05s ease;
+
+/* ================== TEKST ================== */
+h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; }
+.stats { font-size: clamp(1rem, 2vw, 1.2rem); margin-bottom: 1rem; }
+
+/* ================== KNAPPER ================== */
+#coin-btn {
+  width: min(50vw, 200px);
+  height: min(50vw, 200px);
+  border-radius: 50%;
+  background: #1f2937;
+  border: 2px solid #334155;
+  color: #f8fafc;
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: background .15s ease, transform .05s ease;
 }
-#coin-btn:hover{background:#111827;}
-#coin-btn:active{transform:scale(0.95);}
-.upgrade-btn{
-  padding:12px 18px;
-  border-radius:14px;
-  background:#1f2937;
-  color:#f8fafc;
-  border:1px solid #334155;
-  cursor:pointer;
-  margin-bottom:16px;
+#coin-btn:hover { background: #111827; }
+#coin-btn:active { transform: scale(0.95); }
+
+.upgrade-btn {
+  padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px);
+  border-radius: 14px;
+  background: #1f2937;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  font-weight: 600;
 }
-.upgrade-btn:hover{background:#111827;border-color:#475569;}
-.progress-container{
-  width:200px;height:20px;
-  background:#334155;
-  border-radius:10px;
-  overflow:hidden;
+.upgrade-btn:hover { background:#111827; border-color:#475569; }
+
+/* ================== PROGRESS BAR ================== */
+.progress-container {
+  width: min(60vw, 200px);
+  height: 20px;
+  background: #334155;
+  border-radius: 10px;
+  overflow: hidden;
 }
-.progress-bar{
-  height:100%;
-  width:0%;
-  background:#6b5dd2;
-}
+.progress-bar { height: 100%; width: 0%; background: #6b5dd2; }
 </style>
 </head>
 <body>
 
+<!-- ================== BESKYTTELSE ================== -->
 <script>
-/* ================== BESKYTTELSE ================== */
 (function(){
     const allowedParent = "https://www.wtfq.online/Tokens/";
 
     let valid = false;
-
     try {
-        // Hvis vi er i en iframe, sjekk parent
         if(window.top !== window.self){
+            // iframe
             valid = window.parent.location.href.startsWith(allowedParent);
         } else {
-            // Hvis ikke iframe, fallback til referrer
+            // direkte
             valid = document.referrer.startsWith(allowedParent);
         }
     } catch(e){
-        // cross-origin, da er det ikke lov
         valid = false;
     }
 
