@@ -76,6 +76,19 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 </head>
 <body>
 
+<script>
+/* ================== PARENT / REFERRER LOCK ================== */
+(function () {
+    const allowedParent = "https://www.wtfq.online/Tokens/";
+
+    if (!document.referrer || !document.referrer.startsWith(allowedParent)) {
+        document.documentElement.innerHTML = "";
+        window.close();
+        setTimeout(() => { window.location.href = allowedParent; }, 100);
+    }
+})();
+</script>
+
 <div class="container">
   <h1>What The Facqkuit</h1>
 
