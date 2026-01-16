@@ -5,125 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clicker Game</title>
 <style>
-/* ================== GLOBAL ================== */
 * { box-sizing: border-box; }
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden; /* låser scroll */
-  background: #0f172a;
-  color: #f8fafc;
-  font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-/* ================== TEKST ================== */
-h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; }
-.stats { font-size: clamp(1rem, 2vw, 1.2rem); margin-bottom: 1rem; }
-
-/* ================== KNAPPER ================== */
-#coin-btn {
-  width: min(50vw, 200px);
-  height: min(50vw, 200px);
-  border-radius: 50%;
-  background: #1f2937;
-  border: 2px solid #334155;
-  color: #f8fafc;
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
-  cursor: pointer;
-  margin-bottom: 1rem;
-  transition: background .15s ease, transform .05s ease;
-}
-#coin-btn:hover { background: #111827; }
-#coin-btn:active { transform: scale(0.95); }
-
-.upgrade-btn {
-  padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px);
-  border-radius: 14px;
-  background: #1f2937;
-  color: #f8fafc;
-  border: 1px solid #334155;
-  cursor: pointer;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
+html, body { margin:0; padding:0; width:100vw; height:100vh; overflow:hidden; background:#0f172a; color:#f8fafc; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
+h1 { font-size:clamp(2rem,5vw,3rem); margin-bottom:1rem; }
+.stats { font-size:clamp(1rem,2vw,1.2rem); margin-bottom:1rem; }
+#coin-btn { width:min(50vw,200px); height:min(50vw,200px); border-radius:50%; background:#1f2937; border:2px solid #334155; color:#f8fafc; font-size:clamp(1.2rem,4vw,1.8rem); cursor:pointer; margin-bottom:1rem; transition: background .15s ease, transform .05s ease;}
+#coin-btn:hover { background:#111827; } #coin-btn:active { transform:scale(0.95); }
+.upgrade-btn { padding:clamp(8px,2vw,12px) clamp(12px,3vw,18px); border-radius:14px; background:#1f2937; color:#f8fafc; border:1px solid #334155; cursor:pointer; margin-bottom:1rem; font-weight:600;}
 .upgrade-btn:hover { background:#111827; border-color:#475569; }
-
-/* ================== PROGRESS BAR ================== */
-.progress-container {
-  width: min(60vw, 200px);
-  height: 20px;
-  background: #334155;
-  border-radius: 10px;
-  overflow: hidden;
-}
-.progress-bar { height: 100%; width: 0%; background: #6b5dd2; }
+.progress-container { width:min(60vw,200px); height:20px; background:#334155; border-radius:10px; overflow:hidden; }
+.progress-bar { height:100%; width:0%; background:#6b5dd2; }
 </style>
 </head>
 <body>
 
-<!-- ================== BESKYTTELSE ================== -->
 <script>
 (function(){
     const allowedParent = "https://www.wtfq.online/Tokens/";
-
     let valid = false;
-    try {
-        if(window.top !== window.self){
-            // iframe
-            valid = window.parent.location.href.startsWith(allowedParent);
-        } else {
-            // direkte
-            valid = document.referrer.startsWith(allowedParent);
-        }
-    } catch(e){
-        valid = false;
-    }
-
-    if(!valid){
-        document.documentElement.innerHTML = "";
-        setTimeout(()=>{ window.location.href = allowedParent; }, 100);
-    }
+    try { if(window.top !== window.self){ valid = window.parent.location.href.startsWith(allowedParent); } else { valid = document.referrer.startsWith(allowedParent); } }
+    catch(e){ valid = false; }
+    if(!valid){ document.documentElement.innerHTML=""; setTimeout(()=>{window.location.href=allowedParent;},100); }
 })();
 </script>
 
 <h1>Clicker Game</h1>
-
-<div class="stats">
-Coins: <span id="coins">0</span><br>
-Autoclicker: <span id="speed">-</span>
-</div>
-
+<div class="stats">Coins: <span id="coins">0</span><br>Autoclicker: <span id="speed">-</span></div>
 <button id="coin-btn">Trykk Meg</button>
-
-<button id="upgrade-btn" class="upgrade-btn">
-Kjøp Autoclicker (+1 coin)<br>
-Pris: <span id="cost">20</span> coins
-</button>
-
-<div class="progress-container">
-  <div id="progress-bar" class="progress-bar"></div>
-</div>
+<button id="upgrade-btn" class="upgrade-btn">Kjøp Autoclicker (+1 coin)<br>Pris: <span id="cost">20</span> coins</button>
+<div class="progress-container"><div id="progress-bar" class="progress-bar"></div></div>
 
 <script>
-/* =================== STORAGE =================== */
-function get(name){ return parseFloat(localStorage.getItem(name)) || 0; }
-function set(name,value){ localStorage.setItem(name,value); }
+/* =================== COOKIE FUNKSJONER =================== */
+function getCookie(name){ const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)')); return m && !isNaN(parseFloat(m[2])) ? parseFloat(m[2]) : 0; }
+function setCookie(name,value,days=365){ const d=new Date(); d.setTime(d.getTime()+days*24*60*60*1000); document.cookie=name+"="+value+";path=/;expires="+d.toUTCString(); }
+function get(name){ return getCookie(name); }
+function set(name,value){ setCookie(name,value); }
 
 /* =================== DATA =================== */
 let coins = get("coins");
 let autoclickUpgrades = get("autoclickUpgrades");
-let autoclickBought = autoclickUpgrades > 0;
+let autoclickBought = autoclickUpgrades>0;
 let autoclickSpeed = Math.max(0.1,4.0-autoclickUpgrades*0.1);
 let upgradeCost = 20*Math.pow(1.3,autoclickUpgrades);
 
-/* =================== ELEMENTS =================== */
+/* =================== ELEMENTER =================== */
 const coinsEl=document.getElementById("coins");
 const speedEl=document.getElementById("speed");
 const costEl=document.getElementById("cost");
@@ -146,12 +72,12 @@ document.getElementById("coin-btn").onclick=()=>{
 
 /* =================== UPGRADE =================== */
 document.getElementById("upgrade-btn").onclick=()=>{
-  if(coins < Math.floor(upgradeCost)) return alert("Ikke nok coins!");
-  coins -= Math.floor(upgradeCost);
-  autoclickBought = true;
+  if(coins<Math.floor(upgradeCost)) return alert("Ikke nok coins!");
+  coins-=Math.floor(upgradeCost);
+  autoclickBought=true;
   autoclickUpgrades++;
-  autoclickSpeed = Math.max(0.1,4.0-autoclickUpgrades*0.1);
-  upgradeCost = 20*Math.pow(1.3,autoclickUpgrades);
+  autoclickSpeed=Math.max(0.1,4.0-autoclickUpgrades*0.1);
+  upgradeCost=20*Math.pow(1.3,autoclickUpgrades);
   set("coins",coins);
   set("autoclickUpgrades",autoclickUpgrades);
   updateUI();
@@ -160,27 +86,21 @@ document.getElementById("upgrade-btn").onclick=()=>{
 /* =================== AUTOCLICKER =================== */
 let progress=0;
 let lastTime=performance.now();
-
 function loop(now){
   const delta=(now-lastTime)/1000;
   lastTime=now;
-
   if(autoclickBought){
     progress+=delta/autoclickSpeed;
-    while(progress>=1){
-      coins++;
-      progress--;
-      set("coins",coins);
-    }
+    while(progress>=1){ coins++; progress--; set("coins",coins); }
     progressBar.style.width=(progress*100)+"%";
-  } else {
-    progressBar.style.width="0%";
-  }
-
+  } else { progressBar.style.width="0%"; }
   updateUI();
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
+
+/* =================== SYNC FRA TOKENS-SIDEN =================== */
+setInterval(()=>{ coins = get("coins"); updateUI(); },1000);
 </script>
 
 </body>
