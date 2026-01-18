@@ -223,7 +223,7 @@ const resultText = document.getElementById('resultText');
 const multiplierText = document.getElementById('multiplier');
 const betAmount = document.getElementById('betAmount');
 
-// Multipliers for display (even game)
+// Fair multipliers for 6-sided dice
 const multipliers = {1:6, 2:3, 3:2};
 
 /* COINS */
@@ -286,6 +286,10 @@ betBtn.onclick = () => {
 
     if (!picks.length) return alert("Please select at least one dice face!");
     if (!bet || bet <= 0) return alert("Please enter a valid bet greater than 0!");
+    if (bet > getCoins()) return alert("Not enough coins!");
+
+    // Deduct the bet from coins
+    setCoins(getCoins() - bet);
 
     betBtn.disabled = true;
     dice.classList.remove("win","lose");
@@ -303,14 +307,12 @@ betBtn.onclick = () => {
         if (picks.includes(String(roll))) {
             dice.classList.add("win");
             const payout = Math.floor(bet * multipliers[picks.length]);
-            // Coins stay the same for even game
-            setCoins(getCoins());
-            resultText.textContent = `You rolled ${roll} and won ${payout} coins! (Coins unchanged)`;
+            setCoins(getCoins() + payout); // WIN: add payout
+            resultText.textContent = `You rolled ${roll} and won ${payout} coins!`;
             coinBurst();
         } else {
             dice.classList.add("lose");
-            setCoins(getCoins());
-            resultText.textContent = `You rolled ${roll} and lost. (Coins unchanged)`;
+            resultText.textContent = `You rolled ${roll} and lost ${bet} coins.`;
         }
 
         betBtn.disabled = false;
