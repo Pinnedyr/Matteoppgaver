@@ -20,6 +20,9 @@ body {
     padding: 20px;
     box-sizing: border-box;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .coin-display {
@@ -92,6 +95,7 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+/* BET BUTTON */
 button {
     width: 100%;
     padding: 14px;
@@ -101,6 +105,7 @@ button {
     border-radius: 10px;
     cursor: pointer;
     font-weight: bold;
+    box-sizing: border-box;
 }
 
 button:disabled { opacity: 0.6; }
@@ -215,11 +220,11 @@ const coinsEl = document.getElementById('coins');
 const betBtn = document.getElementById('betBtn');
 const resultText = document.getElementById('resultText');
 const multiplierText = document.getElementById('multiplier');
+const betAmount = document.getElementById('betAmount');
 
 const multipliers = {1:4, 2:3.2, 3:2.4, 4:1.6};
 const WIN_RATE = 0.4;
 
-/* COINS */
 function getCoins() {
     const c = document.cookie.match(/coins=(\d+)/);
     return c ? +c[1] : 1000;
@@ -272,7 +277,10 @@ function coinBurst() {
 betBtn.onclick = () => {
     const bet = +betAmount.value;
     const picks = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
-    if (!bet || bet > getCoins()) return;
+
+    if (!picks.length) return alert("Please select at least one dice face!");
+    if (!bet || bet <= 0) return alert("Please enter a valid bet greater than 0!");
+    if (bet > getCoins()) return alert("Not enough coins!");
 
     setCoins(getCoins() - bet);
     betBtn.disabled = true;
