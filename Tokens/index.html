@@ -103,11 +103,7 @@ function updateDisplay(){
   convertBtn.disabled = coins < 10000;
 }
 
-setInterval(()=>{
-  coins = getCookie("coins");
-  tokens = getCookie("tokens");
-  updateDisplay();
-},1000);
+setInterval(()=>{ coins = getCookie("coins"); tokens = getCookie("tokens"); updateDisplay(); },1000);
 
 updateDisplay();
 
@@ -126,24 +122,45 @@ convertBtn.addEventListener("click",()=>{
 /* ================== SPILL ================== */
 const games = [
   {name:"Clicker", img:"game1.png", url:"/Tokens/games/Clicker.html"},
-  {name:"Dice", img:"game2.png", url:"/Tokens/games/Dice.html"}
+  {name:"Dice", img:"game2.png", url:"/Tokens/games/Dice.html", price: 3500} // Price er valgfri
 ];
-const scrollbar = document.getElementById("games-scrollbar");
-const modalOverlay = document.getElementById("modal-overlay");
-const gameModal = document.getElementById("game-modal");
-const gameIframe = document.getElementById("game-iframe");
 
-games.forEach(game=>{
+games.forEach(game => {
   const btn = document.createElement("div");
   btn.className = "game-button";
-  const img = document.createElement("img"); img.src = game.img; img.alt = game.name;
-  const label = document.createElement("div"); label.className = "game-label"; label.textContent = game.name;
-  btn.appendChild(img); btn.appendChild(label);
-  btn.addEventListener("click",()=>{
+  const img = document.createElement("img"); 
+  img.src = game.img; 
+  img.alt = game.name;
+  const label = document.createElement("div"); 
+  label.className = "game-label"; 
+  label.textContent = game.name;
+
+  // Hvis spillet har price, legg til prisen i label
+  if(game.price) {
+    label.textContent += ` (${game.price.toLocaleString()} Coins)`;
+  }
+
+  btn.appendChild(img); 
+  btn.appendChild(label);
+
+  btn.addEventListener("click", () => {
+    // Hvis spillet har price, sjekk om brukeren har nok Coins
+    if(game.price) {
+      if(coins < game.price) {
+        alert(`Du trenger minst ${game.price.toLocaleString()} Coins for å spille ${game.name}.`);
+        return;
+      } else {
+        coins -= game.price;
+        setCookie("coins", coins);
+        updateDisplay();
+      }
+    }
+
     modalOverlay.style.display = "block";
     gameModal.style.display = "block";
     gameIframe.src = game.url;
   });
+
   scrollbar.appendChild(btn);
 });
 
