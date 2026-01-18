@@ -2,14 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Show Cookies</title>
+  <title>Show and Edit Cookies</title>
 </head>
 <body>
+  <h2>Cookies:</h2>
   <pre id="cookieDisplay"></pre>
 
   <script>
-    // Display the cookies in the <pre> element
-    document.getElementById('cookieDisplay').textContent = document.cookie;
+    const displayCookies = () => {
+      document.getElementById('cookieDisplay').textContent = document.cookie || "(No cookies)";
+    };
+
+    // Vis cookies når siden lastes
+    displayCookies();
+
+    // Funksjoner for å bruke i konsollen:
+    window.setCookie = (name, value, days = 7) => {
+      const d = new Date();
+      d.setTime(d.getTime() + (days*24*60*60*1000));
+      const expires = "expires=" + d.toUTCString();
+      document.cookie = `${name}=${value}; ${expires}; path=/`;
+      displayCookies();
+      console.log(`Cookie satt: ${name}=${value}`);
+    };
+
+    window.deleteCookie = (name) => {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+      displayCookies();
+      console.log(`Cookie slettet: ${name}`);
+    };
+
+    window.getCookie = (name) => {
+      const value = document.cookie.split('; ').find(row => row.startsWith(name + '='))?.split('=')[1];
+      console.log(value || `(Ingen cookie med navn "${name}")`);
+      return value;
+    };
   </script>
 </body>
 </html>
