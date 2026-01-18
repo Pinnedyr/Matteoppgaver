@@ -34,31 +34,31 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 
 .game-button {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 5; /* Total knapp ratio 4:5 */
   position: relative;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid #334155;
   cursor: pointer;
-  transition: transform .1s ease, border-color .15s ease, opacity .15s ease;
+  transition: transform .1s ease, border-color .15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: #1f2937;
 }
 
-.game-button.locked { opacity: 0.25; }
-
+/* Spillbilde 1:1 ratio */
 .game-button img {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
+  display: block;
 }
 
+/* Label rett under bildet, fyller bredden, ingen transparency */
 .game-label {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   width: 100%;
-  height: 25%;
-  background: rgba(0,0,0,0.85);
+  background: #111827; /* svart bakgrunn */
   color: #f8fafc;
   display: flex;
   align-items: center;
@@ -66,10 +66,10 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
   font-weight: 600;
   font-size: 0.95rem;
   text-align: center;
-  padding: 2px;
+  padding: 6px 2px;
 }
 
-/* Pris under kortet */
+/* Pris under hele kortet */
 .game-price {
   display: flex;
   align-items: center;
@@ -155,7 +155,6 @@ games.forEach(game => {
 
   const btn = document.createElement("div");
   btn.className = "game-button";
-  if (typeof game.price === "number" && game.price > 0 && !purchased) btn.classList.add("locked");
 
   const img = document.createElement("img");
   img.src = game.img;
@@ -169,7 +168,7 @@ games.forEach(game => {
   btn.appendChild(label);
   card.appendChild(btn);
 
-  // Pris under kortet
+  // Pris under hele kortet
   if (typeof game.price === "number" && game.price > 0) {
     const priceEl = document.createElement("div");
     priceEl.className = "game-price";
@@ -188,7 +187,6 @@ games.forEach(game => {
         coins -= game.price;
         setCookie("coins", coins);
         setCookie(`gamePurchased_${game.name}`, 1);
-        btn.classList.remove("locked");
         updateDisplay();
         alert(`Du har kjøpt ${game.name}!`);
       }
