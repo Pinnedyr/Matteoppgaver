@@ -1,348 +1,202 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-<meta charset="UTF-8">
-<title>Terningspill med betting</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tokens / Coins</title>
+<link rel="icon" type="image/png" href="/images/Math header.png">
 <style>
-/* === GLOBAL BODY === */
-body {
-    margin: 0;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-    height: 100vh;
-    display: flex;
-    color: #e2e8f0;
-    background: #0f172a; /* mørk bakgrunn, firkantede kanter */
+:root { --gap: 12px; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 24px; background: #0f172a; color: #e2e8f0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+.container { max-width: 1000px; margin: 0 auto; text-align: center; }
+h1 { font-size: 3rem; margin-bottom: 16px; }
+.currency-display { display: flex; justify-content: center; gap: 32px; margin-bottom: 24px; font-size: 1.8rem; align-items: center; }
+.currency-display img { width: 36px; height: 36px; }
+.button { display: inline-block; padding: 12px 18px; border-radius: 14px; background: #1f2937; color: #f8fafc; border: 1px solid #334155; text-decoration: none; cursor: pointer; margin-bottom: 24px; transition: background .15s ease, border-color .15s ease, transform .04s ease; font-weight: 600; }
+.button:hover { background: #111827; border-color: #475569; }
+.button:active { transform: translateY(1px); }
+.button:disabled { opacity: 0.5; cursor: not-allowed; }
+.scroll-wrapper { display: flex; justify-content: center; width: 100%; }
+.scroll-bar { display: flex; overflow-x: auto; gap: var(--gap); padding-bottom: 12px; margin-bottom: 24px; }
+.scroll-bar::-webkit-scrollbar { height: 8px; }
+.scroll-bar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+/* Spill-knapp */
+.game-button {
+  width: 160px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: transform .1s ease, border-color .15s ease, opacity .15s ease;
+  background: #1f2937;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  aspect-ratio: 4 / 5; /* ALLTID 4:5 */
+  margin-bottom: 4px;
 }
 
-/* === VENSTRE PANEL === */
-.left {
-    width: 25%;
-    background: #1f2937; /* mørk farge venstre panel */
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    border-radius: 12px;
+.game-button.locked { opacity: 0.25; }
+
+.game-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* Coin display */
-.coin-display {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 18px;
-}
-.coin-display img { width: 24px; }
-
-/* Terningansikt grid */
-.dice-faces {
-    margin-top: 60px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+.game-label {
+  width: 100%;
+  background: rgba(0,0,0,0.8);
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 4px 2px;
+  margin-top: 4px;
 }
 
-/* Terningnummer ruter */
-.face {
-    background: #111827;
-    border-radius: 12px;
-    padding: 20px;
-    text-align: center;
-    font-size: 24px;
-    cursor: pointer;
-    border: 1px solid #334155;
-    transition: background 0.15s ease, border-color 0.15s ease;
-}
-.face:hover { background: #374151; border-color: #475569; }
-.face.selected { background: #1e40af; border-color: #3b82f6; }
-
-/* Multiplikatorvisning */
-.multiplier { margin: 15px 0; }
-
-/* Bet-boks */
-.bet-box {
-    background: #111827;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    box-sizing: border-box;
-    border: 1px solid #334155;
-}
-.bet-box input {
-    width: 100%;
-    padding: 12px;
-    font-size: 18px;
-    border-radius: 12px;
-    border: 1px solid #334155;
-    outline: none;
-    background: #1f2937;
-    color: #f8fafc;
-    text-align: center;
-    box-sizing: border-box;
-    transition: background .15s ease, border-color .15s ease;
-}
-.bet-box input:focus {
-    background: #111827;
-    border-color: #475569;
+.game-price {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: #f8fafc;
+  margin-bottom: 12px;
 }
 
-/* Bet-knapp med mørk bakgrunn og grønn hover-effekt */
-button {
-    width: 100%;
-    padding: 14px;
-    font-size: 20px;
-    background: #0f172a; /* mørk bakgrunn */
-    border: 1px solid #0f172a; /* skjult kantlinje */
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #f8fafc;
-    transition: box-shadow 0.3s ease, transform 0.04s ease;
-}
+.game-price img { width: 16px; height: 16px; }
 
-button:hover {
-    box-shadow: 0 0 10px 2px #22c55e; /* grønn glow */
-}
-
-button:active {
-    transform: translateY(1px);
-}
-
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-/* === HØYRE PANEL === */
-.right {
-    width: 75%;
-    background: #0e1524; /* litt mørkere enn venstre panel */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-/* === TERNING === */
-.dice {
-    width: 150px;
-    height: 150px;
-    background: white; /* original terningfarge */
-    border-radius: 12px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    padding: 15px;
-    transition: background 0.4s;
-}
-.dice.rolling { animation: shake 0.15s infinite; }
-
-@keyframes shake {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(3deg); }
-    50% { transform: rotate(0deg); }
-    75% { transform: rotate(-3deg); }
-    100% { transform: rotate(0deg); }
-}
-
-/* Glow-effekter */
-.dice.win { animation: glow 0.8s ease-in-out infinite alternate; }
-.dice.lose { animation: glow-red 0.8s ease-in-out infinite alternate; }
-
-@keyframes glow {
-    from { box-shadow: 0 0 15px gold; }
-    to { box-shadow: 0 0 35px gold; }
-}
-@keyframes glow-red {
-    from { box-shadow: 0 0 15px red; }
-    to { box-shadow: 0 0 35px red; }
-}
-
-/* Terningprikker */
-.pip {
-    width: 18px;
-    height: 18px;
-    background: black; /* original black pips */
-    border-radius: 50%;
-    margin: auto;
-    visibility: hidden;
-}
-
-/* Coin-burst */
-.coin {
-    position: absolute;
-    width: 24px;
-    pointer-events: none;
-    animation: burst 1s ease-out forwards;
-}
-
-@keyframes burst {
-    from { transform: translate(0,0) scale(1); opacity: 1; }
-    to { transform: translate(var(--x), -120px) scale(0.5); opacity: 0; }
-}
-
-/* Resultat tekst */
-.result {
-    margin-top: 20px;
-    font-size: 20px;
-    color: #f8fafc;
-}
+#game-modal { position: fixed; top: 50%; left: 50%; width: 90%; max-width: 1200px; height: 80%; max-height: 800px; transform: translate(-50%, -50%); background: #0f172a; border: 2px solid #334155; border-radius: 14px; display: none; z-index: 1000; }
+#game-modal iframe { width: 100%; height: 100%; border: none; border-radius: 12px; }
+#modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display:none; z-index: 900; }
 </style>
 </head>
-
 <body>
 
-<script>
-(function(){
-    const allowedParent = "https://www.wtfq.online/Tokens/";
-    let valid = false;
-    try { if(window.top !== window.self){ valid = window.parent.location.href.startsWith(allowedParent); } else { valid = document.referrer.startsWith(allowedParent); } }
-    catch(e){ valid = false; }
-    if(!valid){ document.documentElement.innerHTML=""; setTimeout(()=>{window.location.href=allowedParent;},100); }
-})();
-</script>
-
-<div class="left">
-    <div class="coin-display">
-        <img src="https://www.wtfq.online/Tokens/coin.png">
-        <span id="coins">0</span>
-    </div>
-
-    <div class="dice-faces">
-        <div class="face">1</div><div class="face">2</div><div class="face">3</div>
-        <div class="face">4</div><div class="face">5</div><div class="face">6</div>
-    </div>
-
-    <div class="multiplier">Multiplikator: <span id="multiplier">0x</span></div>
-
-    <div class="bet-box">
-        <input type="number" id="betAmount" placeholder="Vedde mengde">
-    </div>
-
-    <button id="betBtn">Vedd</button>
+<div class="container">
+  <h1>What The Facqkuit</h1>
+  <div class="currency-display">
+    <div><img src="coin.png" alt="Coin"><div><span id="coins-count">0</span> Coins</div></div>
+    <div><img src="token.png" alt="Token"><div><span id="tokens-count">0</span> Tokens</div></div>
+  </div>
+  <button class="button" id="convert-button">Bytt Coins til Tokens</button>
+  <h2>Spill for å tjene Coins:</h2>
+  <div class="scroll-wrapper"><div class="scroll-bar" id="games-scrollbar"></div></div>
 </div>
 
-<div class="right">
-    <div class="dice" id="dice">
-        <div class="pip"></div><div class="pip"></div><div class="pip"></div>
-        <div class="pip"></div><div class="pip"></div><div class="pip"></div>
-        <div class="pip"></div><div class="pip"></div><div class="pip"></div>
-    </div>
-    <div class="result" id="resultText"></div>
-</div>
+<div id="modal-overlay"></div>
+<div id="game-modal"><iframe id="game-iframe"></iframe></div>
 
 <script>
-const faces = document.querySelectorAll('.face');
-const dice = document.getElementById('dice');
-const pips = dice.children;
-const coinsEl = document.getElementById('coins');
-const betBtn = document.getElementById('betBtn');
-const resultText = document.getElementById('resultText');
-const multiplierText = document.getElementById('multiplier');
-const betAmount = document.getElementById('betAmount');
+/* ================== COOKIE FUNKSJONER ================== */
+function getCookie(name){ const m = document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)')); return m && !isNaN(parseFloat(m[2])) ? parseFloat(m[2]) : 0; }
+function setCookie(name,value,days=365){ const d=new Date(); d.setTime(d.getTime()+days*24*60*60*1000); document.cookie=name+"="+value+";path=/;expires="+d.toUTCString(); }
 
-// Rettferdige multiplikatorer for 6-sidet terning
-const multipliers = {1:6, 2:3, 3:2};
+/* ================== DATA ================== */
+let coins = getCookie("coins");
+let tokens = getCookie("tokens");
 
-/* COINS */
-function getCoins() {
-    const c = document.cookie.match(/coins=(\d+)/);
-    return c ? +c[1] : 1000;
+/* ================== ELEMENTER ================== */
+const coinsCountEl = document.getElementById("coins-count");
+const tokensCountEl = document.getElementById("tokens-count");
+const convertBtn = document.getElementById("convert-button");
+
+function updateDisplay(){
+  coinsCountEl.textContent = coins.toLocaleString();
+  tokensCountEl.textContent = tokens.toLocaleString();
+  convertBtn.disabled = coins < 10000;
 }
-function setCoins(v) {
-    document.cookie = "coins=" + v + ";path=/";
-    coinsEl.textContent = v;
-}
-setCoins(getCoins());
+setInterval(()=>{ coins = getCookie("coins"); tokens = getCookie("tokens"); updateDisplay(); },1000);
+updateDisplay();
 
-/* TERNINGVISNING */
-function showDice(n) {
-    [...pips].forEach(p => p.style.visibility = "hidden");
-    const map = {
-        1:[4],2:[0,8],3:[0,4,8],
-        4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]
-    };
-    map[n].forEach(i => pips[i].style.visibility = "visible");
-}
-
-/* SLUMPTERMIN */
-showDice(Math.floor(Math.random() * 6) + 1);
-
-/* VALG AV TERNINGANSIKT */
-faces.forEach(face => face.onclick = () => {
-    const sel = document.querySelectorAll('.face.selected');
-    if (face.classList.contains('selected')) face.classList.remove('selected');
-    else if (sel.length < 3) face.classList.add('selected'); // maks 3 nummer
-    if (!document.querySelector('.face.selected')) face.classList.add('selected');
-
-    const c = document.querySelectorAll('.face.selected').length;
-    multiplierText.textContent = multipliers[c] ? multipliers[c] + "x" : "0x";
-
-    // Vis dynamiske odds
-    const chance = c > 0 ? ((c/6)*100).toFixed(1) : 0;
-    resultText.textContent = `Sjanse for å vinne: ${chance}%`;
+convertBtn.addEventListener("click",()=>{
+  if(coins >= 10000){
+    const newTokens = Math.floor(coins/10000);
+    tokens += newTokens;
+    coins -= newTokens*10000;
+    setCookie("coins",coins);
+    setCookie("tokens",tokens);
+    updateDisplay();
+    alert(`${newTokens} Token(s) er lagt til!`);
+  } else alert("Du trenger minst 10 000 Coins for 1 Token.");
 });
 
-/* COIN-BURST */
-function coinBurst() {
-    for (let i = 0; i < 12; i++) {
-        const c = document.createElement("img");
-        c.src = "https://www.wtfq.online/Tokens/coin.png";
-        c.className = "coin";
-        c.style.left = "50%";
-        c.style.top = "45%";
-        c.style.setProperty("--x", (Math.random()*200-100)+"px");
-        document.querySelector('.right').appendChild(c);
-        setTimeout(() => c.remove(), 1000);
+/* ================== SPILL ================== */
+const games = [
+  {name:"Clicker", img:"game1.png", url:"/Tokens/games/Clicker.html"},
+  {name:"Dice", img:"game2.png", url:"/Tokens/games/Dice.html", price: 3500}
+];
+
+const scrollbar = document.getElementById("games-scrollbar");
+const modalOverlay = document.getElementById("modal-overlay");
+const gameModal = document.getElementById("game-modal");
+const gameIframe = document.getElementById("game-iframe");
+
+games.forEach(game => {
+  const purchased = getCookie(`gamePurchased_${game.name}`) === 1;
+
+  const btn = document.createElement("div");
+  btn.className = "game-button";
+  if (typeof game.price === "number" && game.price > 0 && !purchased) {
+    btn.classList.add("locked"); // 75% opacity hvis låst
+  }
+
+  const img = document.createElement("img");
+  img.src = game.img;
+  img.alt = game.name;
+
+  const label = document.createElement("div");
+  label.className = "game-label";
+  label.textContent = game.name;
+
+  btn.appendChild(img);
+  btn.appendChild(label);
+
+  scrollbar.appendChild(btn);
+
+  // Legg til pris under knappen
+  if (typeof game.price === "number" && game.price > 0) {
+    const priceEl = document.createElement("div");
+    priceEl.className = "game-price";
+    priceEl.innerHTML = `${game.price.toLocaleString()} <img src="coin.png" alt="Coin">`;
+    scrollbar.appendChild(priceEl);
+  }
+
+  btn.addEventListener("click", () => {
+    if (typeof game.price === "number" && game.price > 0 && !purchased) {
+      if (coins < game.price) {
+        alert(`Du trenger minst ${game.price.toLocaleString()} Coins for å kjøpe ${game.name}.`);
+        return;
+      } else {
+        coins -= game.price;
+        setCookie("coins", coins);
+        setCookie(`gamePurchased_${game.name}`, 1);
+        btn.classList.remove("locked");
+        updateDisplay();
+        alert(`Du har kjøpt ${game.name}!`);
+      }
     }
-}
 
-/* BETTING */
-betBtn.onclick = () => {
-    const bet = +betAmount.value;
-    const picks = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
+    if (!game.price || getCookie(`gamePurchased_${game.name}`) == 1) {
+      modalOverlay.style.display = "block";
+      gameModal.style.display = "block";
+      gameIframe.src = game.url;
+    }
+  });
+});
 
-    if (!picks.length) return alert("Vennligst velg minst ett terningansikt!");
-    if (!bet || bet <= 0) return alert("Vennligst skriv inn et gyldig bet større enn 0!");
-    if (bet > getCoins()) return alert("Ikke nok coins!");
-
-    // Trekk bet fra coins
-    setCoins(getCoins() - bet);
-
-    betBtn.disabled = true;
-    dice.classList.remove("win","lose");
-    dice.classList.add("rolling");
-
-    let anim = setInterval(() => showDice(Math.floor(Math.random()*6)+1), 100);
-
-    setTimeout(() => {
-        clearInterval(anim);
-        dice.classList.remove("rolling");
-
-        const roll = Math.floor(Math.random() * 6) + 1;
-        showDice(roll);
-
-        if (picks.includes(String(roll))) {
-            dice.classList.add("win");
-            const payout = Math.floor(bet * multipliers[picks.length]);
-            setCoins(getCoins() + payout); // VINN: legg til payout
-            resultText.textContent = `Du rullet ${roll} og vant ${payout} coins!`;
-            coinBurst();
-        } else {
-            dice.classList.add("lose");
-            resultText.textContent = `Du rullet ${roll} og tapte ${bet} coins.`;
-        }
-
-        betBtn.disabled = false;
-    }, 900);
-};
+modalOverlay.addEventListener("click",()=>{
+  gameIframe.src=""; gameModal.style.display="none"; modalOverlay.style.display="none";
+});
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape'){ gameIframe.src=""; gameModal.style.display="none"; modalOverlay.style.display="none"; } });
 </script>
 </body>
 </html>
