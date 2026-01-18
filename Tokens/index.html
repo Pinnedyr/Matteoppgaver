@@ -22,22 +22,26 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 .scroll-bar::-webkit-scrollbar { height: 8px; }
 .scroll-bar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
-/* Spill-knapp */
-.game-button {
-  width: 160px;
+/* Spillkort */
+.game-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   flex-shrink: 0;
+  width: 160px;
+  gap: 4px;
+}
+
+.game-button {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  position: relative;
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid #334155;
   cursor: pointer;
   transition: transform .1s ease, border-color .15s ease, opacity .15s ease;
   background: #1f2937;
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  aspect-ratio: 4 / 5; /* ALLTID 4:5 */
-  margin-bottom: 4px;
 }
 
 .game-button.locked { opacity: 0.25; }
@@ -49,8 +53,12 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
 }
 
 .game-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  background: rgba(0,0,0,0.8);
+  height: 25%;
+  background: rgba(0,0,0,0.85);
   color: #f8fafc;
   display: flex;
   align-items: center;
@@ -58,10 +66,10 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
   font-weight: 600;
   font-size: 0.95rem;
   text-align: center;
-  padding: 4px 2px;
-  margin-top: 4px;
+  padding: 2px;
 }
 
+/* Pris under kortet */
 .game-price {
   display: flex;
   align-items: center;
@@ -69,7 +77,6 @@ h1 { font-size: 3rem; margin-bottom: 16px; }
   gap: 4px;
   font-size: 0.85rem;
   color: #f8fafc;
-  margin-bottom: 12px;
 }
 
 .game-price img { width: 16px; height: 16px; }
@@ -143,11 +150,12 @@ const gameIframe = document.getElementById("game-iframe");
 games.forEach(game => {
   const purchased = getCookie(`gamePurchased_${game.name}`) === 1;
 
+  const card = document.createElement("div");
+  card.className = "game-card";
+
   const btn = document.createElement("div");
   btn.className = "game-button";
-  if (typeof game.price === "number" && game.price > 0 && !purchased) {
-    btn.classList.add("locked"); // 75% opacity hvis låst
-  }
+  if (typeof game.price === "number" && game.price > 0 && !purchased) btn.classList.add("locked");
 
   const img = document.createElement("img");
   img.src = game.img;
@@ -159,16 +167,17 @@ games.forEach(game => {
 
   btn.appendChild(img);
   btn.appendChild(label);
+  card.appendChild(btn);
 
-  scrollbar.appendChild(btn);
-
-  // Legg til pris under knappen
+  // Pris under kortet
   if (typeof game.price === "number" && game.price > 0) {
     const priceEl = document.createElement("div");
     priceEl.className = "game-price";
     priceEl.innerHTML = `${game.price.toLocaleString()} <img src="coin.png" alt="Coin">`;
-    scrollbar.appendChild(priceEl);
+    card.appendChild(priceEl);
   }
+
+  scrollbar.appendChild(card);
 
   btn.addEventListener("click", () => {
     if (typeof game.price === "number" && game.price > 0 && !purchased) {
@@ -184,7 +193,6 @@ games.forEach(game => {
         alert(`Du har kjøpt ${game.name}!`);
       }
     }
-
     if (!game.price || getCookie(`gamePurchased_${game.name}`) == 1) {
       modalOverlay.style.display = "block";
       gameModal.style.display = "block";
