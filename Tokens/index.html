@@ -128,15 +128,17 @@ const games = [
 games.forEach(game => {
   const btn = document.createElement("div");
   btn.className = "game-button";
+
   const img = document.createElement("img"); 
   img.src = game.img; 
   img.alt = game.name;
+
   const label = document.createElement("div"); 
   label.className = "game-label"; 
-  label.textContent = game.name;
 
-  // Hvis spillet har price, legg til prisen i label
-  if(game.price) {
+  // Sett label-tekst
+  label.textContent = game.name;
+  if (typeof game.price === "number" && game.price > 0) {
     label.textContent += ` (${game.price.toLocaleString()} Coins)`;
   }
 
@@ -145,8 +147,8 @@ games.forEach(game => {
 
   btn.addEventListener("click", () => {
     // Hvis spillet har price, sjekk om brukeren har nok Coins
-    if(game.price) {
-      if(coins < game.price) {
+    if (typeof game.price === "number" && game.price > 0) {
+      if (coins < game.price) {
         alert(`Du trenger minst ${game.price.toLocaleString()} Coins for å spille ${game.name}.`);
         return;
       } else {
@@ -156,6 +158,7 @@ games.forEach(game => {
       }
     }
 
+    // Åpne spillet
     modalOverlay.style.display = "block";
     gameModal.style.display = "block";
     gameIframe.src = game.url;
