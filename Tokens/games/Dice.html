@@ -50,9 +50,14 @@ body {
     text-align: center;
     font-size: 24px;
     cursor: pointer;
+    border: 2px solid #333; /* darker frame around numbers */
+    transition: border 0.2s, background 0.2s;
 }
 
-.face.selected { background: #1e90ff; }
+.face.selected {
+    background: #1e90ff;
+    border: 2px solid #1a5ea8; /* highlight selected */
+}
 
 .multiplier { margin: 15px 0; }
 
@@ -218,7 +223,7 @@ const resultText = document.getElementById('resultText');
 const multiplierText = document.getElementById('multiplier');
 const betAmount = document.getElementById('betAmount');
 
-// Fair multipliers for 6-sided dice
+// Multipliers for display (even game)
 const multipliers = {1:6, 2:3, 3:2};
 
 /* COINS */
@@ -254,6 +259,10 @@ faces.forEach(face => face.onclick = () => {
 
     const c = document.querySelectorAll('.face.selected').length;
     multiplierText.textContent = multipliers[c] ? multipliers[c] + "x" : "0x";
+
+    // Show dynamic odds
+    const chance = c > 0 ? ((c/6)*100).toFixed(1) : 0;
+    resultText.textContent = `Chance to win: ${chance}%`;
 });
 
 /* COIN BURST */
@@ -275,18 +284,12 @@ betBtn.onclick = () => {
     const bet = +betAmount.value;
     const picks = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
 
-    // VALIDATION
     if (!picks.length) return alert("Please select at least one dice face!");
     if (!bet || bet <= 0) return alert("Please enter a valid bet greater than 0!");
-    if (bet > getCoins()) return alert("Not enough coins!");
-
-    // Deduct the bet
-    setCoins(getCoins() - bet);
 
     betBtn.disabled = true;
     dice.classList.remove("win","lose");
     dice.classList.add("rolling");
-    resultText.textContent = "";
 
     let anim = setInterval(() => showDice(Math.floor(Math.random()*6)+1), 100);
 
@@ -294,19 +297,20 @@ betBtn.onclick = () => {
         clearInterval(anim);
         dice.classList.remove("rolling");
 
-        // Fair dice roll
         const roll = Math.floor(Math.random() * 6) + 1;
         showDice(roll);
 
         if (picks.includes(String(roll))) {
             dice.classList.add("win");
             const payout = Math.floor(bet * multipliers[picks.length]);
-            setCoins(getCoins() + payout); // pay the winnings
-            resultText.textContent = `You won ${payout} coins!`;
+            // Coins stay the same for even game
+            setCoins(getCoins());
+            resultText.textContent = `You rolled ${roll} and won ${payout} coins! (Coins unchanged)`;
             coinBurst();
         } else {
             dice.classList.add("lose");
-            resultText.textContent = `You lost ${bet} coins.`;
+            setCoins(getCoins());
+            resultText.textContent = `You rolled ${roll} and lost. (Coins unchanged)`;
         }
 
         betBtn.disabled = false;
