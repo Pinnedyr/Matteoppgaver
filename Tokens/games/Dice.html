@@ -218,8 +218,8 @@ const resultText = document.getElementById('resultText');
 const multiplierText = document.getElementById('multiplier');
 const betAmount = document.getElementById('betAmount');
 
-// Multipliers to give ~60% house edge
-const multipliers = {1:2.4, 2:1.2, 3:0.8};
+// Fair multipliers for even game
+const multipliers = {1:6, 2:3, 3:2};
 
 /* COINS */
 function getCoins() {
@@ -304,7 +304,8 @@ betBtn.onclick = () => {
             coinBurst();
         } else {
             dice.classList.add("lose");
-            resultText.textContent = "You lost.";
+            // No loss in a fair game? Actually losing bet is already removed, so no extra penalty
+            resultText.textContent = "You lost " + bet + " coins.";
         }
 
         betBtn.disabled = false;
