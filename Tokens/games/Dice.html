@@ -11,13 +11,13 @@ body {
     height: 100vh;
     display: flex;
     color: #e2e8f0;
-    background: #0f172a; /* dark background like the site */
+    background: #0f172a; /* dark background, square edges */
 }
 
 /* === LEFT PANEL === */
 .left {
     width: 25%;
-    background: #1f2937; /* darker panel color */
+    background: #1f2937; /* left panel dark color */
     padding: 20px;
     box-sizing: border-box;
     position: relative;
@@ -55,7 +55,7 @@ body {
     text-align: center;
     font-size: 24px;
     cursor: pointer;
-    border: 1px solid #334155; /* subtle frame */
+    border: 1px solid #334155;
     transition: background 0.15s ease, border-color 0.15s ease;
 }
 .face:hover { background: #374151; border-color: #475569; }
@@ -111,20 +111,21 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 /* === RIGHT PANEL === */
 .right {
     width: 75%;
-    background: #1f2937;
+    background: #0e1524; /* slightly darker than left panel */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: 12px;
+    /* square edges, no rounding */
 }
 
-/* Dice styling */
+/* === DICE === */
+/* Restore original dice style: white background, black pips, glow on win/lose */
 .dice {
     width: 150px;
     height: 150px;
-    background: #111827;
+    background: white; /* original dice color */
     border-radius: 12px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -142,24 +143,24 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
     100% { transform: rotate(0deg); }
 }
 
-/* Win / lose glow */
+/* Glow effects */
 .dice.win { animation: glow 0.8s ease-in-out infinite alternate; }
 .dice.lose { animation: glow-red 0.8s ease-in-out infinite alternate; }
 
 @keyframes glow {
-    from { box-shadow: 0 0 15px #facc15; }
-    to { box-shadow: 0 0 35px #fbbf24; }
+    from { box-shadow: 0 0 15px gold; }
+    to { box-shadow: 0 0 35px gold; }
 }
 @keyframes glow-red {
-    from { box-shadow: 0 0 15px #ef4444; }
-    to { box-shadow: 0 0 35px #f87171; }
+    from { box-shadow: 0 0 15px red; }
+    to { box-shadow: 0 0 35px red; }
 }
 
 /* Dice pips */
 .pip {
     width: 18px;
     height: 18px;
-    background: #e2e8f0;
+    background: black; /* original black pips */
     border-radius: 50%;
     margin: auto;
     visibility: hidden;
