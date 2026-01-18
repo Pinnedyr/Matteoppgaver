@@ -22,7 +22,6 @@ body {
     position: relative;
 }
 
-/* COIN DISPLAY */
 .coin-display {
     position: absolute;
     top: 15px;
@@ -35,16 +34,14 @@ body {
 
 .coin-display img {
     width: 24px;
-    height: 24px;
 }
 
-/* DICE FACE SELECT */
+/* FACE PICKER */
 .dice-faces {
     margin-top: 60px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    margin-bottom: 15px;
 }
 
 .face {
@@ -56,41 +53,57 @@ body {
     cursor: pointer;
 }
 
-.face.selected {
-    background: #1e90ff;
-}
+.face.selected { background: #1e90ff; }
 
-.multiplier {
-    margin-bottom: 15px;
-}
+.multiplier { margin: 15px 0; }
 
+/* BET INPUT */
 .bet-box {
-    background: #444;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    background: #3b3b3b;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
 }
 
-input {
+.bet-box input {
     width: 100%;
-    padding: 8px;
-    font-size: 16px;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: #1f1f1f;
+    color: #7CFC90;
+    text-align: center;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.6);
+}
+
+.bet-box input:focus {
+    box-shadow: 0 0 8px #7CFC90;
+}
+
+/* REMOVE NUMBER ARROWS */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
 }
 
 button {
     width: 100%;
-    padding: 12px;
-    font-size: 18px;
+    padding: 14px;
+    font-size: 20px;
     background: #7CFC90;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
+    font-weight: bold;
 }
 
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+button:disabled { opacity: 0.6; }
 
 /* RIGHT PANEL */
 .right {
@@ -100,6 +113,7 @@ button:disabled {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 /* DICE */
@@ -114,7 +128,6 @@ button:disabled {
     padding: 15px;
 }
 
-/* SHAKE ANIMATION */
 .dice.rolling {
     animation: shake 0.15s infinite;
 }
@@ -127,6 +140,16 @@ button:disabled {
     100% { transform: rotate(0deg); }
 }
 
+/* WIN GLOW */
+.dice.win {
+    animation: glow 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 15px gold; }
+    to { box-shadow: 0 0 35px gold; }
+}
+
 .pip {
     width: 18px;
     height: 18px;
@@ -136,10 +159,20 @@ button:disabled {
     visibility: hidden;
 }
 
-.result {
-    margin-top: 20px;
-    font-size: 20px;
+/* COIN BURST */
+.coin {
+    position: absolute;
+    width: 24px;
+    pointer-events: none;
+    animation: burst 1s ease-out forwards;
 }
+
+@keyframes burst {
+    from { transform: translate(0,0) scale(1); opacity: 1; }
+    to { transform: translate(var(--x), -120px) scale(0.5); opacity: 0; }
+}
+
+.result { margin-top: 20px; font-size: 20px; }
 </style>
 </head>
 
@@ -152,20 +185,14 @@ button:disabled {
     </div>
 
     <div class="dice-faces">
-        <div class="face">1</div>
-        <div class="face">2</div>
-        <div class="face">3</div>
-        <div class="face">4</div>
-        <div class="face">5</div>
-        <div class="face">6</div>
+        <div class="face">1</div><div class="face">2</div><div class="face">3</div>
+        <div class="face">4</div><div class="face">5</div><div class="face">6</div>
     </div>
 
-    <div class="multiplier">
-        Multiplier: <span id="multiplier">0x</span>
-    </div>
+    <div class="multiplier">Multiplier: <span id="multiplier">0x</span></div>
 
     <div class="bet-box">
-        <input type="number" id="betAmount" placeholder="Bet coins" min="1">
+        <input type="number" id="betAmount" placeholder="Enter bet">
     </div>
 
     <button id="betBtn">BET</button>
@@ -182,87 +209,99 @@ button:disabled {
 
 <script>
 const faces = document.querySelectorAll('.face');
-const multiplierText = document.getElementById('multiplier');
 const dice = document.getElementById('dice');
 const pips = dice.children;
-const resultText = document.getElementById('resultText');
 const coinsEl = document.getElementById('coins');
 const betBtn = document.getElementById('betBtn');
+const resultText = document.getElementById('resultText');
+const multiplierText = document.getElementById('multiplier');
 
 const multipliers = {1:4, 2:3.2, 3:2.4, 4:1.6};
+const WIN_RATE = 0.4;
 
+/* COINS */
 function getCoins() {
     const c = document.cookie.match(/coins=(\d+)/);
-    return c ? parseInt(c[1]) : 1000;
+    return c ? +c[1] : 1000;
 }
-
-function setCoins(val) {
-    document.cookie = "coins=" + val + ";path=/";
-    coinsEl.textContent = val;
+function setCoins(v) {
+    document.cookie = "coins=" + v + ";path=/";
+    coinsEl.textContent = v;
 }
-
 setCoins(getCoins());
 
-function updateMultiplier() {
-    const count = document.querySelectorAll('.face.selected').length;
-    multiplierText.textContent = multipliers[count] ? multipliers[count] + "x" : "0x";
+/* DICE DISPLAY */
+function showDice(n) {
+    [...pips].forEach(p => p.style.visibility = "hidden");
+    const map = {
+        1:[4],2:[0,8],3:[0,4,8],
+        4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]
+    };
+    map[n].forEach(i => pips[i].style.visibility = "visible");
 }
 
-faces.forEach(face => {
-    face.onclick = () => {
-        const selected = document.querySelectorAll('.face.selected');
-        if (face.classList.contains('selected')) {
-            face.classList.remove('selected');
-        } else {
-            if (selected.length >= 4) return;
-            face.classList.add('selected');
-        }
-        if (document.querySelectorAll('.face.selected').length === 0) {
-            face.classList.add('selected');
-        }
-        updateMultiplier();
-    };
+/* RANDOM FACE ON LOAD */
+showDice(Math.floor(Math.random() * 6) + 1);
+
+/* FACE PICKING */
+faces.forEach(face => face.onclick = () => {
+    const sel = document.querySelectorAll('.face.selected');
+    if (face.classList.contains('selected')) face.classList.remove('selected');
+    else if (sel.length < 4) face.classList.add('selected');
+    if (!document.querySelector('.face.selected')) face.classList.add('selected');
+
+    const c = document.querySelectorAll('.face.selected').length;
+    multiplierText.textContent = multipliers[c] ? multipliers[c] + "x" : "0x";
 });
 
-function showDice(number) {
-    [...pips].forEach(p => p.style.visibility = "hidden");
-    const layouts = {
-        1:[4], 2:[0,8], 3:[0,4,8],
-        4:[0,2,6,8], 5:[0,2,4,6,8],
-        6:[0,2,3,5,6,8]
-    };
-    layouts[number].forEach(i => pips[i].style.visibility = "visible");
+/* COIN BURST */
+function coinBurst() {
+    for (let i = 0; i < 12; i++) {
+        const c = document.createElement("img");
+        c.src = "https://www.wtfq.online/Tokens/coin.png";
+        c.className = "coin";
+        c.style.left = "50%";
+        c.style.top = "45%";
+        c.style.setProperty("--x", (Math.random()*200-100)+"px");
+        document.querySelector('.right').appendChild(c);
+        setTimeout(() => c.remove(), 1000);
+    }
 }
 
+/* BET */
 betBtn.onclick = () => {
-    const bet = parseInt(betAmount.value);
-    const selected = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
-    let coins = getCoins();
+    const bet = +betAmount.value;
+    const picks = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
+    if (!bet || bet > getCoins()) return;
 
-    if (!bet || bet <= 0) return alert("Enter a valid bet");
-    if (bet > coins) return alert("Not enough coins");
-
-    setCoins(coins - bet);
+    setCoins(getCoins() - bet);
     betBtn.disabled = true;
+    dice.classList.remove("win");
+    dice.classList.add("rolling");
     resultText.textContent = "";
 
-    dice.classList.add("rolling");
-
-    let rollInterval = setInterval(() => {
-        showDice(Math.floor(Math.random() * 6) + 1);
-    }, 100);
+    let anim = setInterval(() => showDice(Math.floor(Math.random()*6)+1), 100);
 
     setTimeout(() => {
-        clearInterval(rollInterval);
+        clearInterval(anim);
         dice.classList.remove("rolling");
 
-        const finalRoll = Math.floor(Math.random() * 6) + 1;
-        showDice(finalRoll);
+        let roll = Math.floor(Math.random()*6)+1;
+        let win = picks.includes(String(roll)) && Math.random() < WIN_RATE;
 
-        if (selected.includes(String(finalRoll))) {
-            const win = Math.floor(bet * multipliers[selected.length]);
-            setCoins(getCoins() + win);
-            resultText.textContent = "You won " + win + " coins!";
+        if (!win) {
+            const loseNums = [1,2,3,4,5,6].filter(n => !picks.includes(String(n)));
+            roll = loseNums[Math.floor(Math.random()*loseNums.length)];
+        }
+
+        showDice(roll);
+
+        if (win) {
+            dice.classList.add("win");
+            const payout = Math.floor(bet * multipliers[picks.length]);
+            setCoins(getCoins() + payout);
+            resultText.textContent = "You won " + payout + " coins!";
+            coinBurst();
         } else {
             resultText.textContent = "You lost.";
         }
