@@ -1,1 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dice Betting Game</title>
 
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    color: white;
+}
+
+/* LEFT PANEL */
+.left {
+    width: 25%;
+    background: #2f2f2f;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* COIN DISPLAY */
+.coin-display {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
+}
+
+.coin-display img {
+    width: 24px;
+    height: 24px;
+}
+
+.dice-faces {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.face {
+    background: #555;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.face.selected {
+    background: #1e90ff;
+}
+
+.multiplier {
+    margin-bottom: 15px;
+}
+
+.bet-box {
+    background: #444;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    background: #7CFC90;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* RIGHT PANEL */
+.right {
+    width: 75%;
+    background: #555;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* DICE */
+.dice {
+    width: 150px;
+    height: 150px;
+    background: white;
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    padding: 15px;
+}
+
+.pip {
+    width: 18px;
+    height: 18px;
+    background: black;
+    border-radius: 50%;
+    margin: auto;
+    visibility: hidden;
+}
+
+.result {
+    margin-top: 20px;
+    font-size: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="left">
+    <div class="coin-display">
+        <img src="https://www.wtfq.online/Tokens/coin.png">
+        <span id="coins">0</span>
+    </div>
+
+    <div class="dice-faces">
+        <div class="face">1</div>
+        <div class="face">2</div>
+        <div class="face">3</div>
+        <div class="face">4</div>
+        <div class="face">5</div>
+        <div class="face">6</div>
+    </div>
+
+    <div class="multiplier">
+        Multiplier: <span id="multiplier">0x</span>
+    </div>
+
+    <div class="bet-box">
+        <input type="number" id="betAmount" placeholder="Bet coins" min="1">
+    </div>
+
+    <button id="betBtn">BET</button>
+</div>
+
+<div class="right">
+    <div class="dice" id="dice">
+        <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+        <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+        <div class="pip"></div><div class="pip"></div><div class="pip"></div>
+    </div>
+    <div class="result" id="resultText"></div>
+</div>
+
+<script>
+const faces = document.querySelectorAll('.face');
+const multiplierText = document.getElementById('multiplier');
+const dice = document.getElementById('dice');
+const pips = dice.children;
+const resultText = document.getElementById('resultText');
+const coinsEl = document.getElementById('coins');
+
+const multipliers = {1:4, 2:3.2, 3:2.4, 4:1.6};
+
+function getCoins() {
+    const c = document.cookie.match(/coins=(\d+)/);
+    return c ? parseInt(c[1]) : 1000;
+}
+
+function setCoins(val) {
+    document.cookie = "coins=" + val + ";path=/";
+    coinsEl.textContent = val;
+}
+
+setCoins(getCoins());
+
+function updateMultiplier() {
+    const count = document.querySelectorAll('.face.selected').length;
+    multiplierText.textContent = multipliers[count] ? multipliers[count] + "x" : "0x";
+}
+
+faces.forEach(face => {
+    face.onclick = () => {
+        const selected = document.querySelectorAll('.face.selected');
+
+        if (face.classList.contains('selected')) {
+            face.classList.remove('selected');
+        } else {
+            if (selected.length >= 4) return;
+            face.classList.add('selected');
+        }
+
+        if (document.querySelectorAll('.face.selected').length === 0) {
+            face.classList.add('selected');
+        }
+        updateMultiplier();
+    };
+});
+
+function showDice(number) {
+    [...pips].forEach(p => p.style.visibility = "hidden");
+
+    const layouts = {
+        1:[4],
+        2:[0,8],
+        3:[0,4,8],
+        4:[0,2,6,8],
+        5:[0,2,4,6,8],
+        6:[0,2,3,5,6,8]
+    };
+
+    layouts[number].forEach(i => pips[i].style.visibility = "visible");
+}
+
+document.getElementById('betBtn').onclick = () => {
+    const bet = parseInt(betAmount.value);
+    const selected = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
+    let coins = getCoins();
+
+    if (!bet || bet <= 0) return alert("Enter a valid bet");
+    if (bet > coins) return alert("Not enough coins");
+
+    setCoins(coins - bet);
+
+    const roll = Math.floor(Math.random() * 6) + 1;
+    showDice(roll);
+
+    if (selected.includes(String(roll))) {
+        const win = Math.floor(bet * multipliers[selected.length]);
+        setCoins(getCoins() + win);
+        resultText.textContent = "You won " + win + " coins!";
+    } else {
+        resultText.textContent = "You lost.";
+    }
+};
+</script>
+
+</body>
+</html>
