@@ -4,26 +4,30 @@
 <meta charset="UTF-8">
 <title>Dice Betting Game</title>
 <style>
+/* === GLOBAL BODY === */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     height: 100vh;
     display: flex;
-    color: white;
+    color: #e2e8f0;
+    background: #0f172a; /* dark background like the site */
 }
 
-/* LEFT PANEL */
+/* === LEFT PANEL === */
 .left {
     width: 25%;
-    background: #2f2f2f;
+    background: #1f2937; /* darker panel color */
     padding: 20px;
     box-sizing: border-box;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    border-radius: 12px;
 }
 
+/* Coin display */
 .coin-display {
     position: absolute;
     top: 15px;
@@ -33,9 +37,9 @@ body {
     gap: 6px;
     font-size: 18px;
 }
-
 .coin-display img { width: 24px; }
 
+/* Dice faces grid */
 .dice-faces {
     margin-top: 60px;
     display: grid;
@@ -43,87 +47,84 @@ body {
     gap: 10px;
 }
 
+/* Dice number squares */
 .face {
-    background: #555;
-    border-radius: 8px;
+    background: #111827;
+    border-radius: 12px;
     padding: 20px;
     text-align: center;
     font-size: 24px;
     cursor: pointer;
-    border: 2px solid #333; /* darker frame around numbers */
-    transition: border 0.2s, background 0.2s;
+    border: 1px solid #334155; /* subtle frame */
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
+.face:hover { background: #374151; border-color: #475569; }
+.face.selected { background: #1e40af; border-color: #3b82f6; }
 
-.face.selected {
-    background: #1e90ff;
-    border: 2px solid #1a5ea8; /* highlight selected */
-}
-
+/* Multiplier display */
 .multiplier { margin: 15px 0; }
 
-/* BET INPUT */
+/* Bet input */
 .bet-box {
-    background: #3b3b3b;
+    background: #111827;
     padding: 12px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 12px;
     box-sizing: border-box;
+    border: 1px solid #334155;
 }
-
 .bet-box input {
     width: 100%;
     padding: 12px;
     font-size: 18px;
-    border-radius: 8px;
-    border: none;
+    border-radius: 12px;
+    border: 1px solid #334155;
     outline: none;
-    background: #1f1f1f;
-    color: #7CFC90;
+    background: #1f2937;
+    color: #f8fafc;
     text-align: center;
     box-sizing: border-box;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.6);
+    transition: background .15s ease, border-color .15s ease;
 }
-
 .bet-box input:focus {
-    box-shadow: 0 0 8px #7CFC90;
+    background: #111827;
+    border-color: #475569;
 }
 
-/* REMOVE NUMBER ARROWS */
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-input[type=number] { -moz-appearance: textfield; }
-
-/* BET BUTTON */
+/* Bet button with frame/background */
 button {
     width: 100%;
     padding: 14px;
     font-size: 20px;
-    background: #7CFC90;
-    border: none;
-    border-radius: 10px;
+    background: #1f2937;
+    border: 1px solid #334155;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: bold;
-    box-sizing: border-box;
+    color: #f8fafc;
+    transition: background .15s ease, border-color .15s ease, transform .04s ease;
 }
+button:hover { background: #111827; border-color: #475569; }
+button:active { transform: translateY(1px); }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-button:disabled { opacity: 0.6; }
-
-/* RIGHT PANEL */
+/* === RIGHT PANEL === */
 .right {
     width: 75%;
-    background: #555;
+    background: #1f2937;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
+    border-radius: 12px;
 }
 
-/* DICE */
+/* Dice styling */
 .dice {
     width: 150px;
     height: 150px;
-    background: white;
+    background: #111827;
     border-radius: 12px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -131,7 +132,6 @@ button:disabled { opacity: 0.6; }
     padding: 15px;
     transition: background 0.4s;
 }
-
 .dice.rolling { animation: shake 0.15s infinite; }
 
 @keyframes shake {
@@ -142,30 +142,30 @@ button:disabled { opacity: 0.6; }
     100% { transform: rotate(0deg); }
 }
 
-/* WIN / LOSS GLOW */
+/* Win / lose glow */
 .dice.win { animation: glow 0.8s ease-in-out infinite alternate; }
 .dice.lose { animation: glow-red 0.8s ease-in-out infinite alternate; }
 
 @keyframes glow {
-    from { box-shadow: 0 0 15px gold; }
-    to { box-shadow: 0 0 35px gold; }
+    from { box-shadow: 0 0 15px #facc15; }
+    to { box-shadow: 0 0 35px #fbbf24; }
 }
-
 @keyframes glow-red {
-    from { box-shadow: 0 0 15px red; }
-    to { box-shadow: 0 0 35px red; }
+    from { box-shadow: 0 0 15px #ef4444; }
+    to { box-shadow: 0 0 35px #f87171; }
 }
 
+/* Dice pips */
 .pip {
     width: 18px;
     height: 18px;
-    background: black;
+    background: #e2e8f0;
     border-radius: 50%;
     margin: auto;
     visibility: hidden;
 }
 
-/* COIN BURST */
+/* Coin burst */
 .coin {
     position: absolute;
     width: 24px;
@@ -178,7 +178,12 @@ button:disabled { opacity: 0.6; }
     to { transform: translate(var(--x), -120px) scale(0.5); opacity: 0; }
 }
 
-.result { margin-top: 20px; font-size: 20px; }
+/* Result text */
+.result {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #f8fafc;
+}
 </style>
 </head>
 
