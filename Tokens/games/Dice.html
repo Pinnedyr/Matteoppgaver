@@ -218,8 +218,8 @@ const resultText = document.getElementById('resultText');
 const multiplierText = document.getElementById('multiplier');
 const betAmount = document.getElementById('betAmount');
 
-const multipliers = {1:4, 2:3.2, 3:2.4, 4:1.6};
-const WIN_RATE = 0.4;
+// Multipliers to give ~60% house edge
+const multipliers = {1:2.4, 2:1.2, 3:0.8};
 
 /* COINS */
 function getCoins() {
@@ -249,7 +249,7 @@ showDice(Math.floor(Math.random() * 6) + 1);
 faces.forEach(face => face.onclick = () => {
     const sel = document.querySelectorAll('.face.selected');
     if (face.classList.contains('selected')) face.classList.remove('selected');
-    else if (sel.length < 4) face.classList.add('selected');
+    else if (sel.length < 3) face.classList.add('selected'); // max 3 numbers
     if (!document.querySelector('.face.selected')) face.classList.add('selected');
 
     const c = document.querySelectorAll('.face.selected').length;
@@ -292,17 +292,11 @@ betBtn.onclick = () => {
         clearInterval(anim);
         dice.classList.remove("rolling");
 
-        let roll = Math.floor(Math.random()*6)+1;
-        let win = picks.includes(String(roll)) && Math.random() < WIN_RATE;
-
-        if (!win) {
-            const loseNums = [1,2,3,4,5,6].filter(n => !picks.includes(String(n)));
-            roll = loseNums[Math.floor(Math.random()*loseNums.length)];
-        }
-
+        // Fair dice roll
+        const roll = Math.floor(Math.random() * 6) + 1;
         showDice(roll);
 
-        if (win) {
+        if (picks.includes(String(roll))) {
             dice.classList.add("win");
             const payout = Math.floor(bet * multipliers[picks.length]);
             setCoins(getCoins() + payout);
