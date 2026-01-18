@@ -38,6 +38,7 @@ body {
     height: 24px;
 }
 
+/* DICE FACE SELECT */
 .dice-faces {
     margin-top: 60px;
     display: grid;
@@ -86,6 +87,11 @@ button {
     cursor: pointer;
 }
 
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 /* RIGHT PANEL */
 .right {
     width: 75%;
@@ -106,6 +112,19 @@ button {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     padding: 15px;
+}
+
+/* SHAKE ANIMATION */
+.dice.rolling {
+    animation: shake 0.15s infinite;
+}
+
+@keyframes shake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
 }
 
 .pip {
@@ -168,6 +187,7 @@ const dice = document.getElementById('dice');
 const pips = dice.children;
 const resultText = document.getElementById('resultText');
 const coinsEl = document.getElementById('coins');
+const betBtn = document.getElementById('betBtn');
 
 const multipliers = {1:4, 2:3.2, 3:2.4, 4:1.6};
 
@@ -191,14 +211,12 @@ function updateMultiplier() {
 faces.forEach(face => {
     face.onclick = () => {
         const selected = document.querySelectorAll('.face.selected');
-
         if (face.classList.contains('selected')) {
             face.classList.remove('selected');
         } else {
             if (selected.length >= 4) return;
             face.classList.add('selected');
         }
-
         if (document.querySelectorAll('.face.selected').length === 0) {
             face.classList.add('selected');
         }
@@ -208,20 +226,15 @@ faces.forEach(face => {
 
 function showDice(number) {
     [...pips].forEach(p => p.style.visibility = "hidden");
-
     const layouts = {
-        1:[4],
-        2:[0,8],
-        3:[0,4,8],
-        4:[0,2,6,8],
-        5:[0,2,4,6,8],
+        1:[4], 2:[0,8], 3:[0,4,8],
+        4:[0,2,6,8], 5:[0,2,4,6,8],
         6:[0,2,3,5,6,8]
     };
-
     layouts[number].forEach(i => pips[i].style.visibility = "visible");
 }
 
-document.getElementById('betBtn').onclick = () => {
+betBtn.onclick = () => {
     const bet = parseInt(betAmount.value);
     const selected = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
     let coins = getCoins();
@@ -230,17 +243,32 @@ document.getElementById('betBtn').onclick = () => {
     if (bet > coins) return alert("Not enough coins");
 
     setCoins(coins - bet);
+    betBtn.disabled = true;
+    resultText.textContent = "";
 
-    const roll = Math.floor(Math.random() * 6) + 1;
-    showDice(roll);
+    dice.classList.add("rolling");
 
-    if (selected.includes(String(roll))) {
-        const win = Math.floor(bet * multipliers[selected.length]);
-        setCoins(getCoins() + win);
-        resultText.textContent = "You won " + win + " coins!";
-    } else {
-        resultText.textContent = "You lost.";
-    }
+    let rollInterval = setInterval(() => {
+        showDice(Math.floor(Math.random() * 6) + 1);
+    }, 100);
+
+    setTimeout(() => {
+        clearInterval(rollInterval);
+        dice.classList.remove("rolling");
+
+        const finalRoll = Math.floor(Math.random() * 6) + 1;
+        showDice(finalRoll);
+
+        if (selected.includes(String(finalRoll))) {
+            const win = Math.floor(bet * multipliers[selected.length]);
+            setCoins(getCoins() + win);
+            resultText.textContent = "You won " + win + " coins!";
+        } else {
+            resultText.textContent = "You lost.";
+        }
+
+        betBtn.disabled = false;
+    }, 900);
 };
 </script>
 
