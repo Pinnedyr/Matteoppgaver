@@ -92,19 +92,26 @@ body {
 }
 
 /* Bet button with frame/background */
-button {
-    width: 100%;
-    padding: 14px;
-    font-size: 20px;
-    background: #1f2937;
-    border: 1px solid #334155;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #f8fafc;
-    transition: background .15s ease, border-color .15s ease, transform .04s ease;
+/* Normal tilstand */
+.button {
+  display: inline-block;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: #0f172a; /* Samme som høyre bakgrunn */
+  color: #f8fafc;
+  border: 2px solid transparent; /* start uten synlig outline */
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* smooth hover */
+  font-weight: 600;
 }
-button:hover { background: #111827; border-color: #475569; }
+
+/* Hover tilstand */
+.button:hover {
+  border-color: #22c55e; /* grønn outline */
+  box-shadow: 0 0 10px #22c55e55; /* myk grønn glow */
+}
 button:active { transform: translateY(1px); }
 button:disabled { opacity: 0.6; cursor: not-allowed; }
 
