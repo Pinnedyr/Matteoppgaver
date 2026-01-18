@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
 <meta charset="UTF-8">
-<title>Dice Betting Game</title>
+<title>Terningspill med betting</title>
 <style>
 /* === GLOBAL BODY === */
 body {
@@ -11,13 +11,13 @@ body {
     height: 100vh;
     display: flex;
     color: #e2e8f0;
-    background: #0f172a; /* dark background, square edges */
+    background: #0f172a; /* mørk bakgrunn, firkantede kanter */
 }
 
-/* === LEFT PANEL === */
+/* === VENSTRE PANEL === */
 .left {
     width: 25%;
-    background: #1f2937; /* left panel dark color */
+    background: #1f2937; /* mørk farge venstre panel */
     padding: 20px;
     box-sizing: border-box;
     position: relative;
@@ -39,7 +39,7 @@ body {
 }
 .coin-display img { width: 24px; }
 
-/* Dice faces grid */
+/* Terningansikt grid */
 .dice-faces {
     margin-top: 60px;
     display: grid;
@@ -47,7 +47,7 @@ body {
     gap: 10px;
 }
 
-/* Dice number squares */
+/* Terningnummer ruter */
 .face {
     background: #111827;
     border-radius: 12px;
@@ -61,10 +61,10 @@ body {
 .face:hover { background: #374151; border-color: #475569; }
 .face.selected { background: #1e40af; border-color: #3b82f6; }
 
-/* Multiplier display */
+/* Multiplikatorvisning */
 .multiplier { margin: 15px 0; }
 
-/* Bet input */
+/* Bet-boks */
 .bet-box {
     background: #111827;
     padding: 12px;
@@ -91,13 +91,13 @@ body {
     border-color: #475569;
 }
 
-/* Bet button with dark background and green hover outline */
+/* Bet-knapp med mørk bakgrunn og grønn hover-effekt */
 button {
     width: 100%;
     padding: 14px;
     font-size: 20px;
-    background: #0f172a; /* dark background */
-    border: 1px solid #0f172a; /* match background for no visible border */
+    background: #0f172a; /* mørk bakgrunn */
+    border: 1px solid #0f172a; /* skjult kantlinje */
     border-radius: 12px;
     cursor: pointer;
     font-weight: bold;
@@ -106,7 +106,7 @@ button {
 }
 
 button:hover {
-    box-shadow: 0 0 10px 2px #22c55e; /* green glow/fade outline */
+    box-shadow: 0 0 10px 2px #22c55e; /* grønn glow */
 }
 
 button:active {
@@ -119,24 +119,22 @@ button:disabled {
     box-shadow: none;
 }
 
-/* === RIGHT PANEL === */
+/* === HØYRE PANEL === */
 .right {
     width: 75%;
-    background: #0e1524; /* slightly darker than left panel */
+    background: #0e1524; /* litt mørkere enn venstre panel */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
-    /* square edges, no rounding */
 }
 
-/* === DICE === */
-/* Restore original dice style: white background, black pips, glow on win/lose */
+/* === TERNING === */
 .dice {
     width: 150px;
     height: 150px;
-    background: white; /* original dice color */
+    background: white; /* original terningfarge */
     border-radius: 12px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -154,7 +152,7 @@ button:disabled {
     100% { transform: rotate(0deg); }
 }
 
-/* Glow effects */
+/* Glow-effekter */
 .dice.win { animation: glow 0.8s ease-in-out infinite alternate; }
 .dice.lose { animation: glow-red 0.8s ease-in-out infinite alternate; }
 
@@ -167,7 +165,7 @@ button:disabled {
     to { box-shadow: 0 0 35px red; }
 }
 
-/* Dice pips */
+/* Terningprikker */
 .pip {
     width: 18px;
     height: 18px;
@@ -177,7 +175,7 @@ button:disabled {
     visibility: hidden;
 }
 
-/* Coin burst */
+/* Coin-burst */
 .coin {
     position: absolute;
     width: 24px;
@@ -190,7 +188,7 @@ button:disabled {
     to { transform: translate(var(--x), -120px) scale(0.5); opacity: 0; }
 }
 
-/* Result text */
+/* Resultat tekst */
 .result {
     margin-top: 20px;
     font-size: 20px;
@@ -212,10 +210,10 @@ button:disabled {
         <div class="face">4</div><div class="face">5</div><div class="face">6</div>
     </div>
 
-    <div class="multiplier">Multiplier: <span id="multiplier">0x</span></div>
+    <div class="multiplier">Multiplikator: <span id="multiplier">0x</span></div>
 
     <div class="bet-box">
-        <input type="number" id="betAmount" placeholder="Enter bet">
+        <input type="number" id="betAmount" placeholder="Skriv inn bet">
     </div>
 
     <button id="betBtn">BET</button>
@@ -240,7 +238,7 @@ const resultText = document.getElementById('resultText');
 const multiplierText = document.getElementById('multiplier');
 const betAmount = document.getElementById('betAmount');
 
-// Fair multipliers for 6-sided dice
+// Rettferdige multiplikatorer for 6-sidet terning
 const multipliers = {1:6, 2:3, 3:2};
 
 /* COINS */
@@ -254,7 +252,7 @@ function setCoins(v) {
 }
 setCoins(getCoins());
 
-/* DICE DISPLAY */
+/* TERNINGVISNING */
 function showDice(n) {
     [...pips].forEach(p => p.style.visibility = "hidden");
     const map = {
@@ -264,25 +262,25 @@ function showDice(n) {
     map[n].forEach(i => pips[i].style.visibility = "visible");
 }
 
-/* RANDOM FACE ON LOAD */
+/* SLUMPTERMIN */
 showDice(Math.floor(Math.random() * 6) + 1);
 
-/* FACE PICKING */
+/* VALG AV TERNINGANSIKT */
 faces.forEach(face => face.onclick = () => {
     const sel = document.querySelectorAll('.face.selected');
     if (face.classList.contains('selected')) face.classList.remove('selected');
-    else if (sel.length < 3) face.classList.add('selected'); // max 3 numbers
+    else if (sel.length < 3) face.classList.add('selected'); // maks 3 nummer
     if (!document.querySelector('.face.selected')) face.classList.add('selected');
 
     const c = document.querySelectorAll('.face.selected').length;
     multiplierText.textContent = multipliers[c] ? multipliers[c] + "x" : "0x";
 
-    // Show dynamic odds
+    // Vis dynamiske odds
     const chance = c > 0 ? ((c/6)*100).toFixed(1) : 0;
-    resultText.textContent = `Chance to win: ${chance}%`;
+    resultText.textContent = `Sjanse for å vinne: ${chance}%`;
 });
 
-/* COIN BURST */
+/* COIN-BURST */
 function coinBurst() {
     for (let i = 0; i < 12; i++) {
         const c = document.createElement("img");
@@ -296,16 +294,16 @@ function coinBurst() {
     }
 }
 
-/* BET */
+/* BETTING */
 betBtn.onclick = () => {
     const bet = +betAmount.value;
     const picks = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
 
-    if (!picks.length) return alert("Please select at least one dice face!");
-    if (!bet || bet <= 0) return alert("Please enter a valid bet greater than 0!");
-    if (bet > getCoins()) return alert("Not enough coins!");
+    if (!picks.length) return alert("Vennligst velg minst ett terningansikt!");
+    if (!bet || bet <= 0) return alert("Vennligst skriv inn et gyldig bet større enn 0!");
+    if (bet > getCoins()) return alert("Ikke nok coins!");
 
-    // Deduct the bet from coins
+    // Trekk bet fra coins
     setCoins(getCoins() - bet);
 
     betBtn.disabled = true;
@@ -324,12 +322,12 @@ betBtn.onclick = () => {
         if (picks.includes(String(roll))) {
             dice.classList.add("win");
             const payout = Math.floor(bet * multipliers[picks.length]);
-            setCoins(getCoins() + payout); // WIN: add payout
-            resultText.textContent = `You rolled ${roll} and won ${payout} coins!`;
+            setCoins(getCoins() + payout); // VINN: legg til payout
+            resultText.textContent = `Du rullet ${roll} og vant ${payout} coins!`;
             coinBurst();
         } else {
             dice.classList.add("lose");
-            resultText.textContent = `You rolled ${roll} and lost ${bet} coins.`;
+            resultText.textContent = `Du rullet ${roll} og tapte ${bet} coins.`;
         }
 
         betBtn.disabled = false;
