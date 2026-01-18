@@ -239,16 +239,36 @@ function updateDisplay(){
 setInterval(()=>{ coins = getCookie("coins"); tokens = getCookie("tokens"); updateDisplay(); },1000);
 updateDisplay();
 
-convertBtn.addEventListener("click",()=>{
-  if(coins>=10000){
-    const newTokens = Math.floor(coins/10000);
-    tokens+=newTokens;
-    coins-=newTokens*10000;
-    setCookie("coins",coins);
-    setCookie("tokens",tokens);
+btn.addEventListener("click", () => {
+  if (game.price && !purchased) {
+    if (coins < game.price) { 
+      alert(`Du trenger minst ${game.price} Coins for ${game.name}.`);
+      return; 
+    }
+    // Trekk coins
+    coins -= game.price;
+    setCookie("coins", coins);
+    setCookie(`gamePurchased_${game.name}`, 1);
+    btn.classList.remove("locked");
+    
+    // Fjern pris-elementet
+    if (card.querySelector(".game-price")) {
+      card.querySelector(".game-price").remove();
+    }
+
     updateDisplay();
-    alert(`${newTokens} Token(s) er lagt til!`);
-  }else alert("Du trenger minst 10 000 Coins for 1 Token.");
+    alert(`Du har kjøpt ${game.name}!`);
+
+    // Refresh siden etter 1 sekund
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+
+  } else if (!game.price || getCookie(`gamePurchased_${game.name}`) == 1) {
+    modalOverlay.style.display = "block";
+    gameModal.style.display = "block";
+    gameIframe.src = game.url;
+  }
 });
 
 const games = [
