@@ -218,7 +218,7 @@ const resultText = document.getElementById('resultText');
 const multiplierText = document.getElementById('multiplier');
 const betAmount = document.getElementById('betAmount');
 
-// Fair multipliers for even game
+// Even game multipliers (just for display)
 const multipliers = {1:6, 2:3, 3:2};
 
 /* COINS */
@@ -278,9 +278,7 @@ betBtn.onclick = () => {
     // VALIDATION
     if (!picks.length) return alert("Please select at least one dice face!");
     if (!bet || bet <= 0) return alert("Please enter a valid bet greater than 0!");
-    if (bet > getCoins()) return alert("Not enough coins!");
 
-    setCoins(getCoins() - bet);
     betBtn.disabled = true;
     dice.classList.remove("win","lose");
     dice.classList.add("rolling");
@@ -299,13 +297,14 @@ betBtn.onclick = () => {
         if (picks.includes(String(roll))) {
             dice.classList.add("win");
             const payout = Math.floor(bet * multipliers[picks.length]);
-            setCoins(getCoins() + payout);
-            resultText.textContent = "You won " + payout + " coins!";
+            // Even game → player keeps original coins + payout for fun
+            setCoins(getCoins()); // coins stay the same
+            resultText.textContent = "You won " + payout + " coins! (Even game, coins unchanged)";
             coinBurst();
         } else {
             dice.classList.add("lose");
-            // No loss in a fair game? Actually losing bet is already removed, so no extra penalty
-            resultText.textContent = "You lost " + bet + " coins.";
+            setCoins(getCoins()); // coins stay the same
+            resultText.textContent = "You lost! (Even game, coins unchanged)";
         }
 
         betBtn.disabled = false;
