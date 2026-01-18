@@ -91,22 +91,33 @@ body {
     border-color: #475569;
 }
 
-/* Bet button with frame/background */
+/* Bet button with dark background and green hover outline */
 button {
     width: 100%;
     padding: 14px;
     font-size: 20px;
-    background: #1f2937;
-    border: 1px solid #334155;
+    background: #0f172a; /* dark background */
+    border: 1px solid #0f172a; /* match background for no visible border */
     border-radius: 12px;
     cursor: pointer;
     font-weight: bold;
     color: #f8fafc;
-    transition: background .15s ease, border-color .15s ease, transform .04s ease;
+    transition: box-shadow 0.3s ease, transform 0.04s ease;
 }
-button:hover { background: #111827; border-color: #475569; }
-button:active { transform: translateY(1px); }
-button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+button:hover {
+    box-shadow: 0 0 10px 2px #22c55e; /* green glow/fade outline */
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
 
 /* === RIGHT PANEL === */
 .right {
