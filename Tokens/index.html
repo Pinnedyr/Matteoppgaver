@@ -20,6 +20,50 @@ body {
   text-align: center;
 }
 
+/* ===== OVERSKRIFTER ===== */
+h1 {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+/* ===== VALUTA VISNING ===== */
+.currency-display {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 24px;
+  font-size: 1.6rem;
+  align-items: center;
+}
+
+.currency-display img {
+  width: 28px;   /* FIKSET – var for store */
+  height: 28px;
+}
+
+/* ===== BYTT-KNAPP ===== */
+.button {
+  display: inline-block;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: #1f2937;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 24px;
+  transition: background 0.2s ease;
+}
+
+.button:hover {
+  background: #111827;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ===== SPILL-OVERSIKT ===== */
 .scroll-wrapper {
   display: flex;
@@ -72,6 +116,7 @@ body {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
+  display: block;
 }
 
 /* ===== SPILLNAVN ===== */
@@ -109,8 +154,13 @@ body {
     max-width: 110px;
   }
 
-  .game-label {
-    font-size: 0.75rem;
+  .currency-display {
+    font-size: 1.3rem;
+  }
+
+  .currency-display img {
+    width: 24px;
+    height: 24px;
   }
 }
 </style>
