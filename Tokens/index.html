@@ -336,7 +336,7 @@ games.forEach(game => {
       // Refresh siden etter 1 sekund
       setTimeout(() => {
         location.reload();
-      }, 1000);
+      }, 200);
 
     } else if (!game.price || getCookie(`gamePurchased_${game.name}`) == 1) {
       modalOverlay.style.display = "block";
