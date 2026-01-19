@@ -61,7 +61,7 @@ const baseSpeedCost = 50;
 const costMulti = 1.3;
 
 let power = Math.max(1, powerLevel);
-let delay = Math.max(100, 1000 - speedLevel * 100);
+let delay = Math.max(100, 4000 - speedLevel * 100);
 
 let powerCost = Math.floor(basePowerCost * Math.pow(costMulti, powerLevel));
 let speedCost = Math.floor(baseSpeedCost * Math.pow(costMulti, speedLevel));
