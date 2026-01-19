@@ -117,7 +117,7 @@ document.getElementById("speed-upgrade").onclick = () => {
   if(coins < speedCost) return alert("Ikke nok coins!");
   coins -= speedCost;
   speedLevel++;
-  delay = Math.max(100, 1000 - speedLevel * 100);
+  delay = Math.max(100, 4000 - speedLevel * 100);
   speedCost = Math.floor(baseSpeedCost * Math.pow(costMulti, speedLevel));
   set("coins", coins);
   set("speedLevel", speedLevel);
