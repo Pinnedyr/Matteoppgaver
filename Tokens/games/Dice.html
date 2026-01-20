@@ -223,14 +223,7 @@ button:disabled {
     <div class="multiplier">Multiplikator: <span id="multiplier">0x</span></div>
 
     <div class="bet-box">
-        <input
-  type="number"
-  id="betAmount"
-  placeholder="Vedde mengde"
-  min="1"
-  step="1"
-  inputmode="numeric"
->
+        <input type="number" id="betAmount" placeholder="Vedde mengde" step="1">
     </div>
 
     <button id="betBtn">Vedd</button>
@@ -258,16 +251,6 @@ const betBtn = document.getElementById('betBtn');
 const resultText = document.getElementById('resultText');
 const multiplierText = document.getElementById('multiplier');
 const betAmount = document.getElementById('betAmount');
-
-// Blokker tastetrykk for . og ,
-betAmount.addEventListener("keydown", e => {
-    if (e.key === "." || e.key === ",") e.preventDefault();
-});
-
-// Fjern . eller , om de kommer via copy-paste
-betAmount.addEventListener("input", () => {
-    betAmount.value = betAmount.value.replace(/[.,]/g, "");
-});
 
 // Rettferdige multiplikatorer for 6-sidet terning
 const multipliers = {1:6, 2:3, 3:2};
