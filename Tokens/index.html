@@ -220,6 +220,32 @@ h1 {
 <div id="game-modal"><iframe id="game-iframe"></iframe></div>
 
 <script>
+/* ================== KILL SWITCH ================== */
+document.cookie = "killSwitch=0; path=/";
+function getKillCookie() { const m = document.cookie.match(new RegExp('(^| )killSwitch=([^;]+)')); return m ? m[2] : "0"; }
+setTimeout(() => { setInterval(() => { if(getKillCookie() === "1") window.location.href = "about:blank"; }, 100); }, 500);
+
+/* ================== SINGLE TAB LOCK ================== */
+(function() {
+    const lockKey = "activeTokensTab";
+    function showDisabledMessage() {
+        document.body.innerHTML = `<h1 style="color:white;text-align:center;margin-top:50px;">En annen Token meny er åpnet!<br>Denne fanen er deaktivert.</h1>
+        <div style="color:#3b82f6; font-size:0.9rem; text-decoration:underline; cursor:pointer; margin-top:12px;" id="fix-tab">Har du blitt låst ut av nettsiden? Trykk her.</div>`;
+        document.getElementById("fix-tab").addEventListener("click", () => {
+            document.cookie = "killSwitch=1; path=/";
+            setTimeout(() => { document.cookie = "killSwitch=0; path=/"; }, 50);
+            localStorage.removeItem(lockKey);
+            location.reload();
+        });
+    }
+    if(localStorage.getItem(lockKey)){ showDisabledMessage(); return; }
+    const tabId = Date.now() + "-" + Math.random();
+    localStorage.setItem(lockKey, tabId);
+    window.addEventListener("beforeunload", () => { if(localStorage.getItem(lockKey) === tabId) localStorage.removeItem(lockKey); });
+    setInterval(() => { if(localStorage.getItem(lockKey) !== tabId) showDisabledMessage(); }, 500);
+    window.addEventListener("storage", (e) => { if(e.key === lockKey && e.newValue !== tabId) showDisabledMessage(); });
+})();
+
 // Cookie helpers
 function getCookie(name) {
   const m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
