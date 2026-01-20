@@ -223,7 +223,7 @@ button:disabled {
     <div class="multiplier">Multiplikator: <span id="multiplier">0x</span></div>
 
     <div class="bet-box">
-        <input type="number" id="betAmount" placeholder="Vedde mengde" step="1">
+        <input type="number" id="betAmount" placeholder="Vedde mengde">
     </div>
 
     <button id="betBtn">Vedd</button>
@@ -239,10 +239,6 @@ button:disabled {
 </div>
 
 <script>
-betAmount.addEventListener("keydown", e => {
-    if (e.key === "." || e.key === ",") e.preventDefault();
-});
-
 const faces = document.querySelectorAll('.face');
 const dice = document.getElementById('dice');
 const pips = dice.children;
