@@ -22,16 +22,15 @@
     cursor: pointer; 
     border-radius: 10px;
     overflow: hidden;
-    background-color: #333;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 2px solid #fff;
   }
   .pack img { 
-    max-width: 100%; 
-    max-height: 100%; 
-    display: block;
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain;
   }
   #card { display: none; width: 200px; height: 300px; margin: 20px; position: relative; }
   #card img { width: 100%; height: 100%; border-radius: 8px; }
@@ -81,20 +80,16 @@ updateInventory();
 const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Divine'];
 const packsContainer = document.getElementById('packs-container');
 
-// Dynamically create pack divs with images from packimages folder
+// Create one pack per rarity using the uploaded PNG files
 rarities.forEach(rarity => {
-  for (let i = 1; i <= 1; i++) { // currently 1 image per rarity, you can add more if needed
     const packDiv = document.createElement('div');
     packDiv.className = 'pack';
     const packImg = document.createElement('img');
-    // Fallback if image not found, will use a placeholder color block
-    packImg.src = `packimages/${rarity}.png`;
+    packImg.src = `${rarity}.png`; // Use the uploaded PNG files directly
     packImg.alt = `${rarity} Pack`;
-    packImg.onerror = function() { this.src = `packimages/placeholder.png`; } // Placeholder image if missing
     packDiv.appendChild(packImg);
     packDiv.onclick = () => openPack(rarity);
     packsContainer.appendChild(packDiv);
-  }
 });
 
 function getCookie(name) { const value = `; ${document.cookie}`; const parts = value.split(`; ${name}=`); if (parts.length === 2) return parts.pop().split(';').shift(); }
