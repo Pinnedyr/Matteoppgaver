@@ -39,6 +39,7 @@ body {
     transition: transform 0.3s ease;
 }
 .pack:hover { transform: scale(1.05); }
+.pack.disabled { pointer-events:none; opacity:0.5; }
 .pack img { width:100%; height:80%; object-fit:contain; }
 .pack-price { width:100%; text-align:center; background:#222; padding:5px; font-weight:bold;}
 
@@ -159,14 +160,14 @@ body {
 
 /* SPARKLE EFFECT */
 @keyframes sparkle {
-    0% { transform: scale(0.8) rotate(0deg); opacity:0; }
-    50% { transform: scale(1.2) rotate(180deg); opacity:1; }
-    100% { transform: scale(1) rotate(360deg); opacity:0; }
+    0% { transform: scale(0.5) rotate(0deg); opacity:0; }
+    50% { transform: scale(1.0) rotate(180deg); opacity:1; }
+    100% { transform: scale(0.7) rotate(360deg); opacity:0; }
 }
 .sparkle {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 15px;
+    height: 15px;
     background: radial-gradient(circle, #fff, #ff0, transparent);
     border-radius: 50%;
     animation: sparkle 1s ease-out forwards;
@@ -236,6 +237,9 @@ async function openPackAnimation(rarity){
     if(tokens < price){ alert('Not enough tokens!'); return; }
     tokens -= price; updateTokens();
 
+    // Disable all pack buttons
+    document.querySelectorAll('.pack').forEach(p=>p.classList.add('disabled'));
+
     const cardsList = await fetch('cards/cards.json').then(r=>r.json());
     const rarityOrder=['Common','Uncommon','Rare','Epic','Legendary','Divine'];
     let startIndex = rarityOrder.indexOf(rarity);
@@ -244,6 +248,12 @@ async function openPackAnimation(rarity){
     if(rarityIndex >= rarityOrder.length) rarityIndex = rarityOrder.length-1;
 
     const availableCards = cardsList.filter(c=>c.rarity === rarityOrder[rarityIndex]);
+    if(availableCards.length === 0) {
+        alert("No cards of this rarity yet!");
+        document.querySelectorAll('.pack').forEach(p=>p.classList.remove('disabled'));
+        return;
+    }
+
     const card = availableCards[Math.floor(Math.random() * availableCards.length)];
 
     // Pack slides up + flip
@@ -273,6 +283,8 @@ function flipPack(card){
         inventory.push(card);
         setCookie('inventory',inventory);
         updateInventory();
+        // Re-enable pack buttons
+        document.querySelectorAll('.pack').forEach(p=>p.classList.remove('disabled'));
     },600);
 }
 
@@ -284,13 +296,17 @@ function revealCard(card){
     cardDisplay.style.transform = 'translate(-50%,-50%) scale(1)';
     cardDisplay.style.boxShadow = `0 0 30px 10px ${rarityColors[card.rarity]}`;
 
-    // sparkle effect
-    const sparkle = document.createElement('div');
-    sparkle.className='sparkle';
-    sparkle.style.left = Math.random()*200+'px';
-    sparkle.style.top = Math.random()*300+'px';
-    cardDisplay.appendChild(sparkle);
-    setTimeout(()=> sparkle.remove(),1000);
+    // Multiple small sparkles
+    for(let i=0;i<15;i++){
+        const sparkle = document.createElement('div');
+        sparkle.className='sparkle';
+        sparkle.style.left = Math.random()*200+'px';
+        sparkle.style.top = Math.random()*300+'px';
+        sparkle.style.width = (10+Math.random()*10)+'px';
+        sparkle.style.height = sparkle.style.width;
+        cardDisplay.appendChild(sparkle);
+        setTimeout(()=> sparkle.remove(),1000);
+    }
 
     setTimeout(()=>{
         cardDisplay.style.transform = 'translate(-50%,-50%) scale(0)';
