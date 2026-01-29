@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Card Pack Opener</title>
-
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -41,15 +40,8 @@ body {
 }
 .pack:hover { transform: scale(1.05); }
 .pack.disabled { pointer-events:none; opacity:0.5; }
-.pack img { width:100%; height:100%; object-fit:contain; }
-
-.pack-price {
-    width:100%;
-    text-align:center;
-    background:#222;
-    padding:5px;
-    font-weight:bold;
-}
+.pack img { width:100%; height:100%; object-fit:contain; object-position:center; }
+.pack-price { width:100%; text-align:center; background:#222; padding:5px; font-weight:bold;}
 
 #animation-container {
     position:fixed;
@@ -66,6 +58,8 @@ body {
     height:100%;
     border-radius:10px;
     object-fit:contain;
+    transform-origin:center center;
+    backface-visibility:hidden;
 }
 
 #card-display {
@@ -85,6 +79,7 @@ body {
     height:100%;
     border-radius:10px;
     object-fit:contain;
+    object-position:center;
 }
 
 #rarity-bar {
@@ -94,52 +89,61 @@ body {
     padding:5px;
     text-align:center;
     font-weight:bold;
-    background:rgba(0,0,0,0.6);
+    border-bottom-left-radius:10px;
+    border-bottom-right-radius:10px;
+    box-sizing:border-box;
+    background-color:rgba(0,0,0,0.6);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 
+/* INVENTORY */
 #inventory {
     margin-top:30px;
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
 }
-
 .inventory-card {
+    display:inline-block;
     margin:10px;
     position:relative;
     width:120px;
     transition: transform 0.2s ease;
 }
 .inventory-card:hover { transform: scale(1.08); }
-
 .inventory-card img {
     width:120px;
     height:180px;
     border-radius:8px;
+    display:block;
     object-fit:contain;
 }
-
-.card-name {
+.inventory-card .card-name {
     text-align:center;
     padding:3px;
     font-weight:bold;
     border-radius:0 0 8px 8px;
+    margin-top:-5px;
     overflow:hidden;
+    text-overflow:ellipsis;
     white-space:nowrap;
 }
-
 .sell-btn {
     position:absolute;
     top:6px;
     right:6px;
+    padding:2px 5px;
     font-size:12px;
     border:none;
     border-radius:4px;
     background:#ff5555cc;
     color:#fff;
     cursor:pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
-
+.sell-btn:hover { transform: scale(1.2); background:#ff4444; }
 .sell-price {
     position:absolute;
     top:28px;
@@ -148,39 +152,65 @@ body {
     font-size:11px;
     padding:2px 6px;
     border-radius:6px;
+    display:flex;
+    align-items:center;
+    gap:3px;
 }
 
+#packs-container { display:flex; flex-wrap:wrap; justify-content:center; }
+
+#chance-chart-container {
+    display:none;
+    background:#222;
+    color:#fff;
+    padding:15px;
+    border-radius:10px;
+    margin-top:20px;
+    max-width:90%;
+    overflow-x:auto;
+}
+#chance-chart table { border-collapse: collapse; width:100%; }
+#chance-chart th, #chance-chart td { border:1px solid #fff; padding:5px; text-align:center; }
+
 @keyframes sparkle {
-    0% { transform: scale(0.5); opacity:0; }
-    50% { transform: scale(1); opacity:1; }
-    100% { transform: scale(0.7); opacity:0; }
+    0% { transform: scale(0.5) rotate(0deg); opacity:0; }
+    50% { transform: scale(1.0) rotate(180deg); opacity:1; }
+    100% { transform: scale(0.7) rotate(360deg); opacity:0; }
 }
 .sparkle {
-    position:absolute;
-    width:12px;
-    height:12px;
-    background:radial-gradient(circle,#fff,#ff0,transparent);
-    border-radius:50%;
-    animation:sparkle 1s ease-out forwards;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: radial-gradient(circle, #fff, #ff0, transparent);
+    border-radius: 50%;
+    animation: sparkle 1s ease-out forwards;
+    pointer-events:none;
 }
 </style>
 </head>
-
 <body>
 
 <h1>Card Pack Opener</h1>
-
 <div id="top-bar">
   <div id="tokens"><img src="https://www.wtfq.online/Tokens/token.png">Tokens: 5</div>
   <div id="coins"><img src="https://www.wtfq.online/Tokens/coin.png">Coins: 0</div>
+  <button id="show-chances-btn" style="margin-left:20px;padding:4px 8px;font-size:14px;border-radius:4px;border:none;background:#555;color:#fff;cursor:pointer;">Show Chances</button>
 </div>
 
 <div id="packs-container"></div>
 <div id="animation-container"></div>
 
 <div id="card-display">
-    <img id="card-img">
+    <img id="card-img" src="" alt="Card">
     <div id="rarity-bar"></div>
+</div>
+
+<div id="chance-chart-container">
+    <h3>Card Chances per Pack</h3>
+    <table id="chance-chart">
+        <thead id="chance-chart-head"></thead>
+        <tbody id="chance-chart-body"></tbody>
+    </table>
 </div>
 
 <h2>Inventory</h2>
@@ -292,13 +322,38 @@ async function openPackAnimation(rarity){
     const pool = cardsList.filter(c=>c.rarity===rarityResult);
     const card = pickWeighted(pool);
 
-    revealCard(card);
+    // ANIMATION
+    const animContainer = document.getElementById('animation-container');
+    animContainer.innerHTML = `<img src='${rarity}.png'>`;
+    animContainer.style.bottom = '-400px';
+    animContainer.style.display = 'block';
 
-    /* 🔑 SAVE ONLY NAME */
-    inventory.push(card.name);
-    localStorage.setItem('inventory', JSON.stringify(inventory));
+    let pos = -400;
+    function slide(){
+        pos += 12;
+        animContainer.style.bottom = pos+'px';
+        if(pos < 50) requestAnimationFrame(slide);
+        else flipPack(card);
+    }
+    requestAnimationFrame(slide);
+}
 
-    updateInventory();
+function flipPack(card){
+    const animContainer = document.getElementById('animation-container');
+    const img = animContainer.firstChild;
+    img.style.transition='transform 0.6s ease';
+    img.style.transform='rotateX(90deg)';
+
+    setTimeout(()=>{
+        animContainer.style.display='none';
+        revealCard(card);
+
+        /* 🔑 SAVE ONLY NAME */
+        inventory.push(card.name);
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+
+        updateInventory();
+    },600);
 }
 
 /* ===========================
@@ -315,41 +370,59 @@ function revealCard(card){
     bar.style.background = rarityColors[card.rarity];
 
     display.style.transform = 'translate(-50%,-50%) scale(1)';
-    display.style.boxShadow = `0 0 30px ${rarityColors[card.rarity]}`;
+    display.style.boxShadow = `0 0 30px 10px ${rarityColors[card.rarity]}`;
+
+    for(let i=0;i<20;i++){
+        const sparkle=document.createElement('div');
+        sparkle.className='sparkle';
+        sparkle.style.left=Math.random()*180+'px';
+        sparkle.style.top=Math.random()*280+'px';
+        const size = 8 + Math.random()*12;
+        sparkle.style.width = size+'px';
+        sparkle.style.height = size+'px';
+        sparkle.style.animationDelay = (Math.random()*0.5)+'s';
+        display.appendChild(sparkle);
+        setTimeout(()=>sparkle.remove(),1500);
+    }
 
     setTimeout(()=>{
         display.style.transform = 'translate(-50%,-50%) scale(0)';
         display.style.boxShadow = 'none';
-    },2000);
+    },2200);
 }
 
 /* ===========================
    INVENTORY
 =========================== */
 
-function updateInventory(){
+async function updateInventory(){
     const inv = document.getElementById('inventory');
     inv.innerHTML = '';
 
-    inventory.forEach((name,index)=>{
-        const card = cardsList.find(c=>c.name===name);
+    const cardsListCurrent = cardsList.length ? cardsList : await fetch('cards/cards.json').then(r=>r.json());
+
+    inventory.forEach((cardName, index)=>{
+        const card = cardsListCurrent.find(c=>c.name===cardName);
         if(!card) return;
 
         const div = document.createElement('div');
-        div.className = 'inventory-card';
-        div.innerHTML = `
-            <img src="cards/${card.image}">
-            <div class="card-name" style="background:${rarityColors[card.rarity]}">${card.name}</div>
-            <button class="sell-btn" onclick="sellCard(${index})">Sell</button>
-            <div class="sell-price">${card.coinWorth||1} Coins</div>
+        div.className='inventory-card';
+        div.innerHTML=`
+            <img src='cards/${card.image}'>
+            <div class='card-name' style='background:${rarityColors[card.rarity]}'>
+                ${card.name}
+            </div>
+            <button class='sell-btn' onclick='sellCard(${index})'>Sell</button>
+            <div class='sell-price'>${card.coinWorth||1} Coins</div>
         `;
         inv.appendChild(div);
     });
 }
 
-function sellCard(index){
-    const name = inventory[index];
-    const card = cardsList.find(c=>c.name===name);
+async function sellCard(index){
+    const cardsListCurrent = cardsList.length ? cardsList : await fetch('cards/cards.json').then(r=>r.json());
+    const cardName = inventory[index];
+    const card = cardsListCurrent.find(c=>c.name===cardName);
     if(!card) return;
 
     coins += card.coinWorth || 1;
@@ -378,6 +451,5 @@ function updateCoins(){
     localStorage.setItem('coins', coins);
 }
 </script>
-
 </body>
 </html>
