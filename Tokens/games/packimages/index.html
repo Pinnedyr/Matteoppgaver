@@ -87,7 +87,6 @@ const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Divine'];
 const packPrices = { 'Common': 1, 'Uncommon': 2, 'Rare': 3, 'Epic': 5, 'Legendary': 8, 'Divine': 12 };
 const packsContainer = document.getElementById('packs-container');
 
-// Create packs with price labels
 rarities.forEach(rarity => {
     const packDiv = document.createElement('div');
     packDiv.className = 'pack';
@@ -116,7 +115,6 @@ async function openPack(selectedRarity) {
 
   const cardsList = await fetch('cards/cards.json').then(res => res.json());
 
-  // Function to get a card with weighted rarity chance
   function getCard(rarity) {
     const filtered = cardsList.filter(c => c.rarity === rarity);
     if (filtered.length === 0) return null;
@@ -126,20 +124,27 @@ async function openPack(selectedRarity) {
   const rarityOrder = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
   let startIndex = rarityOrder.indexOf(selectedRarity);
   let cardData = null;
+  let awardedCards = [];
   for (let i=0;i<3;i++){
-    let chance = Math.random(); // lower chance for better rarity
-    let rarityIndex = startIndex + (chance > 0.7 ? 1 : 0); // 30% chance to go up in rarity
+    let chance = Math.random();
+    let rarityIndex = startIndex + (chance > 0.7 ? 1 : 0);
     if (rarityIndex >= rarityOrder.length) rarityIndex = rarityOrder.length-1;
     cardData = getCard(rarityOrder[rarityIndex]) || getCard(rarityOrder[startIndex]);
+    if(cardData) awardedCards.push(cardData);
   }
 
-  document.getElementById('card-img').src = `cards/${cardData.image}`;
+  // Display the last card and add all to inventory
+  const lastCard = awardedCards[awardedCards.length-1];
+  document.getElementById('card-img').src = `cards/${lastCard.image}`;
   const rarityBar = document.getElementById('rarity-bar');
-  rarityBar.textContent = cardData.name;
-  rarityBar.style.backgroundColor = rarityColors[cardData.rarity] || 'white';
+  rarityBar.textContent = lastCard.name;
+  rarityBar.style.backgroundColor = rarityColors[lastCard.rarity] || 'white';
   document.getElementById('card').style.display = 'block';
 
-  inventory.push(cardData);
+  // Add all awarded cards to inventory
+  awardedCards.forEach(c => {
+    inventory.push(c);
+  });
   setCookie('inventory', JSON.stringify(inventory));
   updateInventory();
 }
