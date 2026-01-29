@@ -5,123 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Card Pack Opener</title>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #121212;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    overflow-x: hidden;
-}
-.pack {
-    position: relative;
-    width: 200px;
-    height: 300px;
-    margin: 20px;
-    cursor: pointer;
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    border: 2px solid #fff;
-    transition: transform 0.3s ease;
-}
-.pack img {
-    width: 100%;
-    height: 80%;
-    object-fit: contain;
-}
-.pack-price {
-    width: 100%;
-    text-align: center;
-    padding: 5px;
-    background-color: #222;
-    font-weight: bold;
-}
-#animation-container {
-    position: fixed;
-    bottom: -350px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 300px;
-    pointer-events: none;
-    z-index: 1000;
-}
-#animation-container img {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    object-fit: contain;
-}
-#card-display {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    width: 200px;
-    height: 300px;
-    border-radius: 10px;
-    z-index: 1001;
-    transition: transform 0.6s ease;
-}
-#card-display img {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    object-fit: contain;
-}
-#rarity-bar {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding: 5px;
-    text-align: center;
-    font-weight: bold;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-#inventory {
-    margin-top: 30px;
-}
-.inventory-card {
-    display: inline-block;
-    margin: 10px;
-    position: relative;
-}
-.inventory-card img {
-    width: 120px;
-    height: 180px;
-    border-radius: 8px;
-}
-.sell-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #0008;
-    color: #fff;
-    border: none;
-    padding: 2px 5px;
-    cursor: pointer;
-    border-radius: 4px;
-    z-index: 10;
-}
-#tokens, #coins {
-    margin: 10px;
-    font-size: 18px;
-}
-#packs-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
+body { font-family: Arial; background:#121212; color:#fff; display:flex; flex-direction:column; align-items:center; padding:20px; overflow-x:hidden;}
+.pack { width:200px; height:300px; margin:20px; cursor:pointer; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; align-items:center; border:2px solid #fff; transition: transform 0.3s ease; }
+.pack img { width:100%; height:80%; object-fit:contain; }
+.pack-price { width:100%; text-align:center; background:#222; padding:5px; font-weight:bold;}
+#animation-container { position:fixed; bottom:-350px; left:50%; transform:translateX(-50%); width:200px; height:300px; pointer-events:none; z-index:1000; }
+#animation-container img { width:100%; height:100%; border-radius:10px; object-fit:contain; transform-origin:top center; }
+#card-display { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); width:200px; height:300px; border-radius:10px; z-index:1001; transition: transform 0.6s ease, box-shadow 0.6s ease; }
+#card-display img { width:100%; height:100%; border-radius:10px; object-fit:contain; }
+#rarity-bar { position:absolute; bottom:0; width:100%; padding:5px; text-align:center; font-weight:bold; border-bottom-left-radius:8px; border-bottom-right-radius:8px; }
+#inventory { margin-top:30px; }
+.inventory-card { display:inline-block; margin:10px; position:relative; }
+.inventory-card img { width:120px; height:180px; border-radius:8px; }
+.sell-btn { position:absolute; top:5px; right:5px; background:#0008; color:#fff; border:none; padding:2px 5px; cursor:pointer; border-radius:4px; z-index:10; }
+#tokens,#coins { margin:10px; font-size:18px; }
+#packs-container { display:flex; flex-wrap:wrap; justify-content:center;}
 </style>
 </head>
 <body>
@@ -133,7 +31,7 @@ body {
 <div id="animation-container"></div>
 <div id="card-display">
     <img id="card-img" src="" alt="Card">
-    <div id="rarity-bar" class="rarity-bar"></div>
+    <div id="rarity-bar"></div>
 </div>
 <h2>Inventory</h2>
 <div id="inventory"></div>
@@ -142,9 +40,10 @@ body {
 const rarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
 const packPrices = { 'Common':1,'Uncommon':2,'Rare':3,'Epic':5,'Legendary':8,'Divine':12 };
 const rarityColors = { 'Common':'gray','Uncommon':'green','Rare':'blue','Epic':'purple','Legendary':'orange','Divine':'red' };
-let tokens = parseInt(getCookie('tokens')) || 5;
-let coins = parseInt(getCookie('coins')) || 0;
-let inventory = JSON.parse(getCookie('inventory')||'[]');
+
+let tokens = safeParseCookie('tokens',5);
+let coins = safeParseCookie('coins',0);
+let inventory = safeParseCookie('inventory',[]);
 
 updateTokens(); updateCoins(); updateInventory();
 
@@ -154,61 +53,62 @@ const cardDisplay = document.getElementById('card-display');
 const cardImg = document.getElementById('card-img');
 const rarityBar = document.getElementById('rarity-bar');
 
-// Create pack buttons
+// Create pack buttons with correct images
 rarities.forEach(rarity=>{
     const packDiv = document.createElement('div');
     packDiv.className='pack';
 
-    const packImg=document.createElement('img');
-    packImg.src=`packimages/${rarity}.png`;
-    packImg.alt=`${rarity} Pack`;
-    packImg.onerror=function(){ this.style.backgroundColor=rarityColors[rarity]; this.src=''; };
+    const packImg = document.createElement('img');
+    packImg.src = `packimages/${rarity}.png`; // Correct path
+    packImg.alt = `${rarity} Pack`;
+    packImg.onerror = function(){ this.style.backgroundColor = rarityColors[rarity]; this.src=''; };
     packDiv.appendChild(packImg);
 
-    const priceDiv=document.createElement('div');
-    priceDiv.className='pack-price';
-    priceDiv.textContent=`Cost: ${packPrices[rarity]} Tokens`;
+    const priceDiv = document.createElement('div');
+    priceDiv.className = 'pack-price';
+    priceDiv.textContent = `Cost: ${packPrices[rarity]} Tokens`;
     packDiv.appendChild(priceDiv);
 
-    packDiv.onclick=()=>openPackAnimation(rarity);
+    packDiv.onclick = ()=>openPackAnimation(rarity);
     packsContainer.appendChild(packDiv);
 });
 
+// OPEN PACK ANIMATION
 async function openPackAnimation(rarity){
-    const price=packPrices[rarity];
-    if(tokens<price){ alert('Not enough tokens!'); return; }
-    tokens-=price; updateTokens();
+    const price = packPrices[rarity];
+    if(tokens < price){ alert('Not enough tokens!'); return; }
+    tokens -= price; updateTokens();
 
     const cardsList = await fetch('cards/cards.json').then(r=>r.json());
     function getCard(r){ const f=cardsList.filter(c=>c.rarity===r); return f[Math.floor(Math.random()*f.length)]; }
     const rarityOrder=['Common','Uncommon','Rare','Epic','Legendary','Divine'];
-    let startIndex=rarityOrder.indexOf(rarity);
+    let startIndex = rarityOrder.indexOf(rarity);
     let awardedCards=[];
     for(let i=0;i<3;i++){
         let chance=Math.random();
-        let rarityIndex=startIndex+(chance>0.7?1:0);
-        if(rarityIndex>=rarityOrder.length) rarityIndex=rarityOrder.length-1;
-        let card=getCard(rarityOrder[rarityIndex])||getCard(rarityOrder[startIndex]);
+        let rarityIndex=startIndex + (chance>0.7?1:0);
+        if(rarityIndex >= rarityOrder.length) rarityIndex = rarityOrder.length-1;
+        let card = getCard(rarityOrder[rarityIndex]) || getCard(rarityOrder[startIndex]);
         if(card) awardedCards.push(card);
     }
 
-    // Pack slides up from bottom
-    animationContainer.innerHTML=`<img src='packimages/${rarity}.png'>`;
-    animationContainer.style.bottom='-350px';
-    animationContainer.firstChild.style.transform='rotateX(0deg)';
-    animationContainer.style.display='block';
+    animationContainer.innerHTML = `<img src='packimages/${rarity}.png'>`;
+    animationContainer.style.bottom = '-350px';
+    animationContainer.style.display = 'block';
+    animationContainer.firstChild.style.transform = 'rotateX(0deg)';
 
-    let bottomPos=-350;
-    const slideUp=setInterval(()=>{
-        bottomPos+=15;
-        animationContainer.style.bottom=bottomPos+'px';
-        if(bottomPos>=50){ clearInterval(slideUp); slicePack(awardedCards); }
+    let pos=-350;
+    const slideUp = setInterval(()=>{
+        pos += 15;
+        animationContainer.style.bottom = pos+'px';
+        if(pos >= 50){ clearInterval(slideUp); slicePack(awardedCards); }
     },10);
 }
 
 function slicePack(awardedCards){
-    // top slice effect
-    animationContainer.firstChild.style.transform='rotateX(90deg)';
+    const packImg = animationContainer.firstChild;
+    packImg.style.transition='transform 0.5s ease';
+    packImg.style.transform='rotateX(90deg)';
     setTimeout(()=>{
         animationContainer.style.display='none';
         revealCard(awardedCards[awardedCards.length-1]);
@@ -219,28 +119,45 @@ function slicePack(awardedCards){
 }
 
 function revealCard(card){
-    cardImg.src=`cards/${card.image}`;
-    rarityBar.textContent=card.name;
-    rarityBar.style.backgroundColor=rarityColors[card.rarity];
-    cardDisplay.style.transform='translate(-50%, -50%) scale(1)';
-    setTimeout(()=>{ cardDisplay.style.transform='translate(-50%, -50%) scale(0)'; },2000);
+    cardImg.src = `cards/${card.image}`;
+    rarityBar.textContent = card.name;
+    rarityBar.style.backgroundColor = rarityColors[card.rarity];
+    cardDisplay.style.transform = 'translate(-50%,-50%) scale(1)';
+    cardDisplay.style.boxShadow = `0 0 30px 10px ${rarityColors[card.rarity]}`;
+    setTimeout(()=>{
+        cardDisplay.style.transform = 'translate(-50%,-50%) scale(0)';
+        cardDisplay.style.boxShadow = 'none';
+    },2000);
 }
 
-function getCookie(name){ const value=`; ${document.cookie}`; const parts=value.split(`; ${name}=`); if(parts.length===2) return JSON.parse(parts.pop().split(';').shift()); }
-function setCookie(name,value){ document.cookie=`${name}=${JSON.stringify(value)}; path=/`; }
+// COOKIE HELPERS
+function safeParseCookie(name,defaultValue){
+    const v=document.cookie.split('; ').find(r=>r.startsWith(name+'='));
+    if(v) try{ return JSON.parse(v.split('=')[1]); }catch(e){ return defaultValue; }
+    return defaultValue;
+}
+function setCookie(name,value){ document.cookie = `${name}=${JSON.stringify(value)}; path=/`; }
+
+// TOKENS, COINS, INVENTORY
 function updateTokens(){ document.getElementById('tokens').textContent=`Tokens: ${tokens}`; }
 function updateCoins(){ document.getElementById('coins').textContent=`Coins: ${coins}`; }
 function updateInventory(){
-    const inv=document.getElementById('inventory'); inv.innerHTML='';
+    const inv = document.getElementById('inventory'); inv.innerHTML='';
     inventory.forEach((card,index)=>{
-        const div=document.createElement('div');
-        div.className='inventory-card';
-        div.innerHTML=`<img src='cards/${card.image}'><button class='sell-btn' onclick='sellCard(${index})'>Sell</button>`;
+        const div = document.createElement('div'); div.className='inventory-card';
+        div.innerHTML = `<img src='cards/${card.image}'><button class='sell-btn' onclick='sellCard(${index})'>Sell</button>`;
         inv.appendChild(div);
     });
 }
-function sellCard(index){ const card=inventory[index]; coins+=card.coinWorth||1; setCookie('coins',coins); inventory.splice(index,1); setCookie('inventory',inventory); updateCoins(); updateInventory(); }
+function sellCard(index){ 
+    const card = inventory[index]; 
+    coins += card.coinWorth||1; 
+    setCookie('coins',coins); 
+    inventory.splice(index,1); 
+    setCookie('inventory',inventory); 
+    updateCoins(); 
+    updateInventory(); 
+}
 </script>
-
 </body>
 </html>
