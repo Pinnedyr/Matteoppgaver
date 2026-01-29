@@ -44,22 +44,25 @@ body {
 .pack-price { width:100%; text-align:center; background:#222; padding:5px; font-weight:bold;}
 
 #animation-container {
-    position:fixed;
-    bottom:-400px;
-    left:50%;
-    transform:translateX(-50%);
-    width:200px;
-    height:300px;
-    pointer-events:none;
-    z-index:1000;
+    position: fixed;
+    bottom: -400px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 300px;
+    pointer-events: none;
+    z-index: 1000;
+    perspective: 1000px; /* <-- ADD THIS LINE */
 }
+
 #animation-container img {
-    width:100%;
-    height:100%;
-    border-radius:10px;
-    object-fit:contain;
-    transform-origin:center center;
-    backface-visibility:hidden;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    object-fit: cover;           /* <-- CHANGE from contain to cover */
+    transform-origin: center center;
+    backface-visibility: hidden; /* <-- ADD THIS LINE */
+    transform-style: preserve-3d;/* <-- ADD THIS LINE */
 }
 
 #card-display {
@@ -355,19 +358,28 @@ async function openPackAnimation(rarity){
 function flipPack(card){
     const animContainer = document.getElementById('animation-container');
     const img = animContainer.firstChild;
-    img.style.transition='transform 0.6s ease';
-    img.style.transform='rotateX(90deg)';
 
+    // Rotate the pack 90° (half flip)
+    img.style.transition = 'transform 0.6s ease';
+    img.style.transform = 'rotateX(90deg)';
+
+    // After 600ms (halfway), switch to the actual card image and flip back
+    setTimeout(()=>{
+        img.src = 'cards/' + card.image;
+        img.style.transform = 'rotateX(0deg)';
+    }, 600);
+
+    // After full flip, hide animation and reveal card
     setTimeout(()=>{
         animContainer.style.display='none';
         revealCard(card);
 
-        /* 🔑 SAVE ONLY NAME */
+        // Save only the card name in inventory
         inventory.push(card.name);
         localStorage.setItem('inventory', JSON.stringify(inventory));
 
         updateInventory();
-    },600);
+    }, 1200);
 }
 
 /* ===========================
