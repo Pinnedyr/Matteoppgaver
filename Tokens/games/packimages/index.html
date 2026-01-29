@@ -44,25 +44,27 @@ body {
 .pack-price { width:100%; text-align:center; background:#222; padding:5px; font-weight:bold;}
 
 #animation-container {
-    position: fixed;
-    bottom: -400px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 300px;
-    pointer-events: none;
-    z-index: 1000;
-    perspective: 1000px; /* <-- ADD THIS LINE */
+    position:fixed;
+    bottom:-400px;
+    left:50%;
+    transform:translateX(-50%);
+    width:240px;  /* slightly bigger than pack */
+    height:360px; /* slightly bigger than pack */
+    pointer-events:none;
+    z-index:1000;
+    background:black; /* hide scaling artifacts */
+    border-radius:10px;
+    perspective:1200px; /* proper 3D flip perspective */
+    overflow:hidden;
 }
-
 #animation-container img {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    object-fit: cover;           /* <-- CHANGE from contain to cover */
-    transform-origin: center center;
-    backface-visibility: hidden; /* <-- ADD THIS LINE */
-    transform-style: preserve-3d;/* <-- ADD THIS LINE */
+    width:100%;
+    height:100%;
+    border-radius:10px;
+    object-fit:cover;           /* fill container fully */
+    transform-origin:center center;
+    backface-visibility:hidden; /* prevent see-through */
+    transform-style:preserve-3d;
 }
 
 #card-display {
@@ -109,40 +111,35 @@ body {
     justify-content:center;
 }
 .inventory-card {
+    display:inline-block;
     margin:10px;
     position:relative;
     width:120px;
-    height:180px; /* fixed height for frame */
-    border-radius:8px;
-    border: 2px solid #fff; /* frame color will be overridden inline per rarity */
-    overflow:hidden;
+    height:180px;
     transition: transform 0.2s ease, border-color 0.2s ease;
-    background:#222; /* fallback frame bg */
+    border-radius:8px;
+    overflow:hidden;
+    border:2px solid #fff;
 }
-
-.inventory-card:hover {
-    transform: scale(1.08);
-}
-
+.inventory-card:hover { transform: scale(1.08); }
 .inventory-card img {
     width:100%;
     height:100%;
-    object-fit:cover;
+    border-radius:8px;
     display:block;
+    object-fit:cover;
 }
-
-.card-name {
+.inventory-card .card-name {
     position:absolute;
     bottom:0;
     width:100%;
     text-align:center;
     padding:3px;
     font-weight:bold;
-    border-top-left-radius:0;
-    border-top-right-radius:0;
     border-bottom-left-radius:8px;
     border-bottom-right-radius:8px;
     overflow:hidden;
+    text-overflow:ellipsis;
     white-space:nowrap;
     color:#fff;
     box-sizing:border-box;
@@ -191,7 +188,7 @@ body {
 
 @keyframes sparkle {
     0% { transform: scale(0.5) rotate(0deg); opacity:0; }
-    50% { transform: scale(1.0) rotate(180deg); opacity:1; }
+    50% { transform: scale(1.2) rotate(180deg); opacity:1; }
     100% { transform: scale(0.7) rotate(360deg); opacity:0; }
 }
 .sparkle {
@@ -234,248 +231,198 @@ body {
 <div id="inventory"></div>
 
 <script>
-/* ===========================
-   GLOBAL DATA
-=========================== */
-
 const rarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
+const packPrices = { 'Common':1,'Uncommon':2,'Rare':3,'Epic':5,'Legendary':8,'Divine':12 };
+const rarityColors = { 'Common':'gray','Uncommon':'green','Rare':'blue','Epic':'purple','Legendary':'orange','Divine':'red' };
 
-const packPrices = {
-    Common:1, Uncommon:2, Rare:3, Epic:5, Legendary:8, Divine:12
-};
+let tokens = JSON.parse(localStorage.getItem('tokens')||'5');
+let coins = JSON.parse(localStorage.getItem('coins')||'0');
+let inventory = JSON.parse(localStorage.getItem('inventory')||'[]');
 
-const rarityColors = {
-    Common:'gray',
-    Uncommon:'green',
-    Rare:'blue',
-    Epic:'purple',
-    Legendary:'orange',
-    Divine:'red'
-};
+updateTokens(); updateCoins(); updateInventory();
 
-const rarityLevels = {
-    Common:0, Uncommon:1, Rare:2, Epic:3, Legendary:4, Divine:5
-};
+const packsContainer = document.getElementById('packs-container');
+const animationContainer = document.getElementById('animation-container');
+const cardDisplay = document.getElementById('card-display');
+const cardImg = document.getElementById('card-img');
+const rarityBar = document.getElementById('rarity-bar');
 
-let tokens = Number(localStorage.getItem('tokens')) || 5;
-let coins = Number(localStorage.getItem('coins')) || 0;
+const rarityLevels = { 'Common':0, 'Uncommon':1, 'Rare':2, 'Epic':3, 'Legendary':4, 'Divine':5 };
+const levelRarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
 
-/* 🔑 INVENTORY STORES **ONLY CARD NAMES** */
-let inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+rarities.forEach(rarity=>{
+    const packDiv = document.createElement('div');
+    packDiv.className='pack';
+    const packImg = document.createElement('img');
+    packImg.src = `${rarity}.png`;
+    packImg.alt = `${rarity} Pack`;
+    packImg.onerror = function(){ this.style.backgroundColor = rarityColors[rarity]; this.src=''; };
+    packDiv.appendChild(packImg);
+    const priceDiv = document.createElement('div');
+    priceDiv.className='pack-price';
+    priceDiv.textContent = `Cost: ${packPrices[rarity]} Tokens`;
+    packDiv.appendChild(priceDiv);
+    packDiv.onclick = ()=>openPackAnimation(rarity);
+    packsContainer.appendChild(packDiv);
+});
 
-let cardsList = [];
-
-/* ===========================
-   INIT
-=========================== */
-
-(async function init(){
-    cardsList = await fetch('cards/cards.json').then(r=>r.json());
-    createPacks();
-    updateTokens();
-    updateCoins();
-    updateInventory();
-})();
-
-/* ===========================
-   PACK CREATION
-=========================== */
-
-function createPacks(){
-    const container = document.getElementById('packs-container');
-    container.innerHTML = '';
-
-    rarities.forEach(rarity=>{
-        const pack = document.createElement('div');
-        pack.className = 'pack';
-        pack.innerHTML = `
-            <img src="${rarity}.png" onerror="this.style.background='${rarityColors[rarity]}';this.src=''">
-            <div class="pack-price">Cost: ${packPrices[rarity]} Tokens</div>
-        `;
-        pack.onclick = ()=>openPackAnimation(rarity);
-        container.appendChild(pack);
-    });
+function getRandomRarity(baseRarity){
+    const baseLevel = rarityLevels[baseRarity];
+    let roll = Math.random()*100;
+    let thresholds = [];
+    switch(baseRarity){
+        case 'Common': thresholds=[84,94,98,99,99.9,100]; break;
+        case 'Uncommon': thresholds=[0,85,95,99,99.9,100]; break;
+        case 'Rare': thresholds=[0,0,85,95,99,100]; break;
+        case 'Epic': thresholds=[0,0,0,85,95,100,100]; break;
+        case 'Legendary': thresholds=[0,0,0,0,90,100]; break;
+        case 'Divine': thresholds=[0,0,0,0,10,100]; break;
+    }
+    for(let i=baseLevel;i<levelRarities.length;i++){ if(roll<thresholds[i]) return levelRarities[i]; }
+    return baseRarity;
 }
 
-/* ===========================
-   PACK LOGIC
-=========================== */
-
-function getRandomRarity(base){
-    const roll = Math.random()*100;
-    const table = {
-        Common:[84,94,98,99,99.9,100],
-        Uncommon:[0,85,95,99,99.9,100],
-        Rare:[0,0,85,95,99,100],
-        Epic:[0,0,0,85,95,100],
-        Legendary:[0,0,0,0,90,100],
-        Divine:[0,0,0,0,10,100]
-    };
-
-    const baseLevel = rarityLevels[base];
-    for(let i=baseLevel;i<rarities.length;i++){
-        if(roll < table[base][i]) return rarities[i];
+function pickWeightedCard(cards){
+    const total = cards.reduce((sum,c)=>sum.chance||1,0);
+    let rand = Math.random()*total;
+    for(let card of cards){
+        const ch = card.chance||1;
+        if(rand<ch) return card;
+        rand-=ch;
     }
-    return base;
-}
-
-function pickWeighted(cards){
-    const total = cards.reduce((s,c)=>s+(c.chance||1),0);
-    let r = Math.random()*total;
-    for(const c of cards){
-        r -= (c.chance||1);
-        if(r<=0) return c;
-    }
-    return cards[0];
+    return cards[cards.length-1];
 }
 
 async function openPackAnimation(rarity){
-    if(tokens < packPrices[rarity]) return alert('Not enough tokens');
+    const price = packPrices[rarity];
+    if(tokens<price){ alert('Not enough tokens!'); return; }
+    tokens-=price; updateTokens();
+    document.querySelectorAll('.pack').forEach(p=>p.classList.add('disabled'));
 
-    tokens -= packPrices[rarity];
-    updateTokens();
+    const cardsList = await fetch('cards/cards.json').then(r=>r.json());
+    let cardRarity = getRandomRarity(rarity);
+    const availableCards = cardsList.filter(c=>c.rarity===cardRarity);
+    let card = availableCards.length>0?pickWeightedCard(availableCards):cardsList.find(c=>c.rarity===rarity);
 
-    const rarityResult = getRandomRarity(rarity);
-    const pool = cardsList.filter(c=>c.rarity===rarityResult);
-    const card = pickWeighted(pool);
-
-    // ANIMATION
-    const animContainer = document.getElementById('animation-container');
-    animContainer.innerHTML = `<img src='${rarity}.png'>`;
-    animContainer.style.bottom = '-400px';
-    animContainer.style.display = 'block';
+    animationContainer.innerHTML=`<img src='${rarity}.png'>`;
+    animationContainer.style.bottom='-400px';
+    animationContainer.style.display='block';
 
     let pos = -400;
     function slide(){
         pos += 12;
-        animContainer.style.bottom = pos+'px';
-        if(pos < 50) requestAnimationFrame(slide);
-        else flipPack(card);
+        animationContainer.style.bottom = pos+'px';
+        if(pos < 50){ requestAnimationFrame(slide); }
+        else { flipPack(card); }
     }
     requestAnimationFrame(slide);
 }
 
 function flipPack(card){
-    const animContainer = document.getElementById('animation-container');
-    const img = animContainer.firstChild;
+    const img = animationContainer.firstChild;
+    img.style.transition='transform 0.6s ease';
+    img.style.transform='rotateX(90deg)';
 
-    // Rotate the pack 90° (half flip)
-    img.style.transition = 'transform 0.6s ease';
-    img.style.transform = 'rotateX(90deg)';
+    // hide image until flip midpoint
+    img.style.visibility='hidden';
 
-    // After 600ms (halfway), switch to the actual card image and flip back
     setTimeout(()=>{
-        img.src = 'cards/' + card.image;
-        img.style.transform = 'rotateX(0deg)';
-    }, 600);
+        img.src=`cards/${card.image}`;
+        img.style.visibility='visible';
+        img.style.transform='rotateX(0deg)';
+    },600);
 
-    // After full flip, hide animation and reveal card
     setTimeout(()=>{
-        animContainer.style.display='none';
+        animationContainer.style.display='none';
         revealCard(card);
-
-        // Save only the card name in inventory
         inventory.push(card.name);
         localStorage.setItem('inventory', JSON.stringify(inventory));
-
         updateInventory();
-    }, 1200);
+        document.querySelectorAll('.pack').forEach(p=>p.classList.remove('disabled'));
+    },1200);
 }
 
-/* ===========================
-   CARD DISPLAY
-=========================== */
-
 function revealCard(card){
-    const display = document.getElementById('card-display');
-    const img = document.getElementById('card-img');
-    const bar = document.getElementById('rarity-bar');
+    cardImg.src=`cards/${card.image}`;
+    rarityBar.textContent = card.name;
+    rarityBar.style.backgroundColor = rarityColors[card.rarity];
 
-    img.src = 'cards/' + card.image;
-    bar.textContent = card.name;
-    bar.style.background = rarityColors[card.rarity];
+    cardDisplay.style.transform='translate(-50%,-50%) scale(1)';
+    cardDisplay.style.boxShadow=`0 0 30px 10px ${rarityColors[card.rarity]}`;
 
-    display.style.transform = 'translate(-50%,-50%) scale(1)';
-    display.style.boxShadow = `0 0 30px 10px ${rarityColors[card.rarity]}`;
-
-    for(let i=0;i<20;i++){
+    for(let i=0;i<30;i++){
         const sparkle=document.createElement('div');
         sparkle.className='sparkle';
         sparkle.style.left=Math.random()*180+'px';
         sparkle.style.top=Math.random()*280+'px';
-        const size = 8 + Math.random()*12;
+        const size = 10 + Math.random()*15;
         sparkle.style.width = size+'px';
         sparkle.style.height = size+'px';
         sparkle.style.animationDelay = (Math.random()*0.5)+'s';
-        display.appendChild(sparkle);
+        cardDisplay.appendChild(sparkle);
         setTimeout(()=>sparkle.remove(),1500);
     }
 
-    setTimeout(()=>{
-        display.style.transform = 'translate(-50%,-50%) scale(0)';
-        display.style.boxShadow = 'none';
+    setTimeout(()=>{ 
+        cardDisplay.style.transform='translate(-50%,-50%) scale(0)'; 
+        cardDisplay.style.boxShadow='none'; 
     },2200);
 }
 
-/* ===========================
-   INVENTORY
-=========================== */
+function updateTokens(){ document.getElementById('tokens').innerHTML=`<img src='https://www.wtfq.online/Tokens/token.png'>Tokens: ${tokens}`; localStorage.setItem('tokens', tokens); }
+function updateCoins(){ document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; localStorage.setItem('coins', coins); }
 
 async function updateInventory(){
-    const inv = document.getElementById('inventory');
-    inv.innerHTML = '';
+    const inv=document.getElementById('inventory'); inv.innerHTML='';
+    const cardsList = await fetch('cards/cards.json').then(r=>r.json());
 
-    const cardsListCurrent = cardsList.length ? cardsList : await fetch('cards/cards.json').then(r=>r.json());
-
-    inventory.forEach((cardName, index)=>{
-        const card = cardsListCurrent.find(c=>c.name===cardName);
+    inventory.forEach((cardName,index)=>{
+        const card = cardsList.find(c=>c.name===cardName);
         if(!card) return;
-
-        const div = document.createElement('div');
-        div.className='inventory-card';
-        div.innerHTML=`
-    <img src='cards/${card.image}'>
-    <div class='card-name' style='background:${rarityColors[card.rarity]}'>
-        ${card.name}
-    </div>
-    <button class='sell-btn' onclick='sellCard(${index})'>Sell</button>
-    <div class='sell-price'>${card.coinWorth||1} Coins</div>
-`;
+        const div=document.createElement('div'); div.className='inventory-card';
+        div.style.borderColor = rarityColors[card.rarity];
+        div.innerHTML=`<img src='cards/${card.image}'><div class='card-name' style='background:${rarityColors[card.rarity]}'>${card.name}</div>
+        <button class='sell-btn' onclick='sellCard(${index})'>Sell</button>
+        <div class='sell-price'>${card.coinWorth||1} Coins</div>`;
         inv.appendChild(div);
     });
 }
 
 async function sellCard(index){
-    const cardsListCurrent = cardsList.length ? cardsList : await fetch('cards/cards.json').then(r=>r.json());
+    const cardsList = await fetch('cards/cards.json').then(r=>r.json());
     const cardName = inventory[index];
-    const card = cardsListCurrent.find(c=>c.name===cardName);
+    const card = cardsList.find(c=>c.name===cardName);
     if(!card) return;
-
-    coins += card.coinWorth || 1;
+    coins+=card.coinWorth||1;
     inventory.splice(index,1);
-
     localStorage.setItem('coins', coins);
     localStorage.setItem('inventory', JSON.stringify(inventory));
-
-    updateCoins();
-    updateInventory();
+    updateCoins(); updateInventory();
 }
 
-/* ===========================
-   UI
-=========================== */
-
-function updateTokens(){
-    document.getElementById('tokens').innerHTML =
-        `<img src="https://www.wtfq.online/Tokens/token.png">Tokens: ${tokens}`;
-    localStorage.setItem('tokens', tokens);
-}
-
-function updateCoins(){
-    document.getElementById('coins').innerHTML =
-        `<img src="https://www.wtfq.online/Tokens/coin.png">Coins: ${coins}`;
-    localStorage.setItem('coins', coins);
-}
+document.getElementById('show-chances-btn').onclick = async ()=>{ 
+    const cardsList = await fetch('cards/cards.json').then(r=>r.json());
+    const head=document.getElementById('chance-chart-head'); const body=document.getElementById('chance-chart-body');
+    head.innerHTML="<tr><th>Card</th>"+rarities.map(r=>`<th>${r} Pack</th>`).join('')+"</tr>"; body.innerHTML='';
+    cardsList.forEach(card=>{
+        const row=document.createElement('tr');
+        row.innerHTML=`<td>${card.name} (${card.rarity})</td>`+
+            rarities.map(pack=>{
+                const thresholds={'Common':[84,94,98,99,99.9,100],'Uncommon':[0,85,95,99,99.9,100],'Rare':[0,0,85,95,99,100],'Epic':[0,0,0,85,95,100,100],'Legendary':[0,0,0,0,90,100],'Divine':[0,0,0,0,10,100]};
+                const baseLevel = rarityLevels[pack]; const cardLevel=rarityLevels[card.rarity];
+                let rarityProb = 0;
+                if(cardLevel>=baseLevel || (pack==='Divine' && cardLevel===4)){
+                    const availableCards = cardsList.filter(c=>c.rarity===card.rarity);
+                    const totalChance = availableCards.reduce((s,c)=>s+(c.chance||1),0);
+                    rarityProb = ((card.chance||1)/totalChance)*(thresholds[pack][cardLevel]- (cardLevel>0?thresholds[pack][cardLevel-1]:0));
+                    rarityProb = Math.max(0, rarityProb);
+                }
+                return `<td>${(rarityProb*100).toFixed(2)}%</td>`;
+            }).join('');
+        body.appendChild(row);
+    });
+    document.getElementById('chance-chart-container').style.display='block';
+};
 </script>
 </body>
 </html>
