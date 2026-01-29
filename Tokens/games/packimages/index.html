@@ -52,12 +52,15 @@ body {
     height:300px;
     pointer-events:none;
     z-index:1000;
+    overflow:hidden;
+    border-radius:10px;
 }
 #animation-container img {
     width:100%;
     height:100%;
-    border-radius:10px;
     object-fit:contain;
+    object-position:center;
+    border-radius:10px;
     transform-origin:center center;
     backface-visibility:hidden;
 }
@@ -77,9 +80,9 @@ body {
 #card-display img {
     width:100%;
     height:100%;
-    border-radius:10px;
     object-fit:contain;
     object-position:center;
+    border-radius:10px;
 }
 
 #rarity-bar {
@@ -98,7 +101,6 @@ body {
     white-space:nowrap;
 }
 
-/* INVENTORY */
 #inventory {
     margin-top:30px;
     display:flex;
@@ -221,9 +223,15 @@ const rarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
 const packPrices = { 'Common':1,'Uncommon':2,'Rare':3,'Epic':5,'Legendary':8,'Divine':12 };
 const rarityColors = { 'Common':'gray','Uncommon':'green','Rare':'blue','Epic':'purple','Legendary':'orange','Divine':'red' };
 
-let tokens = JSON.parse(localStorage.getItem('tokens')||'5');
-let coins = JSON.parse(localStorage.getItem('coins')||'0');
-let inventory = JSON.parse(localStorage.getItem('inventory')||'[]');
+function safeParseCookie(name,defaultValue){
+    const v=document.cookie.split('; ').find(r=>r.startsWith(name+'='));
+    if(v) try{ return JSON.parse(v.split('=')[1]); }catch(e){ return defaultValue; }
+    return defaultValue;
+}
+
+let tokens = safeParseCookie('tokens',5);
+let coins = safeParseCookie('coins',0);
+let inventory = safeParseCookie('inventory',[]);
 
 updateTokens(); updateCoins(); updateInventory();
 
@@ -236,7 +244,6 @@ const rarityBar = document.getElementById('rarity-bar');
 const rarityLevels = { 'Common':0, 'Uncommon':1, 'Rare':2, 'Epic':3, 'Legendary':4, 'Divine':5 };
 const levelRarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
 
-// CREATE PACK BUTTONS
 rarities.forEach(rarity=>{
     const packDiv = document.createElement('div');
     packDiv.className='pack';
@@ -280,7 +287,6 @@ function pickWeightedCard(cards){
     return cards[cards.length-1];
 }
 
-// OPEN PACK ANIMATION USING requestAnimationFrame
 async function openPackAnimation(rarity){
     const price = packPrices[rarity];
     if(tokens<price){ alert('Not enough tokens!'); return; }
@@ -292,7 +298,7 @@ async function openPackAnimation(rarity){
     const availableCards = cardsList.filter(c=>c.rarity===cardRarity);
     let card = availableCards.length>0?pickWeightedCard(availableCards):cardsList.find(c=>c.rarity===rarity);
 
-    animationContainer.innerHTML=`<img src='${rarity}.png'>`;
+    animationContainer.innerHTML=`<img src='cards/${card.image}'>`;
     animationContainer.style.bottom='-400px';
     animationContainer.style.display='block';
 
@@ -314,14 +320,14 @@ function flipPack(card){
         animationContainer.style.display='none';
         revealCard(card);
         inventory.push(card);
-        localStorage.setItem('inventory', JSON.stringify(inventory));
-        updateInventory();
+        document.cookie=`inventory=${JSON.stringify(inventory)}; path=/`;
         document.querySelectorAll('.pack').forEach(p=>p.classList.remove('disabled'));
     },600);
 }
 
 function revealCard(card){
     cardImg.src=`cards/${card.image}`;
+    cardImg.style.objectFit='contain';
     rarityBar.textContent = card.name;
     rarityBar.style.backgroundColor = rarityColors[card.rarity];
 
@@ -344,8 +350,8 @@ function revealCard(card){
     setTimeout(()=>{ cardDisplay.style.transform='translate(-50%,-50%) scale(0)'; cardDisplay.style.boxShadow='none'; },2200);
 }
 
-function updateTokens(){ document.getElementById('tokens').innerHTML=`<img src='https://www.wtfq.online/Tokens/token.png'>Tokens: ${tokens}`; localStorage.setItem('tokens', tokens); }
-function updateCoins(){ document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; localStorage.setItem('coins', coins); }
+function updateTokens(){ document.getElementById('tokens').innerHTML=`<img src='https://www.wtfq.online/Tokens/token.png'>Tokens: ${tokens}`; document.cookie=`tokens=${JSON.stringify(tokens)}; path=/`; }
+function updateCoins(){ document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; document.cookie=`coins=${JSON.stringify(coins)}; path=/`; }
 
 function updateInventory(){
     const inv=document.getElementById('inventory'); inv.innerHTML='';
@@ -362,8 +368,8 @@ function sellCard(index){
     const card=inventory[index];
     coins+=card.coinWorth||1;
     inventory.splice(index,1);
-    localStorage.setItem('coins', coins);
-    localStorage.setItem('inventory', JSON.stringify(inventory));
+    document.cookie=`coins=${JSON.stringify(coins)}; path=/`;
+    document.cookie=`inventory=${JSON.stringify(inventory)}; path=/`;
     updateCoins(); updateInventory();
 }
 
@@ -398,8 +404,4 @@ document.getElementById('show-chances-btn').onclick = async ()=>{
             }).join('');
         body.appendChild(row);
     });
-    document.getElementById('chance-chart-container').style.display='block';
-};
-</script>
-</body>
-</html>
+    document.getElementById
