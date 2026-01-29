@@ -27,11 +27,13 @@
     align-items: center;
     justify-content: flex-start;
     border: 2px solid #fff;
+    transition: transform 0.5s ease;
   }
   .pack img { 
     width: 100%; 
     height: 80%; 
     object-fit: contain;
+    transition: transform 0.5s ease;
   }
   .pack-price {
     width: 100%;
@@ -41,7 +43,7 @@
     font-weight: bold;
   }
   #card { display: none; width: 200px; height: 300px; margin: 20px; position: relative; }
-  #card img { width: 100%; height: 100%; border-radius: 8px; }
+  #card img { width: 100%; height: 100%; border-radius: 8px; transform: scale(0); transition: transform 0.5s ease; }
   .rarity-bar {
     position: absolute;
     bottom: 0;
@@ -87,12 +89,13 @@ const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Divine'];
 const packPrices = { 'Common': 1, 'Uncommon': 2, 'Rare': 3, 'Epic': 5, 'Legendary': 8, 'Divine': 12 };
 const packsContainer = document.getElementById('packs-container');
 
+// Create packs with images from packimages folder
 rarities.forEach(rarity => {
     const packDiv = document.createElement('div');
     packDiv.className = 'pack';
 
     const packImg = document.createElement('img');
-    packImg.src = `${rarity}.png`;
+    packImg.src = `packimages/${rarity}.png`;
     packImg.alt = `${rarity} Pack`;
     packDiv.appendChild(packImg);
 
@@ -101,14 +104,14 @@ rarities.forEach(rarity => {
     priceDiv.textContent = `Cost: ${packPrices[rarity]} Tokens`;
     packDiv.appendChild(priceDiv);
 
-    packDiv.onclick = () => openPack(rarity);
+    packDiv.onclick = () => openPack(packDiv, rarity);
     packsContainer.appendChild(packDiv);
 });
 
 function getCookie(name) { const value = `; ${document.cookie}`; const parts = value.split(`; ${name}=`); if (parts.length === 2) return parts.pop().split(';').shift(); }
 function setCookie(name, value) { document.cookie = name + '=' + value + '; path=/'; }
 
-async function openPack(selectedRarity) {
+async function openPack(packDiv, selectedRarity) {
   const price = packPrices[selectedRarity];
   if (tokens < price) { alert('Not enough tokens!'); return; }
   tokens -= price; setCookie('tokens', tokens); updateTokens();
@@ -121,30 +124,36 @@ async function openPack(selectedRarity) {
     return filtered[Math.floor(Math.random() * filtered.length)];
   }
 
+  // Animate pack opening
+  packDiv.children[0].style.transform = 'rotateY(90deg)';
+  setTimeout(() => {
+    packDiv.children[0].style.display = 'none';
+  }, 250);
+
+  // Award 3 cards with weighted rarity
   const rarityOrder = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
   let startIndex = rarityOrder.indexOf(selectedRarity);
-  let cardData = null;
   let awardedCards = [];
   for (let i=0;i<3;i++){
     let chance = Math.random();
     let rarityIndex = startIndex + (chance > 0.7 ? 1 : 0);
     if (rarityIndex >= rarityOrder.length) rarityIndex = rarityOrder.length-1;
-    cardData = getCard(rarityOrder[rarityIndex]) || getCard(rarityOrder[startIndex]);
+    let cardData = getCard(rarityOrder[rarityIndex]) || getCard(rarityOrder[startIndex]);
     if(cardData) awardedCards.push(cardData);
   }
 
-  // Display the last card and add all to inventory
+  // Display the last card with animation
   const lastCard = awardedCards[awardedCards.length-1];
-  document.getElementById('card-img').src = `cards/${lastCard.image}`;
+  const cardImg = document.getElementById('card-img');
+  cardImg.src = `cards/${lastCard.image}`;
   const rarityBar = document.getElementById('rarity-bar');
   rarityBar.textContent = lastCard.name;
   rarityBar.style.backgroundColor = rarityColors[lastCard.rarity] || 'white';
   document.getElementById('card').style.display = 'block';
+  setTimeout(() => { cardImg.style.transform = 'scale(1)'; }, 100);
 
-  // Add all awarded cards to inventory
-  awardedCards.forEach(c => {
-    inventory.push(c);
-  });
+  // Add all cards to inventory
+  awardedCards.forEach(c => inventory.push(c));
   setCookie('inventory', JSON.stringify(inventory));
   updateInventory();
 }
