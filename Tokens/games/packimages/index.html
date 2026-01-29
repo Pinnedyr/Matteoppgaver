@@ -14,8 +14,24 @@
     align-items: center;
     padding: 20px;
   }
-  #pack { position: relative; width: 200px; height: 300px; margin: 20px; cursor: pointer; }
-  #pack img { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+  #pack { 
+    position: relative; 
+    width: 200px; 
+    height: 300px; 
+    margin: 20px; 
+    cursor: pointer; 
+    border: 2px solid #fff; /* Make pack area visible */
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  #pack img { 
+    width: 100%; 
+    height: 100%; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    display: block;
+  }
   #card { display: none; width: 200px; height: 300px; margin: 20px; position: relative; }
   #card img { width: 100%; height: 100%; border-radius: 8px; }
   .rarity-bar {
@@ -31,8 +47,10 @@
   #inventory { margin-top: 30px; }
   .inventory-card { display: inline-block; margin: 10px; position: relative; }
   .inventory-card img { width: 120px; height: 180px; border-radius: 8px; }
-  .sell-btn { position: absolute; top: 5px; right: 5px; background: #0008; color: #fff; border: none; padding: 2px 5px; cursor: pointer; border-radius: 4px; }
+  .sell-btn { position: absolute; top: 5px; right: 5px; background: #0008; color: #fff; border: none; padding: 2px 5px; cursor: pointer; border-radius: 4px; z-index: 10; }
   #tokens, #coins { margin: 10px; font-size: 18px; }
+  /* Add hover effect so the clickable area is more obvious */
+  #pack:hover { box-shadow: 0 0 15px #fff; }
 </style>
 </head>
 <body>
@@ -51,94 +69,38 @@
 <div id="inventory"></div>
 
 <script>
-// Rarity colors
-const rarityColors = {
-  'Common': 'gray',
-  'Uncommon': 'green',
-  'Rare': 'blue',
-  'Epic': 'purple',
-  'Legendary': 'orange',
-  'Divine': 'red'
-};
-
-// Tokens and Coins stored in cookies
+const rarityColors = { 'Common': 'gray', 'Uncommon': 'green', 'Rare': 'blue', 'Epic': 'purple', 'Legendary': 'orange', 'Divine': 'red' };
 let tokens = parseInt(getCookie('tokens')) || 5;
 let coins = parseInt(getCookie('coins')) || 0;
 updateTokens();
 updateCoins();
-
-// Inventory stored in cookies
 let inventory = JSON.parse(getCookie('inventory') || '[]');
 updateInventory();
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
-function setCookie(name, value) {
-  document.cookie = name + '=' + value + '; path=/';
-}
-
+function getCookie(name) { const value = `; ${document.cookie}`; const parts = value.split(`; ${name}=`); if (parts.length === 2) return parts.pop().split(';').shift(); }
+function setCookie(name, value) { document.cookie = name + '=' + value + '; path=/'; }
 async function openPack() {
   if (tokens < 1) { alert('Not enough tokens!'); return; }
-  tokens--;
-  setCookie('tokens', tokens);
-  updateTokens();
-
-  // Simple pack opening animation
-  const pack = document.getElementById('pack');
+  tokens--; setCookie('tokens', tokens); updateTokens();
   const packImg = document.getElementById('pack-img');
   packImg.style.transform = 'rotateY(90deg)';
-
   setTimeout(async () => {
-    // Choose a random card from JSON files in /cards
     const cardsList = await fetch('cards/cards.json').then(res => res.json());
     const cardData = cardsList[Math.floor(Math.random() * cardsList.length)];
-
     document.getElementById('card-img').src = `cards/${cardData.image}`;
     const rarityBar = document.getElementById('rarity-bar');
     rarityBar.textContent = cardData.name;
     rarityBar.style.backgroundColor = rarityColors[cardData.rarity] || 'white';
-
     document.getElementById('card').style.display = 'block';
     packImg.style.transform = '';
-
-    // Save card to inventory
     inventory.push(cardData);
     setCookie('inventory', JSON.stringify(inventory));
     updateInventory();
   }, 500);
 }
-
-function updateTokens() {
-  document.getElementById('tokens').textContent = `Tokens: ${tokens}`;
-}
-function updateCoins() {
-  document.getElementById('coins').textContent = `Coins: ${coins}`;
-}
-
-function updateInventory() {
-  const inv = document.getElementById('inventory');
-  inv.innerHTML = '';
-  inventory.forEach((card, index) => {
-    const div = document.createElement('div');
-    div.className = 'inventory-card';
-    div.innerHTML = `<img src='cards/${card.image}'><button class='sell-btn' onclick='sellCard(${index})'>Sell</button>`;
-    inv.appendChild(div);
-  });
-}
-
-function sellCard(index) {
-  const card = inventory[index];
-  coins += card.coinWorth || 1;
-  setCookie('coins', coins);
-  inventory.splice(index, 1);
-  setCookie('inventory', JSON.stringify(inventory));
-  updateCoins();
-  updateInventory();
-}
+function updateTokens() { document.getElementById('tokens').textContent = `Tokens: ${tokens}`; }
+function updateCoins() { document.getElementById('coins').textContent = `Coins: ${coins}`; }
+function updateInventory() { const inv = document.getElementById('inventory'); inv.innerHTML = ''; inventory.forEach((card, index) => { const div = document.createElement('div'); div.className = 'inventory-card'; div.innerHTML = `<img src='cards/${card.image}'><button class='sell-btn' onclick='sellCard(${index})'>Sell</button>`; inv.appendChild(div); }); }
+function sellCard(index) { const card = inventory[index]; coins += card.coinWorth || 1; setCookie('coins', coins); inventory.splice(index, 1); setCookie('inventory', JSON.stringify(inventory)); updateCoins(); updateInventory(); }
 </script>
 
 </body>
