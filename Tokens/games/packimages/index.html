@@ -211,6 +211,9 @@ const cardDisplay = document.getElementById('card-display');
 const cardImg = document.getElementById('card-img');
 const rarityBar = document.getElementById('rarity-bar');
 
+const rarityLevels = { 'Common':0, 'Uncommon':1, 'Rare':2, 'Epic':3, 'Legendary':4, 'Divine':5 };
+const levelRarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
+
 // CREATE PACK BUTTONS
 rarities.forEach(rarity=>{
     const packDiv = document.createElement('div');
@@ -231,32 +234,50 @@ rarities.forEach(rarity=>{
     packsContainer.appendChild(packDiv);
 });
 
-// OPEN PACK ANIMATION (1 card per pack)
+// RANDOM RARITY FUNCTION
+function getRandomRarity(baseRarity) {
+    const baseLevel = rarityLevels[baseRarity];
+    let roll = Math.random()*100; // 0-100%
+
+    // Common pack probabilities example
+    let thresholds = [];
+    switch(baseRarity) {
+        case 'Common': thresholds = [84,94,98,99,99.9,100]; break;
+        case 'Uncommon': thresholds = [0,85,95,99,99.9,100]; break;
+        case 'Rare': thresholds = [0,0,85,95,99,100]; break;
+        case 'Epic': thresholds = [0,0,0,85,95,100,100]; break;
+        case 'Legendary': thresholds = [0,0,0,0,90,100]; break;
+        case 'Divine': thresholds = [0,0,0,0,10,100]; break;
+    }
+    for(let i=baseLevel;i<=5;i++){
+        if(roll < thresholds[i]) return levelRarities[i];
+    }
+    return baseRarity; // fallback
+}
+
+// OPEN PACK ANIMATION
 async function openPackAnimation(rarity){
     const price = packPrices[rarity];
     if(tokens < price){ alert('Not enough tokens!'); return; }
     tokens -= price; updateTokens();
 
-    // Disable all pack buttons
     document.querySelectorAll('.pack').forEach(p=>p.classList.add('disabled'));
 
     const cardsList = await fetch('cards/cards.json').then(r=>r.json());
-    const rarityOrder=['Common','Uncommon','Rare','Epic','Legendary','Divine'];
-    let startIndex = rarityOrder.indexOf(rarity);
-    let chance=Math.random();
-    let rarityIndex=startIndex + (chance>0.7?1:0);
-    if(rarityIndex >= rarityOrder.length) rarityIndex = rarityOrder.length-1;
 
-    const availableCards = cardsList.filter(c=>c.rarity === rarityOrder[rarityIndex]);
-    if(availableCards.length === 0) {
-        alert("No cards of this rarity yet!");
-        document.querySelectorAll('.pack').forEach(p=>p.classList.remove('disabled'));
-        return;
+    // pick 1 card
+    let cardRarity = getRandomRarity(rarity);
+    const availableCards = cardsList.filter(c=>c.rarity===cardRarity);
+    let card;
+    if(availableCards.length>0){
+        card = availableCards[Math.floor(Math.random()*availableCards.length)];
+    } else {
+        // fallback: pick base rarity card if none exist
+        const fallback = cardsList.filter(c=>c.rarity===rarity);
+        card = fallback[Math.floor(Math.random()*fallback.length)];
     }
 
-    const card = availableCards[Math.floor(Math.random() * availableCards.length)];
-
-    // Pack slides up + flip
+    // animation
     animationContainer.innerHTML = `<img src='${rarity}.png'>`;
     animationContainer.style.bottom = '-350px';
     animationContainer.style.display = 'block';
@@ -266,10 +287,7 @@ async function openPackAnimation(rarity){
     const slideUp = setInterval(()=>{
         pos += 15;
         animationContainer.style.bottom = pos+'px';
-        if(pos >= 50){
-            clearInterval(slideUp);
-            flipPack(card);
-        }
+        if(pos>=50){ clearInterval(slideUp); flipPack(card); }
     },10);
 }
 
@@ -283,7 +301,6 @@ function flipPack(card){
         inventory.push(card);
         setCookie('inventory',inventory);
         updateInventory();
-        // Re-enable pack buttons
         document.querySelectorAll('.pack').forEach(p=>p.classList.remove('disabled'));
     },600);
 }
@@ -296,7 +313,7 @@ function revealCard(card){
     cardDisplay.style.transform = 'translate(-50%,-50%) scale(1)';
     cardDisplay.style.boxShadow = `0 0 30px 10px ${rarityColors[card.rarity]}`;
 
-    // Multiple small sparkles
+    // sparkles
     for(let i=0;i<15;i++){
         const sparkle = document.createElement('div');
         sparkle.className='sparkle';
