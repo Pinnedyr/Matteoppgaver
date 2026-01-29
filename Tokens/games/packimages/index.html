@@ -235,8 +235,20 @@ const rarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
 const packPrices = { 'Common':1,'Uncommon':2,'Rare':3,'Epic':5,'Legendary':8,'Divine':12 };
 const rarityColors = { 'Common':'gray','Uncommon':'green','Rare':'blue','Epic':'purple','Legendary':'orange','Divine':'red' };
 
-let tokens = JSON.parse(localStorage.getItem('tokens')||'5');
-let coins = JSON.parse(localStorage.getItem('coins')||'0');
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return m && !isNaN(parseFloat(m[2])) ? parseFloat(m[2]) : 0;
+}
+
+function setCookie(name, value, days = 365) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = name + "=" + value + ";path=/;expires=" + d.toUTCString();
+}
+
+// Initialize coins and tokens from the cookies
+let tokens = getCookie("tokens") || 5;
+let coins = getCookie("coins") || 0;
 let inventory = JSON.parse(localStorage.getItem('inventory')||'[]');
 
 updateTokens(); updateCoins(); updateInventory();
@@ -369,9 +381,14 @@ function revealCard(card){
     },2200);
 }
 
-function updateTokens(){ document.getElementById('tokens').innerHTML=`<img src='https://www.wtfq.online/Tokens/token.png'>Tokens: ${tokens}`; localStorage.setItem('tokens', tokens); }
-function updateCoins(){ document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; localStorage.setItem('coins', coins); }
-
+function updateTokens(){ 
+    document.getElementById('tokens').innerHTML=`<img src='https://www.wtfq.online/Tokens/token.png'>Tokens: ${tokens}`; 
+    setCookie("tokens", tokens);
+}
+function updateCoins(){ 
+    document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; 
+    setCookie("coins", coins);
+}
 async function updateInventory(){
     const inv=document.getElementById('inventory'); inv.innerHTML='';
     const cardsList = await fetch('cards/cards.json').then(r=>r.json());
