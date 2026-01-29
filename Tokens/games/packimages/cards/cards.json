@@ -1,4 +1,5 @@
 [
-  {"name":"Cp marcus","image":"Marcus.jpg","rarity":"Common","coinWorth":50},
-  {"name":"Mateo bavianer","image":"Mateo bavianer.jpg","rarity":"Uncommon","coinWorth":120}
+  {"name":"Cp marcus","image":"Marcus.jpg","rarity":"Common","coinWorth":50,"chance":1.5},
+  {"name":"Mateo bavianer","image":"Mateo bavianer.jpg","rarity":"Uncommon","coinWorth":120,"chance":1},
+  {"name":"Jens","image":"Jens.jpg","rarity":"Uncommon","coinWorth":500,"chance":0.2}
 ]
