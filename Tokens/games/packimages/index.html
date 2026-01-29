@@ -6,7 +6,7 @@
 <title>Card Pack Opener</title>
 <style>
 body {
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background:#121212;
     color:#fff;
     display:flex;
@@ -40,12 +40,12 @@ body {
 }
 .pack:hover { transform: scale(1.05); }
 .pack.disabled { pointer-events:none; opacity:0.5; }
-.pack img { width:100%; height:80%; object-fit:contain; object-position:center; }
+.pack img { width:100%; height:100%; object-fit:contain; object-position:center; }
 .pack-price { width:100%; text-align:center; background:#222; padding:5px; font-weight:bold;}
 
 #animation-container {
     position:fixed;
-    bottom:-350px;
+    bottom:-400px;
     left:50%;
     transform:translateX(-50%);
     width:200px;
@@ -58,7 +58,6 @@ body {
     height:100%;
     border-radius:10px;
     object-fit:contain;
-    object-position:center;
     transform-origin:center center;
     backface-visibility:hidden;
 }
@@ -73,6 +72,7 @@ body {
     border-radius:10px;
     z-index:1001;
     transition: transform 0.6s ease, box-shadow 0.6s ease;
+    overflow:hidden;
 }
 #card-display img {
     width:100%;
@@ -89,8 +89,13 @@ body {
     padding:5px;
     text-align:center;
     font-weight:bold;
-    border-bottom-left-radius:8px;
-    border-bottom-right-radius:8px;
+    border-bottom-left-radius:10px;
+    border-bottom-right-radius:10px;
+    box-sizing:border-box;
+    background-color:rgba(0,0,0,0.6);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 
 /* INVENTORY */
@@ -113,6 +118,7 @@ body {
     height:180px;
     border-radius:8px;
     display:block;
+    object-fit:contain;
 }
 .inventory-card .card-name {
     text-align:center;
@@ -120,6 +126,9 @@ body {
     font-weight:bold;
     border-radius:0 0 8px 8px;
     margin-top:-5px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 .sell-btn {
     position:absolute;
@@ -212,9 +221,9 @@ const rarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
 const packPrices = { 'Common':1,'Uncommon':2,'Rare':3,'Epic':5,'Legendary':8,'Divine':12 };
 const rarityColors = { 'Common':'gray','Uncommon':'green','Rare':'blue','Epic':'purple','Legendary':'orange','Divine':'red' };
 
-let tokens = safeParseCookie('tokens',5);
-let coins = safeParseCookie('coins',0);
-let inventory = safeParseCookie('inventory',[]);
+let tokens = JSON.parse(localStorage.getItem('tokens')||'5');
+let coins = JSON.parse(localStorage.getItem('coins')||'0');
+let inventory = JSON.parse(localStorage.getItem('inventory')||'[]');
 
 updateTokens(); updateCoins(); updateInventory();
 
@@ -244,7 +253,6 @@ rarities.forEach(rarity=>{
     packsContainer.appendChild(packDiv);
 });
 
-// RANDOM RARITY FUNCTION
 function getRandomRarity(baseRarity){
     const baseLevel = rarityLevels[baseRarity];
     let roll = Math.random()*100;
@@ -257,11 +265,10 @@ function getRandomRarity(baseRarity){
         case 'Legendary': thresholds=[0,0,0,0,90,100]; break;
         case 'Divine': thresholds=[0,0,0,0,10,100]; break;
     }
-    for(let i=baseLevel;i<=5;i++){ if(roll<thresholds[i]) return levelRarities[i]; }
+    for(let i=baseLevel;i<levelRarities.length;i++){ if(roll<thresholds[i]) return levelRarities[i]; }
     return baseRarity;
 }
 
-// PICK CARD BASED ON WEIGHTED CHANCE
 function pickWeightedCard(cards){
     const total = cards.reduce((sum,c)=>sum.chance||1,0);
     let rand = Math.random()*total;
@@ -273,61 +280,72 @@ function pickWeightedCard(cards){
     return cards[cards.length-1];
 }
 
-// OPEN PACK ANIMATION
+// OPEN PACK ANIMATION USING requestAnimationFrame
 async function openPackAnimation(rarity){
     const price = packPrices[rarity];
     if(tokens<price){ alert('Not enough tokens!'); return; }
     tokens-=price; updateTokens();
     document.querySelectorAll('.pack').forEach(p=>p.classList.add('disabled'));
+
     const cardsList = await fetch('cards/cards.json').then(r=>r.json());
     let cardRarity = getRandomRarity(rarity);
     const availableCards = cardsList.filter(c=>c.rarity===cardRarity);
     let card = availableCards.length>0?pickWeightedCard(availableCards):cardsList.find(c=>c.rarity===rarity);
+
     animationContainer.innerHTML=`<img src='${rarity}.png'>`;
-    animationContainer.style.bottom='-350px'; animationContainer.style.display='block';
-    animationContainer.firstChild.style.transform='rotateX(0deg)';
-    let pos=-350;
-    const slideUp = setInterval(()=>{
-        pos+=15; animationContainer.style.bottom=pos+'px';
-        if(pos>=50){ clearInterval(slideUp); flipPack(card); }
-    },10);
+    animationContainer.style.bottom='-400px';
+    animationContainer.style.display='block';
+
+    let pos = -400;
+    function slide(){
+        pos += 12;
+        animationContainer.style.bottom = pos+'px';
+        if(pos < 50){ requestAnimationFrame(slide); }
+        else { flipPack(card); }
+    }
+    requestAnimationFrame(slide);
 }
 
 function flipPack(card){
-    const img=animationContainer.firstChild;
-    img.style.transition='transform 0.6s ease'; img.style.transform='rotateX(90deg)';
+    const img = animationContainer.firstChild;
+    img.style.transition='transform 0.6s ease';
+    img.style.transform='rotateX(90deg)';
     setTimeout(()=>{
-        animationContainer.style.display='none'; revealCard(card);
-        inventory.push(card); setCookie('inventory',inventory); updateInventory();
+        animationContainer.style.display='none';
+        revealCard(card);
+        inventory.push(card);
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        updateInventory();
         document.querySelectorAll('.pack').forEach(p=>p.classList.remove('disabled'));
     },600);
 }
 
 function revealCard(card){
     cardImg.src=`cards/${card.image}`;
-    rarityBar.textContent=card.name;
-    rarityBar.style.backgroundColor=rarityColors[card.rarity];
+    rarityBar.textContent = card.name;
+    rarityBar.style.backgroundColor = rarityColors[card.rarity];
+
     cardDisplay.style.transform='translate(-50%,-50%) scale(1)';
     cardDisplay.style.boxShadow=`0 0 30px 10px ${rarityColors[card.rarity]}`;
-    for(let i=0;i<15;i++){
+
+    for(let i=0;i<20;i++){
         const sparkle=document.createElement('div');
         sparkle.className='sparkle';
-        sparkle.style.left=Math.random()*200+'px';
-        sparkle.style.top=Math.random()*300+'px';
-        sparkle.style.width=(10+Math.random()*10)+'px';
-        sparkle.style.height=sparkle.style.width;
+        sparkle.style.left=Math.random()*180+'px';
+        sparkle.style.top=Math.random()*280+'px';
+        const size = 8 + Math.random()*12;
+        sparkle.style.width = size+'px';
+        sparkle.style.height = size+'px';
+        sparkle.style.animationDelay = (Math.random()*0.5)+'s';
         cardDisplay.appendChild(sparkle);
-        setTimeout(()=>sparkle.remove(),1000);
+        setTimeout(()=>sparkle.remove(),1500);
     }
-    setTimeout(()=>{ cardDisplay.style.transform='translate(-50%,-50%) scale(0)'; cardDisplay.style.boxShadow='none'; },2000);
+
+    setTimeout(()=>{ cardDisplay.style.transform='translate(-50%,-50%) scale(0)'; cardDisplay.style.boxShadow='none'; },2200);
 }
 
-// COOKIE HELPERS
-function safeParseCookie(name,defaultValue){ const v=document.cookie.split('; ').find(r=>r.startsWith(name+'=')); if(v) try{ return JSON.parse(v.split('=')[1]); }catch(e){ return defaultValue; } return defaultValue; }
-function setCookie(name,value){ document.cookie=`${name}=${JSON.stringify(value)}; path=/`; }
-
-function updateTokens(){ document.getElementById('tokens').innerHTML=`<img src='https://www.wtfq.online/Tokens/token.png'>Tokens: ${tokens}`; }
-function updateCoins(){ document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; }
+function updateTokens(){ document.getElementById('tokens').innerHTML=`<img src='https://www.wtfq.online/Tokens/token.png'>Tokens: ${tokens}`; localStorage.setItem('tokens', tokens); }
+function updateCoins(){ document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; localStorage.setItem('coins', coins); }
 
 function updateInventory(){
     const inv=document.getElementById('inventory'); inv.innerHTML='';
@@ -340,7 +358,14 @@ function updateInventory(){
     });
 }
 
-function sellCard(index){ const card=inventory[index]; coins+=card.coinWorth||1; setCookie('coins',coins); inventory.splice(index,1); setCookie('inventory',inventory); updateCoins(); updateInventory(); }
+function sellCard(index){
+    const card=inventory[index];
+    coins+=card.coinWorth||1;
+    inventory.splice(index,1);
+    localStorage.setItem('coins', coins);
+    localStorage.setItem('inventory', JSON.stringify(inventory));
+    updateCoins(); updateInventory();
+}
 
 // SHOW CHANCES BUTTON
 document.getElementById('show-chances-btn').onclick = async ()=>{
@@ -353,7 +378,6 @@ document.getElementById('show-chances-btn').onclick = async ()=>{
         const row=document.createElement('tr');
         row.innerHTML=`<td>${card.name} (${card.rarity})</td>`+
             rarities.map(pack=>{
-                // compute probability based on weighted and rarity thresholds
                 const thresholds={
                     'Common':[84,94,98,99,99.9,100],
                     'Uncommon':[0,85,95,99,99.9,100],
@@ -368,6 +392,7 @@ document.getElementById('show-chances-btn').onclick = async ()=>{
                     const availableCards = cardsList.filter(c=>c.rarity===card.rarity);
                     const totalChance = availableCards.reduce((s,c)=>s+(c.chance||1),0);
                     rarityProb = ((card.chance||1)/totalChance)*(thresholds[pack][cardLevel]- (cardLevel>0?thresholds[pack][cardLevel-1]:0));
+                    rarityProb = Math.max(0, rarityProb);
                 }
                 return `<td>${(rarityProb*100).toFixed(2)}%</td>`;
             }).join('');
