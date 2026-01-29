@@ -38,6 +38,7 @@ body {
     border:2px solid #fff;
     transition: transform 0.3s ease;
 }
+.pack:hover { transform: scale(1.05); }
 .pack img { width:100%; height:80%; object-fit:contain; }
 .pack-price { width:100%; text-align:center; background:#222; padding:5px; font-weight:bold;}
 
@@ -57,6 +58,7 @@ body {
     border-radius:10px;
     object-fit:contain;
     transform-origin:top center;
+    backface-visibility:hidden;
 }
 
 #card-display {
@@ -99,7 +101,9 @@ body {
     margin:10px;
     position:relative;
     width:120px;
+    transition: transform 0.2s ease;
 }
+.inventory-card:hover { transform: scale(1.08); }
 .inventory-card img {
     width:120px;
     height:180px;
@@ -126,6 +130,11 @@ body {
     background:#ff5555cc;
     color:#fff;
     cursor:pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+.sell-btn:hover {
+    transform: scale(1.2);
+    background:#ff4444;
 }
 
 /* PRICE UNDER BUTTON */
@@ -146,6 +155,22 @@ body {
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
+}
+
+/* SPARKLE EFFECT */
+@keyframes sparkle {
+    0% { transform: scale(0.8) rotate(0deg); opacity:0; }
+    50% { transform: scale(1.2) rotate(180deg); opacity:1; }
+    100% { transform: scale(1) rotate(360deg); opacity:0; }
+}
+.sparkle {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, #fff, #ff0, transparent);
+    border-radius: 50%;
+    animation: sparkle 1s ease-out forwards;
+    pointer-events:none;
 }
 </style>
 </head>
@@ -205,36 +230,23 @@ rarities.forEach(rarity=>{
     packsContainer.appendChild(packDiv);
 });
 
-// OPEN PACK ANIMATION
+// OPEN PACK ANIMATION (1 card per pack)
 async function openPackAnimation(rarity){
     const price = packPrices[rarity];
     if(tokens < price){ alert('Not enough tokens!'); return; }
     tokens -= price; updateTokens();
 
     const cardsList = await fetch('cards/cards.json').then(r=>r.json());
-    function getCard(r, exclude=[]){
-        const filtered = cardsList.filter(c=>c.rarity===r && !exclude.includes(c.name));
-        if(filtered.length===0) return cardsList.find(c=>c.rarity===r);
-        return filtered[Math.floor(Math.random()*filtered.length)];
-    }
-
     const rarityOrder=['Common','Uncommon','Rare','Epic','Legendary','Divine'];
     let startIndex = rarityOrder.indexOf(rarity);
-    let awardedCards=[];
-    let usedNames = [];
+    let chance=Math.random();
+    let rarityIndex=startIndex + (chance>0.7?1:0);
+    if(rarityIndex >= rarityOrder.length) rarityIndex = rarityOrder.length-1;
 
-    for(let i=0;i<3;i++){
-        let chance=Math.random();
-        let rarityIndex=startIndex + (chance>0.7?1:0);
-        if(rarityIndex >= rarityOrder.length) rarityIndex = rarityOrder.length-1;
-        let card = getCard(rarityOrder[rarityIndex], usedNames);
-        if(card){
-            awardedCards.push(card);
-            usedNames.push(card.name);
-        }
-    }
+    const availableCards = cardsList.filter(c=>c.rarity === rarityOrder[rarityIndex]);
+    const card = availableCards[Math.floor(Math.random() * availableCards.length)];
 
-    // Pack slides up
+    // Pack slides up + flip
     animationContainer.innerHTML = `<img src='${rarity}.png'>`;
     animationContainer.style.bottom = '-350px';
     animationContainer.style.display = 'block';
@@ -244,22 +256,24 @@ async function openPackAnimation(rarity){
     const slideUp = setInterval(()=>{
         pos += 15;
         animationContainer.style.bottom = pos+'px';
-        if(pos >= 50){ clearInterval(slideUp); slicePack(awardedCards); }
+        if(pos >= 50){
+            clearInterval(slideUp);
+            flipPack(card);
+        }
     },10);
 }
 
-// SLICE PACK
-function slicePack(awardedCards){
-    const packImg = animationContainer.firstChild;
-    packImg.style.transition='transform 0.5s ease';
-    packImg.style.transform='rotateX(90deg)';
+function flipPack(card){
+    const img = animationContainer.firstChild;
+    img.style.transition='transform 0.6s ease';
+    img.style.transform='rotateX(90deg)';
     setTimeout(()=>{
         animationContainer.style.display='none';
-        revealCard(awardedCards[awardedCards.length-1]);
-        awardedCards.forEach(c=>inventory.push(c));
+        revealCard(card);
+        inventory.push(card);
         setCookie('inventory',inventory);
         updateInventory();
-    },500);
+    },600);
 }
 
 // CARD REVEAL
@@ -269,6 +283,15 @@ function revealCard(card){
     rarityBar.style.backgroundColor = rarityColors[card.rarity];
     cardDisplay.style.transform = 'translate(-50%,-50%) scale(1)';
     cardDisplay.style.boxShadow = `0 0 30px 10px ${rarityColors[card.rarity]}`;
+
+    // sparkle effect
+    const sparkle = document.createElement('div');
+    sparkle.className='sparkle';
+    sparkle.style.left = Math.random()*200+'px';
+    sparkle.style.top = Math.random()*300+'px';
+    cardDisplay.appendChild(sparkle);
+    setTimeout(()=> sparkle.remove(),1000);
+
     setTimeout(()=>{
         cardDisplay.style.transform = 'translate(-50%,-50%) scale(0)';
         cardDisplay.style.boxShadow = 'none';
@@ -283,7 +306,6 @@ function safeParseCookie(name,defaultValue){
 }
 function setCookie(name,value){ document.cookie = `${name}=${JSON.stringify(value)}; path=/`; }
 
-// TOKENS, COINS, INVENTORY
 function updateTokens(){ 
     document.getElementById('tokens').innerHTML=`<img src='https://www.wtfq.online/Tokens/token.png'>Tokens: ${tokens}`; 
 }
@@ -291,7 +313,7 @@ function updateCoins(){
     document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; 
 }
 
-// UPDATE INVENTORY WITH SMALL SELL BUTTON
+// UPDATE INVENTORY
 function updateInventory(){
     const inv = document.getElementById('inventory'); 
     inv.innerHTML='';
