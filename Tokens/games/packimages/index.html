@@ -53,13 +53,13 @@ const cardDisplay = document.getElementById('card-display');
 const cardImg = document.getElementById('card-img');
 const rarityBar = document.getElementById('rarity-bar');
 
-// Create pack buttons with correct images
+// CREATE PACK BUTTONS
 rarities.forEach(rarity=>{
     const packDiv = document.createElement('div');
     packDiv.className='pack';
 
     const packImg = document.createElement('img');
-    packImg.src = `packimages/${rarity}.png`; // Correct path
+    packImg.src = `${rarity}.png`; // correct directory (same folder as index.html)
     packImg.alt = `${rarity} Pack`;
     packImg.onerror = function(){ this.style.backgroundColor = rarityColors[rarity]; this.src=''; };
     packDiv.appendChild(packImg);
@@ -80,19 +80,30 @@ async function openPackAnimation(rarity){
     tokens -= price; updateTokens();
 
     const cardsList = await fetch('cards/cards.json').then(r=>r.json());
-    function getCard(r){ const f=cardsList.filter(c=>c.rarity===r); return f[Math.floor(Math.random()*f.length)]; }
+    function getCard(r, exclude=[]) {
+        const filtered = cardsList.filter(c=>c.rarity===r && !exclude.includes(c.name));
+        if(filtered.length===0) return cardsList.find(c=>c.rarity===r); // fallback
+        return filtered[Math.floor(Math.random()*filtered.length)];
+    }
+
     const rarityOrder=['Common','Uncommon','Rare','Epic','Legendary','Divine'];
     let startIndex = rarityOrder.indexOf(rarity);
     let awardedCards=[];
+    let usedNames = [];
+
     for(let i=0;i<3;i++){
         let chance=Math.random();
         let rarityIndex=startIndex + (chance>0.7?1:0);
-        if(rarityIndex >= rarityOrder.length) rarityIndex = rarityOrder.length-1;
-        let card = getCard(rarityOrder[rarityIndex]) || getCard(rarityOrder[startIndex]);
-        if(card) awardedCards.push(card);
+        if(rarityIndex>=rarityOrder.length) rarityIndex=rarityOrder.length-1;
+        let card = getCard(rarityOrder[rarityIndex], usedNames);
+        if(card){
+            awardedCards.push(card);
+            usedNames.push(card.name);
+        }
     }
 
-    animationContainer.innerHTML = `<img src='packimages/${rarity}.png'>`;
+    // Pack slides up
+    animationContainer.innerHTML = `<img src='${rarity}.png'>`;
     animationContainer.style.bottom = '-350px';
     animationContainer.style.display = 'block';
     animationContainer.firstChild.style.transform = 'rotateX(0deg)';
@@ -105,19 +116,21 @@ async function openPackAnimation(rarity){
     },10);
 }
 
+// SLICE PACK
 function slicePack(awardedCards){
     const packImg = animationContainer.firstChild;
     packImg.style.transition='transform 0.5s ease';
     packImg.style.transform='rotateX(90deg)';
     setTimeout(()=>{
         animationContainer.style.display='none';
-        revealCard(awardedCards[awardedCards.length-1]);
+        revealCard(awardedCards[awardedCards.length-1]); // show last card
         awardedCards.forEach(c=>inventory.push(c));
         setCookie('inventory',inventory);
         updateInventory();
     },500);
 }
 
+// CARD REVEAL
 function revealCard(card){
     cardImg.src = `cards/${card.image}`;
     rarityBar.textContent = card.name;
