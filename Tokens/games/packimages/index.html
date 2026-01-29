@@ -114,29 +114,24 @@ body {
     margin-top:-5px;
 }
 
-/* SELL BUTTON IN TOP-RIGHT */
+/* SMALL SELL BUTTON TOP-RIGHT */
 .sell-btn {
     position:absolute;
     top:6px;
     right:6px;
-    width:26px;
-    height:26px;
-    border-radius:50%;
-    background:#000c;
-    border:1px solid #fff;
+    padding:2px 5px;
+    font-size:12px;
+    border:none;
+    border-radius:4px;
+    background:#ff5555cc;
+    color:#fff;
     cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:0;
 }
-.sell-btn img {
-    width:14px;
-    height:14px;
-}
+
+/* PRICE UNDER BUTTON */
 .sell-price {
     position:absolute;
-    top:36px;
+    top:28px;
     right:4px;
     background:#000c;
     font-size:11px;
@@ -296,24 +291,25 @@ function updateCoins(){
     document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; 
 }
 
+// UPDATE INVENTORY WITH SMALL SELL BUTTON
 function updateInventory(){
-    const inv = document.getElementById('inventory'); inv.innerHTML='';
+    const inv = document.getElementById('inventory'); 
+    inv.innerHTML='';
+
     inventory.forEach((card,index)=>{
-        const div = document.createElement('div'); div.className='inventory-card';
+        const div = document.createElement('div'); 
+        div.className='inventory-card';
         div.innerHTML = `
             <img src='cards/${card.image}'>
             <div class='card-name' style='background:${rarityColors[card.rarity]}'>${card.name}</div>
-            <button class='sell-btn' onclick='sellCard(${index})'>
-                <img src='https://www.wtfq.online/Tokens/coin.png'>
-            </button>
-            <div class='sell-price'>
-                <img src='https://www.wtfq.online/Tokens/coin.png'>${card.coinWorth||1}
-            </div>
+            <button class='sell-btn' onclick='sellCard(${index})'>Sell</button>
+            <div class='sell-price'>${card.coinWorth||1} Coins</div>
         `;
         inv.appendChild(div);
     });
 }
 
+// SELL FUNCTION
 function sellCard(index){ 
     const card = inventory[index]; 
     coins += card.coinWorth||1; 
