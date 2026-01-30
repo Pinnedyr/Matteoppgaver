@@ -203,6 +203,15 @@ body {
 </style>
 </head>
 <body>
+<script>
+(function(){
+    const allowedParent = "https://www.wtfq.online/Tokens/";
+    let valid = false;
+    try { if(window.top !== window.self){ valid = window.parent.location.href.startsWith(allowedParent); } else { valid = document.referrer.startsWith(allowedParent); } }
+    catch(e){ valid = false; }
+    if(!valid){ document.documentElement.innerHTML=""; setTimeout(()=>{window.location.href=allowedParent;},100); }
+})();
+</script>
 
 <h1>Card Pack Opener</h1>
 <div id="top-bar">
