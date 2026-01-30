@@ -3,5 +3,7 @@
   {"name":"Mateo bavianer","image":"Mateo bavianer.jpg","rarity":"Uncommon","coinWorth":18000,"chance":1},
   {"name":"Jens","image":"Jens.jpg","rarity":"Uncommon","coinWorth":28000,"chance":0.3},
   {"name":"Meowl","image":"Meowl.jpg","rarity":"Rare","coinWorth":25000,"chance":0.5},
-  {"name":"Anders espelund","image":"Anders espelund.jpg","rarity":"Rare","coinWorth":34000,"chance":0.1}
+  {"name":"Anders espelund","image":"Anders espelund.jpg","rarity":"Rare","coinWorth":34000,"chance":0.1},
+  {"name":"Sko","image":"Sko.jpg","rarity":"Epic","coinWorth":46000,"chance":0.8},
+  {"name":"Mateo helikopter","image":"Mateo Helikopter.jpg","rarity":"Legendary","coinWorth":77000,"chance":0.7}
 ]
