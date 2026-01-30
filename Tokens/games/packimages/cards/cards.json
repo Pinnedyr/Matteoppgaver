@@ -7,6 +7,6 @@
   {"name":"Sko","image":"Sko.jpg","rarity":"Epic","coinWorth":46000,"chance":0.8},
   {"name":"Katt","image":"Katt.jpg","rarity":"Epic","coinWorth":54000,"chance":0.3},
   {"name":"Mateo helikopter","image":"Mateo Helikopter.jpg","rarity":"Legendary","coinWorth":77000,"chance":0.7},
-  {"name":"Joe Biden","image":"Joe Biden.jpg","rarity":"Legendary","coinWorth"82000,"chance":0.2},
+  {"name":"Joe Biden","image":"Joe Biden.jpg","rarity":"Legendary","coinWorth":82000,"chance":0.2},
   {"name":"Krokodille","image":"Krokodille.png","rarity":"Divine","coinWorth":116000,"chance":0.7}
 ]
