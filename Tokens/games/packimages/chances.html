@@ -3,133 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Card Chances</title>
-
+<title>Pack Rarity Chances</title>
 <style>
 body {
-  background: #0f172a;
-  color: #e5e7eb;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  padding: 30px;
+    background: #0f172a;
+    color: #e5e7eb;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    padding: 30px;
 }
-
 h1 {
-  text-align: center;
-  margin-bottom: 30px;
+    text-align: center;
+    margin-bottom: 30px;
 }
-
 table {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  border-collapse: collapse;
-  background: #020617;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: #020617;
 }
-
 th, td {
-  border: 1px solid #334155;
-  padding: 10px;
-  text-align: center;
-  font-size: 0.9rem;
+    border: 1px solid #334155;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9rem;
 }
-
 th {
-  background: #020617;
-  font-weight: 700;
+    background: #020617;
+    font-weight: 700;
 }
-
 td {
-  background: #020617;
+    background: #020617;
 }
-
 .rarity {
-  font-weight: 700;
-  text-transform: capitalize;
+    font-weight: 700;
+    text-transform: capitalize;
 }
-
 .footer {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 0.8rem;
-  opacity: 0.7;
+    text-align: center;
+    margin-top: 24px;
+    font-size: 0.8rem;
+    opacity: 0.7;
 }
 </style>
 </head>
 <body>
 
-<h1>Card Chances</h1>
+<h1>Pack Rarity Chances</h1>
 
-<table id="chanceTable">
-  <thead>
-    <tr>
-      <th>Rarity</th>
-      <th>Common Pack</th>
-      <th>Uncommon Pack</th>
-      <th>Rare Pack</th>
-      <th>Epic Pack</th>
-      <th>Legendary Pack</th>
-      <th>Divine Pack</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Filled by JS -->
-  </tbody>
+<table>
+<thead>
+<tr>
+    <th>Rarity</th>
+    <th>Common Pack</th>
+    <th>Uncommon Pack</th>
+    <th>Rare Pack</th>
+    <th>Epic Pack</th>
+    <th>Legendary Pack</th>
+    <th>Divine Pack</th>
+</tr>
+</thead>
+<tbody id="chance-body"></tbody>
 </table>
 
 <div class="footer">
-  Chances are calculated from card weights and shown as percentages.
+    Percentages are based on the pack drop thresholds defined in the game logic.
 </div>
 
 <script>
-fetch("cards.json")
-  .then(res => res.json())
-  .then(cards => {
-    const tableBody = document.querySelector("#chanceTable tbody");
+const rarities = ['Common','Uncommon','Rare','Epic','Legendary','Divine'];
+const thresholds = {
+    'Common':[84,94,98,99,99.9,100],
+    'Uncommon':[0,85,95,99,99.9,100],
+    'Rare':[0,0,85,95,99,100],
+    'Epic':[0,0,0,85,95,100,100],
+    'Legendary':[0,0,0,0,90,100],
+    'Divine':[0,0,0,0,10,100]
+};
 
-    // Group by rarity
-    const rarityMap = {};
-    cards.forEach(card => {
-      if (!rarityMap[card.rarity]) rarityMap[card.rarity] = [];
-      rarityMap[card.rarity].push(card);
-    });
+const body = document.getElementById('chance-body');
 
-    Object.keys(rarityMap).forEach(rarity => {
-      const cardsInRarity = rarityMap[rarity];
+rarities.forEach(rarity => {
+    const row = document.createElement('tr');
+    row.innerHTML = `<td class="rarity">${rarity}</td>` +
+      rarities.map(pack => {
+        const baseLevel = rarities.indexOf(pack);
+        const cardLevel = rarities.indexOf(rarity);
+        let chance = 0;
 
-      // Total weight
-      let total = 0;
-      cardsInRarity.forEach(c => {
-        const w = Number(c.chance);
-        if (!isNaN(w) && w > 0) total += w;
-      });
+        if (cardLevel >= baseLevel || (pack==='Divine' && cardLevel===4)) {
+            const lower = cardLevel > 0 ? thresholds[pack][cardLevel-1] : 0;
+            const upper = thresholds[pack][cardLevel];
+            chance = upper - lower;
+        }
 
-      if (total <= 0) return;
+        return `<td>${chance.toFixed(2)}%</td>`;
+      }).join('');
 
-      // Build display text
-      const details = cardsInRarity.map(c => {
-        const percent = ((c.chance / total) * 100).toFixed(2);
-        return `${c.name}: ${percent}%`;
-      }).join("<br>");
-
-      const row = document.createElement("tr");
-
-      row.innerHTML = `
-        <td class="rarity">${rarity}</td>
-        <td>${details}</td>
-        <td>${details}</td>
-        <td>${details}</td>
-        <td>${details}</td>
-        <td>${details}</td>
-        <td>${details}</td>
-      `;
-
-      tableBody.appendChild(row);
-    });
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Failed to load card chances.");
-  });
+    body.appendChild(row);
+});
 </script>
 
 </body>
