@@ -208,10 +208,22 @@ h1 {
 
 <div class="container">
   <h1>What The Facqkuit</h1>
-  <div class="currency-display">
-    <div><img src="coin.png" alt="Coin"><div><span id="coins-count">0</span> Coins</div></div>
-    <div><img src="token.png" alt="Token"><div><span id="tokens-count">0</span> Tokens</div></div>
+<div class="currency-display">
+  <div>
+    <img src="coin.png" alt="Coin">
+    <div><span id="coins-count">0</span> Coins</div>
   </div>
+
+  <div>
+    <img src="token.png" alt="Token">
+    <div><span id="tokens-count">0</span> Tokens</div>
+  </div>
+
+  <div>
+    <img src="coconut.png" alt="Coconut">
+    <div><span id="coconut-count">0</span> Kokosnøtter</div>
+  </div>
+</div>
   <button class="button" id="convert-button">Bytt Coins til Tokens</button>
   <h2>Spill for å tjene Coins:</h2>
   <div class="scroll-wrapper"><div class="scroll-bar" id="games-scrollbar"></div></div>
@@ -260,14 +272,17 @@ function setCookie(name, value, days = 365) {
 
 let coins = getCookie("coins");
 let tokens = getCookie("tokens");
+let coconut = getCookie("coconut");
 
 const coinsCountEl = document.getElementById("coins-count");
 const tokensCountEl = document.getElementById("tokens-count");
+const coconutCountEl = document.getElementById("coconut-count");
 const convertBtn = document.getElementById("convert-button");
 
 function updateDisplay() {
   coinsCountEl.textContent = coins.toLocaleString();
   tokensCountEl.textContent = tokens.toLocaleString();
+  coconutCountEl.textContent = coconut.toLocaleString();
   convertBtn.disabled = coins < 10000;
 }
 
@@ -275,6 +290,7 @@ function updateDisplay() {
 setInterval(() => {
   coins = getCookie("coins");
   tokens = getCookie("tokens");
+  coconut = getCookie("coconut");
   updateDisplay();
 }, 1000);
 
