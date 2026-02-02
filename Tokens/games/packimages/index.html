@@ -429,7 +429,7 @@ function updateInventory(){
             if(!card) return;
             div.innerHTML=`<img src='cards/${card.image}'><div class='card-name' style='background:${rarityColors[card.rarity]}'>${card.name}</div>
             <button class='sell-btn' onclick='sellCard(${index})'>Sell</button>
-            <div class='sell-price'>${card.coinWorth||1} Coins</div>`;
+            <div class='sell-price'>${card.coinWorth||1} Coconuts</div>`;
             inv.appendChild(div);
         });
     });
