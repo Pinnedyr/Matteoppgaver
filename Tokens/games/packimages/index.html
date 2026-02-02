@@ -215,13 +215,14 @@ body {
 
 <h1>Card Pack Opener</h1>
 <div id="top-bar">
-  <div id="tokens"><img src="https://www.wtfq.online/Tokens/token.png">Tokens: 0</div>
-  <div id="coins"><img src="https://www.wtfq.online/Tokens/coin.png">Coins: 0</div>
+  <div id="tokens"><img src="https://www.wtfq.online/Tokens/token.png"> Tokens: 0</div>
+  <div id="coins"><img src="https://www.wtfq.online/Tokens/coin.png"> Coins: 0</div>
+  <div id="coconuts"><img src="https://www.wtfq.online/Tokens/coconut.png"> Coconuts: 0</div>
   <a href="https://www.wtfq.online/Tokens/games/packimages/chances.html" target="_blank">
-  <button style="margin-left:20px;padding:4px 8px;font-size:14px;border-radius:4px;border:none;background:#555;color:#fff;cursor:pointer;">
-    Show Chances
-  </button>
-</a>
+    <button style="margin-left:20px;padding:4px 8px;font-size:14px;border-radius:4px;border:none;background:#555;color:#fff;cursor:pointer;">
+      Show Chances
+    </button>
+  </a>
 </div>
 
 <div id="packs-container"></div>
@@ -256,7 +257,8 @@ function setCookie(name, value, days = 365) {
 }
 
 let tokens = getCookie("tokens") || 0;
-let coins = getCookie("coins") || 0;
+let coins = getCookie("coins") || 0;       // keep coins cookie
+let coconuts = getCookie("coconut") || 0;  // new cookie for coconuts
 
 // Auto-sync with other tab/page every second
 setInterval(() => {
@@ -411,6 +413,10 @@ function updateCoins(){
     document.getElementById('coins').innerHTML=`<img src='https://www.wtfq.online/Tokens/coin.png'>Coins: ${coins}`; 
     setCookie("coins", coins);
 }
+function updateCoconuts(){ 
+    document.getElementById('coconuts').innerHTML = `<img src='https://www.wtfq.online/Tokens/coconut.png'> Coconuts: ${coconuts}`; 
+    setCookie("coconut", coconuts);
+}
 
 // ================== INVENTORY ==================
 function updateInventory(){
@@ -430,15 +436,20 @@ function updateInventory(){
 }
 
 function sellCard(index){
-    fetch('cards/cards.json').then(r=>r.json()).then(cardsList=>{
+    fetch('cards/cards.json').then(r => r.json()).then(cardsList => {
         const cardName = inventory[index];
-        const card = cardsList.find(c=>c.name===cardName);
-        coins += card.coinWorth||1;
-        inventory.splice(index,1);
+        const card = cardsList.find(c => c.name === cardName);
+        coconuts += card.coinWorth || 1;  // coins → coconuts
+        inventory.splice(index, 1);
         localStorage.setItem('inventory', JSON.stringify(inventory));
-        updateCoins(); updateInventory();
+        updateCoconuts();  // update display
+        updateInventory();
     });
 }
+
+updateTokens();
+updateCoins();      // coins still displayed
+updateCoconuts();    // show coconuts
 </script>
 </body>
 </html>
