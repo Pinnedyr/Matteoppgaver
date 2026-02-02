@@ -1,13 +1,13 @@
 [
-  {"name":"Cp marcus","image":"Marcus.jpg","rarity":"Common","coinWorth":7000,"chance":1.5},
-  {"name":"Mateo bavianer","image":"Mateo bavianer.jpg","rarity":"Uncommon","coinWorth":18000,"chance":1},
-  {"name":"Jens","image":"Jens.jpg","rarity":"Uncommon","coinWorth":28000,"chance":0.3},
-  {"name":"Meowl","image":"Meowl.jpg","rarity":"Rare","coinWorth":25000,"chance":0.5},
-  {"name":"Anders espelund","image":"Anders espelund.jpg","rarity":"Rare","coinWorth":34000,"chance":0.1},
-  {"name":"Sko","image":"Sko.jpg","rarity":"Epic","coinWorth":46000,"chance":0.8},
-  {"name":"Katt","image":"Katt.jpg","rarity":"Epic","coinWorth":54000,"chance":0.3},
-  {"name":"Mateo helikopter","image":"Mateo Helikopter.jpg","rarity":"Legendary","coinWorth":77000,"chance":0.7},
-  {"name":"Joe Biden","image":"Joe Biden.jpg","rarity":"Legendary","coinWorth":82000,"chance":0.2},
-  {"name":"Shmikel","image":"Shmikel.jpeg","rarity":"Divine","coinWorth":113000,"chance":0.9},
-  {"name":"Krokodille","image":"Krokodille.png","rarity":"Divine","coinWorth":126000,"chance":0.3}
+  {"name":"Cp marcus","image":"Marcus.jpg","rarity":"Common","coinWorth":1,"chance":1.5},
+  {"name":"Mateo bavianer","image":"Mateo bavianer.jpg","rarity":"Uncommon","coinWorth":2,"chance":1},
+  {"name":"Jens","image":"Jens.jpg","rarity":"Uncommon","coinWorth":2,"chance":0.3},
+  {"name":"Meowl","image":"Meowl.jpg","rarity":"Rare","coinWorth":3,"chance":0.5},
+  {"name":"Anders espelund","image":"Anders espelund.jpg","rarity":"Rare","coinWorth":3,"chance":0.1},
+  {"name":"Sko","image":"Sko.jpg","rarity":"Epic","coinWorth":5,"chance":0.8},
+  {"name":"Katt","image":"Katt.jpg","rarity":"Epic","coinWorth":5,"chance":0.3},
+  {"name":"Mateo helikopter","image":"Mateo Helikopter.jpg","rarity":"Legendary","coinWorth":8,"chance":0.7},
+  {"name":"Joe Biden","image":"Joe Biden.jpg","rarity":"Legendary","coinWorth":8,"chance":0.2},
+  {"name":"Shmikel","image":"Shmikel.jpeg","rarity":"Divine","coinWorth":12,"chance":0.9},
+  {"name":"Krokodille","image":"Krokodille.png","rarity":"Divine","coinWorth":12,"chance":0.3}
 ]
