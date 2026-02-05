@@ -16,8 +16,9 @@
       bannerlink: "https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform"
     },
     {
-      bannertekst: "Husk at du kan trykke Alt for å lukke nettsiden!",
-      bannerfarge: "#2ed573"
+      bannertekst: "Kjeder du deg? Prøv den nye Tokens-siden ved å trykke her.",
+      bannerfarge: "#a400d6",
+      bannerlink: "https://www.wtfq.online/Tokens/"
     }
   ];
 
