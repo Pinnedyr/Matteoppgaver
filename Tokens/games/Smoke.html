@@ -14,51 +14,75 @@
         background: #0f172a;
         color: #e2e8f0;
         font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      }
-
-      button {
-        border: none;
-        background: none;
-        height: 400px;
-        width: 400px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
-      }
-
-      button:hover {
-        width: 450px;
-        height: 450px;
-      }
-
-      img {
-        height: 400px;
-        width: 400px;
-        transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
-      }
-
-      img:hover {
-        width: 450px;
-        height: 450px;
+        margin: 0;
+        overflow: hidden;
       }
 
       h1 {
-        font-size: 3rem;
-        margin-bottom: 16px;
+        font-size: 2.5rem;
+        margin-bottom: 12px;
       }
 
       .controls {
-        margin-top: 20px;
-        font-size: 18px;
+        margin-top: 10px;
+        font-size: 16px;
       }
 
       input[type="range"] {
-        width: 300px;
+        width: 200px;
       }
 
       label {
-        margin-left: 10px;
+        margin-left: 8px;
+      }
+
+      .detector-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin-bottom: 12px;
+      }
+
+      #detectorButton {
+        border: none;
+        background: none;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+      }
+
+      #detectorImg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        transition: transform 0.1s;
+      }
+
+      .red-light {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 0, 0, 0.4);
+        border-radius: 50%;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 1;
+        transition: opacity 0.1s;
+      }
+
+      /* Shake animation */
+      @keyframes shake {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        20% { transform: translate(-2px, 2px) rotate(-5deg); }
+        40% { transform: translate(2px, -2px) rotate(5deg); }
+        60% { transform: translate(-2px, 2px) rotate(-5deg); }
+        80% { transform: translate(2px, -2px) rotate(5deg); }
+        100% { transform: translate(0, 0) rotate(0deg); }
       }
     </style>
   </head>
@@ -67,9 +91,12 @@
 
 <h1>Smoke Detector</h1>
 
-<button onclick="playBeep()">
-  <img src="Detector.png">
-</button>
+<div class="detector-container">
+  <div class="red-light" id="redLight"></div>
+  <button id="detectorButton">
+    <img id="detectorImg" src="Detector.png" alt="Smoke Detector">
+  </button>
+</div>
 
 <div class="controls">
   <p>Beep interval: <span id="intervalValue">30</span> seconds</p>
@@ -87,44 +114,55 @@ const beep = document.getElementById("beep");
 const slider = document.getElementById("intervalSlider");
 const intervalValue = document.getElementById("intervalValue");
 const autoToggle = document.getElementById("autoToggle");
+const detectorButton = document.getElementById("detectorButton");
+const detectorImg = document.getElementById("detectorImg");
+const redLight = document.getElementById("redLight");
 
 let beepTimeout;
 
 function playBeep() {
   beep.currentTime = 0;
   beep.play();
+
+  // Show red light
+  redLight.style.opacity = 1;
+  setTimeout(() => redLight.style.opacity = 0, 100);
+
+  // Shake detector
+  detectorImg.style.animation = "shake 0.2s";
+  setTimeout(() => detectorImg.style.animation = "", 200);
 }
 
 function scheduleBeep() {
   clearTimeout(beepTimeout);
 
-  if (!autoToggle.checked) return; // stop auto beeping if toggle is off
+  if (!autoToggle.checked) return;
 
-  // Base interval from slider
   let intervalSec = parseInt(slider.value);
-
-  // Add random offset ±5 seconds
-  intervalSec += Math.floor(Math.random() * 11) - 5; // -5 to +5
-  if (intervalSec < 1) intervalSec = 1; // prevent zero or negative interval
+  intervalSec += Math.floor(Math.random() * 11) - 5; // ±5 seconds
+  if (intervalSec < 1) intervalSec = 1;
 
   beepTimeout = setTimeout(() => {
     playBeep();
-    scheduleBeep(); // schedule next beep
+    scheduleBeep();
   }, intervalSec * 1000);
 }
 
-// Update display and reschedule when slider changes
+// Update display & reschedule when slider moves
 slider.addEventListener("input", () => {
   intervalValue.textContent = slider.value;
   scheduleBeep();
 });
 
-// Reschedule when auto beep toggle changes
+// Reschedule when auto toggle changes
 autoToggle.addEventListener("change", () => {
   scheduleBeep();
 });
 
-// Spacebar plays beep manually
+// Click button manually
+detectorButton.addEventListener("click", playBeep);
+
+// Spacebar plays beep
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
@@ -132,7 +170,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// Start auto-beeping on load
+// Start auto-beeping
 scheduleBeep();
 </script>
 
