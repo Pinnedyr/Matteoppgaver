@@ -56,9 +56,34 @@
     if(!valid){ document.documentElement.innerHTML=""; setTimeout(()=>{window.location.href=allowedParent;},100); }
 })();
 </script>
+<h1>Smoke Detector</h1><br>
 
-    <h1>Smoke Detector</h1> <br>
-    <button><img src="Detector.png"></button>
-    
+<button onclick="playBeep()">
+  <img src="Detector.png">
+</button>
+
+<audio id="beep" src="Beep.mp3" preload="auto"></audio>
+
+<script>
+const beep = document.getElementById("beep");
+
+function playBeep() {
+  beep.currentTime = 0;
+  beep.play();
+}
+
+// function to schedule the next random beep
+function scheduleBeep() {
+  const randomDelay = Math.random() * (60000 - 30000) + 30000; // 30–60 seconds
+
+  setTimeout(() => {
+    playBeep();
+    scheduleBeep(); // schedule the next one
+  }, randomDelay);
+}
+
+// start the random beeping
+scheduleBeep();
+</script>
   </body>
 </html>
