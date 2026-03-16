@@ -56,6 +56,10 @@
       input[type="range"] {
         width: 300px;
       }
+
+      label {
+        margin-left: 10px;
+      }
     </style>
   </head>
 
@@ -70,6 +74,10 @@
 <div class="controls">
   <p>Beep interval: <span id="intervalValue">30</span> seconds</p>
   <input type="range" id="intervalSlider" min="5" max="120" value="30">
+  <p>
+    <input type="checkbox" id="randomToggle">
+    <label for="randomToggle">Random Mode (-5s to +5s)</label>
+  </p>
 </div>
 
 <audio id="beep" src="Beep.mp3" preload="auto"></audio>
@@ -78,23 +86,39 @@
 const beep = document.getElementById("beep");
 const slider = document.getElementById("intervalSlider");
 const intervalValue = document.getElementById("intervalValue");
+const randomToggle = document.getElementById("randomToggle");
 
-let beepInterval;
+let beepTimeout;
 
 function playBeep() {
   beep.currentTime = 0;
   beep.play();
 }
 
-function startBeeping() {
-  clearInterval(beepInterval);
-  const seconds = slider.value;
-  beepInterval = setInterval(playBeep, seconds * 1000);
+function scheduleBeep() {
+  clearTimeout(beepTimeout);
+  let intervalSec = parseInt(slider.value);
+
+  if (randomToggle.checked) {
+    // Random offset between -5 and +5 seconds
+    intervalSec += Math.floor(Math.random() * 11) - 5; // -5 to +5
+    if (intervalSec < 1) intervalSec = 1; // avoid non-positive interval
+  }
+
+  beepTimeout = setTimeout(() => {
+    playBeep();
+    scheduleBeep(); // schedule next beep
+  }, intervalSec * 1000);
 }
 
+// Update interval display and restart schedule
 slider.addEventListener("input", () => {
   intervalValue.textContent = slider.value;
-  startBeeping();
+  scheduleBeep();
+});
+
+randomToggle.addEventListener("change", () => {
+  scheduleBeep();
 });
 
 // spacebar plays beep
@@ -105,8 +129,8 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// start on load
-startBeeping();
+// start beeping on load
+scheduleBeep();
 </script>
 
   </body>
