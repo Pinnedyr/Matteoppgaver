@@ -75,8 +75,8 @@
   <p>Beep interval: <span id="intervalValue">30</span> seconds</p>
   <input type="range" id="intervalSlider" min="5" max="120" value="30">
   <p>
-    <input type="checkbox" id="randomToggle">
-    <label for="randomToggle">Random Mode (-5s to +5s)</label>
+    <input type="checkbox" id="randomToggle" checked>
+    <label for="randomToggle">Random Offset (±5s)</label>
   </p>
 </div>
 
@@ -100,9 +100,9 @@ function scheduleBeep() {
   let intervalSec = parseInt(slider.value);
 
   if (randomToggle.checked) {
-    // Random offset between -5 and +5 seconds
+    // Automatic random offset between -5 and +5 seconds
     intervalSec += Math.floor(Math.random() * 11) - 5; // -5 to +5
-    if (intervalSec < 1) intervalSec = 1; // avoid non-positive interval
+    if (intervalSec < 1) intervalSec = 1; // prevent zero or negative interval
   }
 
   beepTimeout = setTimeout(() => {
@@ -111,17 +111,18 @@ function scheduleBeep() {
   }, intervalSec * 1000);
 }
 
-// Update interval display and restart schedule
+// Update display and reschedule when slider changes
 slider.addEventListener("input", () => {
   intervalValue.textContent = slider.value;
   scheduleBeep();
 });
 
+// Reschedule when random mode is toggled
 randomToggle.addEventListener("change", () => {
   scheduleBeep();
 });
 
-// spacebar plays beep
+// Spacebar plays beep manually
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
@@ -129,7 +130,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// start beeping on load
+// Start beeping on load
 scheduleBeep();
 </script>
 
