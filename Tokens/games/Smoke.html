@@ -72,16 +72,15 @@
         opacity: 0;
         pointer-events: none;
         z-index: 1;
-        transition: opacity 0.1s;
+        transition: opacity 0.3s ease-out;
       }
 
-      /* Shake animation */
       @keyframes shake {
         0% { transform: translate(0, 0) rotate(0deg); }
-        20% { transform: translate(-2px, 2px) rotate(-5deg); }
-        40% { transform: translate(2px, -2px) rotate(5deg); }
-        60% { transform: translate(-2px, 2px) rotate(-5deg); }
-        80% { transform: translate(2px, -2px) rotate(5deg); }
+        20% { transform: translate(-1px, 1px) rotate(-2deg); }
+        40% { transform: translate(1px, -1px) rotate(2deg); }
+        60% { transform: translate(-1px, 1px) rotate(-2deg); }
+        80% { transform: translate(1px, -1px) rotate(2deg); }
         100% { transform: translate(0, 0) rotate(0deg); }
       }
     </style>
@@ -110,68 +109,56 @@
 <audio id="beep" src="Beep.mp3" preload="auto"></audio>
 
 <script>
-const beep = document.getElementById("beep");
-const slider = document.getElementById("intervalSlider");
-const intervalValue = document.getElementById("intervalValue");
-const autoToggle = document.getElementById("autoToggle");
-const detectorButton = document.getElementById("detectorButton");
-const detectorImg = document.getElementById("detectorImg");
-const redLight = document.getElementById("redLight");
+const beep = document.getElementById("beep")
+const slider = document.getElementById("intervalSlider")
+const intervalValue = document.getElementById("intervalValue")
+const autoToggle = document.getElementById("autoToggle")
+const detectorButton = document.getElementById("detectorButton")
+const detectorImg = document.getElementById("detectorImg")
+const redLight = document.getElementById("redLight")
 
-let beepTimeout;
+let beepTimeout
 
 function playBeep() {
-  beep.currentTime = 0;
-  beep.play();
-
-  // Show red light
-  redLight.style.opacity = 1;
-  setTimeout(() => redLight.style.opacity = 0, 100);
-
-  // Shake detector
-  detectorImg.style.animation = "shake 0.2s";
-  setTimeout(() => detectorImg.style.animation = "", 200);
+  beep.currentTime = 0
+  beep.play()
+  redLight.style.opacity = 1
+  setTimeout(() => redLight.style.opacity = 0, 300)
+  detectorImg.style.animation = "shake 0.2s"
+  setTimeout(() => detectorImg.style.animation = "", 200)
 }
 
 function scheduleBeep() {
-  clearTimeout(beepTimeout);
-
-  if (!autoToggle.checked) return;
-
-  let intervalSec = parseInt(slider.value);
-  intervalSec += Math.floor(Math.random() * 11) - 5; // ±5 seconds
-  if (intervalSec < 1) intervalSec = 1;
-
+  clearTimeout(beepTimeout)
+  if (!autoToggle.checked) return
+  let intervalSec = parseInt(slider.value)
+  intervalSec += Math.floor(Math.random() * 11) - 5
+  if (intervalSec < 1) intervalSec = 1
   beepTimeout = setTimeout(() => {
-    playBeep();
-    scheduleBeep();
-  }, intervalSec * 1000);
+    playBeep()
+    scheduleBeep()
+  }, intervalSec * 1000)
 }
 
-// Update display & reschedule when slider moves
 slider.addEventListener("input", () => {
-  intervalValue.textContent = slider.value;
-  scheduleBeep();
-});
+  intervalValue.textContent = slider.value
+  scheduleBeep()
+})
 
-// Reschedule when auto toggle changes
 autoToggle.addEventListener("change", () => {
-  scheduleBeep();
-});
+  scheduleBeep()
+})
 
-// Click button manually
-detectorButton.addEventListener("click", playBeep);
+detectorButton.addEventListener("click", playBeep)
 
-// Spacebar plays beep
 document.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
-    e.preventDefault();
-    playBeep();
+    e.preventDefault()
+    playBeep()
   }
-});
+})
 
-// Start auto-beeping
-scheduleBeep();
+scheduleBeep()
 </script>
 
   </body>
