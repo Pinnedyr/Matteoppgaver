@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Terningspill med betting</title>
+<title>Dice</title>
 <style>
 /* === GLOBAL BODY === */
 body {
@@ -220,13 +220,13 @@ button:disabled {
         <div class="face">4</div><div class="face">5</div><div class="face">6</div>
     </div>
 
-    <div class="multiplier">Multiplikator: <span id="multiplier">0x</span></div>
+    <div class="multiplier">Multiplier: <span id="multiplier">0x</span></div>
 
     <div class="bet-box">
-        <input type="number" id="betAmount" placeholder="Vedde mengde">
+        <input type="number" id="betAmount" placeholder="Bet ammount">
     </div>
 
-    <button id="betBtn">Vedd</button>
+    <button id="betBtn">Bet</button>
 </div>
 
 <div class="right">
@@ -309,9 +309,9 @@ betBtn.onclick = () => {
     const bet = +betAmount.value;
     const picks = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
 
-    if (!picks.length) return alert("Vennligst velg minst ett terningansikt!");
-    if (!bet || bet <= 0) return alert("Vennligst skriv inn et gyldig bet større enn 0!");
-    if (bet > getCoins()) return alert("Ikke nok coins!");
+    if (!picks.length) return alert("Please chose one dice face!");
+    if (!bet || bet <= 0) return alert("The minimum bet is 1!");
+    if (bet > getCoins()) return alert("Not enough coins!");
 
     // Trekk bet fra coins
     setCoins(getCoins() - bet);
