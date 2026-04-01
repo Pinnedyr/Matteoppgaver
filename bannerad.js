@@ -5,18 +5,17 @@
 
   const banners = [
     {
-      bannertekst:
-        "Kommer du alltid inn i timen med feil bok? Prøv våre Skoleplaner ved å trykke her.",
+      bannertekst: "Want the best schoolplans? Click here to open schoolplans and add your own class.",
       bannerfarge: "#ff4757",
       bannerlink: "https://www.wtfq.online/skoleplaner/"
     },
     {
-      bannertekst: "Har du forslag til nettsiden? Trykk her.",
+      bannertekst: "Do you have suggestions for our site? Click here.",
       bannerfarge: "#1e90ff",
       bannerlink: "https://docs.google.com/forms/d/e/1FAIpQLSckiALFsZhY7CymY6bAQRYuAGhrNWw_8QfA0eliQnA7PxNRdg/viewform"
     },
     {
-      bannertekst: "Kjeder du deg? Prøv den nye Tokens-siden ved å trykke her.",
+      bannertekst: "Are you bored? Click here to play many games made by us!",
       bannerfarge: "#a400d6",
       bannerlink: "https://www.wtfq.online/Tokens/"
     }
