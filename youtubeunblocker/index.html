@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Matteoppgaver</title>
-  <link rel="icon" type="image/png" href="images/Math header.png">
+  <title>Youtube Videoplayer</title>
+  <link rel="icon" type="image/png" href="https://wtfq.online/images/Logo.png">
   <script src="closeTab.js"></script>
   <script src="https://wtfq.online/bannerad.js"></script>
   <script src="https://wtfq.online/Tokens/tokendisplay.js"></script>
@@ -78,12 +78,12 @@
 <body>
 
 <h1>What the facqkuit</h1>
-<p class="subtitle">YouTube Videospiller</p>
+<p class="subtitle">YouTube Videoplayer</p>
 
 <div class="controls">
-  <input id="video-input" placeholder="YouTube-ID eller link" />
-  <button id="load-btn">Last inn</button>
-  <button id="play-btn">Tilfeldig video</button>
+  <input id="video-input" placeholder="YouTube-ID or link" />
+  <button id="load-btn">Load</button>
+  <button id="play-btn">Random video</button>
 </div>
 
 <p id="error-msg"></p>
@@ -91,9 +91,9 @@
 <iframe id="player" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 <div id="loading-overlay">
-  <p>Laster tilfeldig video...</p>
-  <p id="tries-counter">Prøvde 0 linker</p>
-  <button id="stop-btn">Stopp</button>
+  <p>Loading random video...</p>
+  <p id="tries-counter">Tried 0 links</p>
+  <button id="stop-btn">Stop</button>
 </div>
 
 <script>
@@ -174,13 +174,13 @@
     errorMsg.textContent = "";
     const id = extractId(input.value.trim());
     if (!id) {
-      errorMsg.textContent = "Ugyldig YouTube-link eller ID";
+      errorMsg.textContent = "Wrong YouTube-link or ID";
       return;
     }
     if (await checkVideo(id)) {
       playVideo(id);
     } else {
-      errorMsg.textContent = "Videoen ble ikke funnet";
+      errorMsg.textContent = "The video was not found";
     }
   };
 
