@@ -80,7 +80,7 @@
   box.innerHTML = `
     <img src="${ICON_URL}" alt="Token">
     <span>${tokens}</span>
-    <div class="wtfq-token-tooltip">Trykk her for å få Tokens</div>
+    <div class="wtfq-token-tooltip">Click here to get Tokens!</div>
   `;
 
   box.addEventListener("click", () => {
