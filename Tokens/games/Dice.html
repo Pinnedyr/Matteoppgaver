@@ -287,7 +287,7 @@ faces.forEach(face => face.onclick = () => {
 
     // Vis dynamiske odds
     const chance = c > 0 ? ((c/6)*100).toFixed(1) : 0;
-    resultText.textContent = `Sjanse for å vinne: ${chance}%`;
+    resultText.textContent = `Chance to win: ${chance}%`;
 });
 
 /* COIN-BURST */
@@ -309,7 +309,7 @@ betBtn.onclick = () => {
     const bet = +betAmount.value;
     const picks = [...document.querySelectorAll('.face.selected')].map(f => f.textContent);
 
-    if (!picks.length) return alert("Please chose one dice face!");
+    if (!picks.length) return alert("Please choose one dice face!");
     if (!bet || bet <= 0) return alert("The minimum bet is 1!");
     if (bet > getCoins()) return alert("Not enough coins!");
 
@@ -333,11 +333,11 @@ betBtn.onclick = () => {
             dice.classList.add("win");
             const payout = Math.floor(bet * multipliers[picks.length]);
             setCoins(getCoins() + payout); // VINN: legg til payout
-            resultText.textContent = `Du rullet ${roll} og vant ${payout} coins!`;
+            resultText.textContent = `You rolled ${roll} and won ${payout} coins!`;
             coinBurst();
         } else {
             dice.classList.add("lose");
-            resultText.textContent = `Du rullet ${roll} og tapte ${bet} coins.`;
+            resultText.textContent = `You rolled ${roll} and lost ${bet} coins.`;
         }
 
         betBtn.disabled = false;
