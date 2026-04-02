@@ -18,6 +18,11 @@
       bannertekst: "Are you bored? Click here to play many games made by us!",
       bannerfarge: "#a400d6",
       bannerlink: "https://www.wtfq.online/Tokens/"
+    },
+    {
+      bannertekst: "Check out our Tiktok, by clicking here!",
+      bannerfarge: "#576e50",
+      bannerlink: "https://www.tiktok.com/@www.wtfq.online"
     }
   ];
 
