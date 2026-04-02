@@ -20,7 +20,7 @@
       bannerlink: "https://www.wtfq.online/Tokens/"
     },
     {
-      bannertekst: "Check out our Tiktok, by clicking here!",
+      bannertekst: "Follow our Tiktok, by clicking here or by seaching @www.wtfq.online!",
       bannerfarge: "#576e50",
       bannerlink: "https://www.tiktok.com/@www.wtfq.online"
     }
