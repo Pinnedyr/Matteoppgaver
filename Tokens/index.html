@@ -257,8 +257,8 @@ setTimeout(() => { setInterval(() => { if(getKillCookie() === "1") window.locati
 (function() {
     const lockKey = "activeTokensTab";
     function showDisabledMessage() {
-        document.body.innerHTML = `<h1 style="color:white;text-align:center;margin-top:50px;">En annen Token meny er åpnet!<br>Denne fanen er deaktivert.</h1>
-        <div style="color:#3b82f6; font-size:0.9rem; text-decoration:underline; cursor:pointer; margin-top:12px;" id="fix-tab">Har du blitt låst ut av nettsiden? Trykk her.</div>`;
+        document.body.innerHTML = `<h1 style="color:white;text-align:center;margin-top:50px;">Another Token-menu is open!<br>This tab has been deactivated.</h1>
+        <div style="color:#3b82f6; font-size:0.9rem; text-decoration:underline; cursor:pointer; margin-top:12px;" id="fix-tab">Are you locked out of the website? Click here.</div>`;
         document.getElementById("fix-tab").addEventListener("click", () => {
             document.cookie = "killSwitch=1; path=/";
             setTimeout(() => { document.cookie = "killSwitch=0; path=/"; }, 50);
@@ -377,7 +377,7 @@ games.forEach(game => {
   btn.addEventListener("click", () => {
     if (game.price && !purchased) {
       if (coins < game.price) {
-        alert(`Du trenger minst ${game.price} Coins for ${game.name}.`);
+        alert(`You need atleast ${game.price} Coins for ${game.name}.`);
         return;
       }
 
